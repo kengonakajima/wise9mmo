@@ -37,8 +37,9 @@ Character.sync(function(){ sys.puts( "character sync fin" ); })
 //
 // RPC func defs
 //
-function echo( sock, a, b, c ) {
-    sock.send( "echo", a,b,c);    
+function echo( a, b, c ) {
+    sys.puts( "recv echo. abc:"+a+","+b+","+c);
+    this.send( "echo", a,b,c);    
 }
 
 // 関数登録
@@ -46,6 +47,24 @@ var functions = {};
 function addRPC( name, f ) {
     functions[name]=f;
 }
+
+net.Socket.prototype.send = function() {
+    if( arguments.length < 1 ){
+        sys.puts( "need argument" );
+        return;
+    }
+
+    var v={};
+    v["method"] = arguments[0];
+    var params=[];
+    for(var i=0;i<arguments.length-1;i++){
+        params.push( arguments[i+1] );
+    }
+    v["params"] = params;
+    this.write(JSON.stringify(v)+"\n");
+}
+
+addRPC( "echo", echo );
 
 
 //
@@ -57,19 +76,8 @@ var server = net.createServer(function (socket) {
     // 新しい接続を受けいれたとき
     socket.addListener("connect", function () {
 
-        socket.prototype.send = function() {
-            if( arguments.length < 1 ){
-                sys.puts( "need argument" );
-                return;
-            }
-
-            var v={};
-            v["method"] = arguments[0];
-            v["params"] = arguments.slice(1);
-            this.write(JSON.stringify(v)+"\n");
-        }
-this.addrString = 
-        sockets[this.addrString] = cli;
+        this.addrString = this.remoteAddress + ":" + this.remotePort;
+        sockets[this.addrString] = this;
     });
 
     // データが来たとき
@@ -85,9 +93,15 @@ this.addrString =
         var ary = data.split("\n");
         for(var i=0;i<ary.length;i++){
             var line = ary[i];
-            var decoded = JSON.parse(line);
+            if( line==""){continue;}
+            try{
+                var decoded = JSON.parse(line);
+            }catch(e){
+                socket.send( "error", "invalid line:'"+line+"'");
+                continue;
+            }
             if( decoded.method == null || decoded.params == null ){
-                sendRPC( socket, "error", "invalid json", "line:"+line );
+                socket.send( "error", "invalid json", "line:"+line );
                 sys.print( "error string:" + line );
                 return;
             }
@@ -95,10 +109,10 @@ this.addrString =
             // call func
             var f = functions[decoded.method];
             if( f == null ){
-                cli.send( "error", "func not found", "name:" + decoded.method );
+                socket.send( "error", "func not found", "name:" + decoded.method );
                 return;
             }
-            f.apply( cli, decoded.params );
+            f.apply( socket, decoded.params );
         }
         
     });
