@@ -65,8 +65,8 @@ net.Socket.prototype.send = function() {
     var v={};
     v["method"] = arguments[0];
     var params=[];
-    for(var i=0;i<arguments.length-1;i++){
-        params.push( arguments[i+1] );
+    for(var i=1;i<arguments.length;i++){
+        params.push( arguments[i] );
     }
     v["params"] = params;
     this.write(JSON.stringify(v)+"\n");
@@ -114,7 +114,13 @@ var server = net.createServer(function (socket) {
                 socket.send( "error", "func not found", "name:" + decoded.method );
                 return;
             }
-            f.apply( socket, decoded.params );
+            try {
+                f.apply( socket, decoded.params );
+            } catch(e){
+                socket.send( "error", "exception in rpc", "line:"+line );
+                sys.print( "exception in rpc. string:" + line );
+                return;
+            }
         }
         
     });
@@ -123,6 +129,11 @@ var server = net.createServer(function (socket) {
     socket.addListener("end", function () {
         delete sockets[ socket.addrString ];
         sys.puts( "end. socknum:" + sockets.length);
+    });
+
+    // エラーが起きたときのコールバック(SIGPIPEとか)
+    socket.addListener("error", function () {
+        sys.puts( "error. socknum:" + sockets.length);
     });
 });
 
