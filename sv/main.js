@@ -137,6 +137,8 @@ var server = net.createServer(function (socket) {
     });
 });
 
+
+// RPC関数を登録
 addRPC( "echo", echo );
 addRPC( "sum", sum );
 
