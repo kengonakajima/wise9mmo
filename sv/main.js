@@ -1,53 +1,61 @@
 /*
-  wise9 mmo server main
+  wise9 連載MMOG サーバー
 */
 
-
+// 必要なモジュールをロードする
 var sys = require('sys');
 var net = require('net');
 var Sequelize = require("./sequelize").Sequelize
 
+// グローバル変数
 var sockets = new Array();
+var functions = {};
 
 
+// DBアクセス用コード
+/*
 var sequelize = new Sequelize('test', 'wise9', '', {  host: "localhost",  port: 3306 })
 
-var rpcfuncs = new Array();
-
-////////////////// table defs
 var Character = sequelize.define('Character', {
     name: Sequelize.STRING,
     pass:     Sequelize.STRING,
     data: Sequelize.TEXT
 })
 
+var Log = sequelize.define('Log', {
+    
+})
+
 
 Character.sync(function(){ sys.puts( "character sync fin" ); })
 
-/*
-    Character.find(  { name: charname }, function(ch) {
-        if( ch.pass == pass ) {
-            conn.call( "loginResult", 1 );
-        } else {
-            conn.call( "loginResult", 0 );
-        }
-    })
+Character.find(  { name: charname }, function(ch) {
+    if( ch.pass == pass ) {
+        conn.call( "loginResult", 1 );
+    } else {
+        conn.call( "loginResult", 0 );
+    }
+})
+
 */
 
-//
-// RPC func defs
-//
+// RPC 関数定義
 function echo( a, b, c ) {
     sys.puts( "recv echo. abc:"+a+","+b+","+c);
     this.send( "echo", a,b,c);    
 }
+function sum( a, b, c ) {
+    sys.puts( "recv echo. abc:"+a+","+b+","+c);
+    this.send( "sum", a+b+c);
+}
+    
 
 // 関数登録
-var functions = {};
 function addRPC( name, f ) {
     functions[name]=f;
 }
 
+// 共用の送信関数
 net.Socket.prototype.send = function() {
     if( arguments.length < 1 ){
         sys.puts( "need argument" );
@@ -64,32 +72,26 @@ net.Socket.prototype.send = function() {
     this.write(JSON.stringify(v)+"\n");
 }
 
-addRPC( "echo", echo );
 
-
-//
-// サーバ
-//
+// nodeサーバ本体
 var server = net.createServer(function (socket) {
     socket.setEncoding("utf8");
 
-    // 新しい接続を受けいれたとき
+    // 新しい接続を受けいれたときのコールバック関数
     socket.addListener("connect", function () {
-
         this.addrString = this.remoteAddress + ":" + this.remotePort;
         sockets[this.addrString] = this;
     });
 
-    // データが来たとき
+    // データが来たときのコールバック関数
     socket.addListener("data", function (data) {
-
         if( data.match( /^<policy-file-request/ ) ){
             sys.puts( "policy file requested\n");
             socket.write( "<?xml version=\"1.0\"?><cross-domain-policy><allow-access-from domain=\"*\" to-ports=\"*\" secure=\"false\" /></cross-domain-policy>\n" );
             return;
         }
 
-        // parse
+        // データ行を文字列分割してJSON解析
         var ary = data.split("\n");
         for(var i=0;i<ary.length;i++){
             var line = ary[i];
@@ -106,7 +108,7 @@ var server = net.createServer(function (socket) {
                 return;
             }
             
-            // call func
+            // 公開してる関数を呼びだす
             var f = functions[decoded.method];
             if( f == null ){
                 socket.send( "error", "func not found", "name:" + decoded.method );
@@ -117,13 +119,15 @@ var server = net.createServer(function (socket) {
         
     });
     
-    // 切れたとき
+    // ソケットが切断したときのコールバック
     socket.addListener("end", function () {
         delete sockets[ socket.addrString ];
-
         sys.puts( "end. socknum:" + sockets.length);
     });
 });
+
+addRPC( "echo", echo );
+addRPC( "sum", sum );
 
 server.listen(7000, "127.0.0.1");
 
