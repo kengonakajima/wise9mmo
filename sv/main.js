@@ -41,11 +41,11 @@ Character.find(  { name: charname }, function(ch) {
 
 // RPC 関数定義
 function echo( a, b, c ) {
-    sys.puts( "recv echo. abc:"+a+","+b+","+c);
+    sys.puts( "echo: abc:"+a+","+b+","+c);
     this.send( "echo", a,b,c);    
 }
 function sum( a, b, c ) {
-    sys.puts( "recv echo. abc:"+a+","+b+","+c);
+    sys.puts( "sum: abc:"+a+","+b+","+c);
     this.send( "sum", a+b+c);
 }
     
