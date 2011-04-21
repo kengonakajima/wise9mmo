@@ -48,7 +48,12 @@ function sum( a, b, c ) {
     sys.puts( "sum: abc:"+a+","+b+","+c);
     this.send( "sum", a+b+c);
 }
-    
+function delayed(a,b,c){
+    sys.puts( "delayed: abc:"+a+","+b+","+c);
+    setTimeout( function(sock) {
+        sock.send( "delayed", a,b,c);    
+    }, 1000, this  );    
+}
 
 // 関数登録
 function addRPC( name, f ) {
@@ -141,6 +146,7 @@ var server = net.createServer(function (socket) {
 // RPC関数を登録
 addRPC( "echo", echo );
 addRPC( "sum", sum );
+addRPC( "delayed", delayed );
 
 server.listen(7000, "127.0.0.1");
 
