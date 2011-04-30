@@ -19,7 +19,9 @@ function Field( hsize, vsize ) {
 function toIndex( x,y,z, hs ){
     return y * hs * hs + z * hs + x ;
 }
+
 // yが高さ方向, zが奥行き xが左右
+
 Field.prototype.fill = function( x0,y0,z0, x1,y1,z1, t ) {
     var i=0;
     for(var x=x0; x < x1; x ++ ){
@@ -31,6 +33,8 @@ Field.prototype.fill = function( x0,y0,z0, x1,y1,z1, t ) {
         }
     }
 }
+    
+
 
 Field.prototype.stats = function() {
     var counts = new Array(10);
@@ -59,11 +63,16 @@ Field.prototype.stats = function() {
         sys.puts(s);
     }
 }
-
 Field.prototype.get = function(x,y,z){
     if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize) throw "invalid block coord:"+x+","+y+","+z;
     return this.blocks[ toIndex( x,y,z,this.hSize) ];
 }
+    
+Field.prototype.set = function(x,y,z,t){
+    if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize) throw "invalid block coord:"+x+","+y+","+z;
+    this.blocks[ toIndex( x,y,z,this.hSize) ] = t;
+}
+    
 // 大きい一部取る
 // x1は含まない (0,0,0)-(1,1,1)は１セル分
 Field.prototype.getBox = function(x0,y0,z0,x1,y1,z1) {

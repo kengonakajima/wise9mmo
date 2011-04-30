@@ -54,6 +54,17 @@ function getField(x0,y0,z0,x1,y1,z1){
         this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,ary );
     }
 }
+function dig(x,y,z){
+    sys.puts("dig:"+x+","+y+","+z);
+    // todo: 無条件に受けいれてる
+    var b = fld.get(x,y,z);
+    if( b != null && b == modField.Enums.BlockType.STONE ){
+        fld.set( x,y,z, modField.Enums.BlockType.AIR);
+        this.nearcast( "changeFieldNotify", x,y,z, modField.Enums.BlockType.AIR);
+        sys.puts("digged");
+    }    
+    
+}
 
 function login() {
   sys.puts( "login" );
@@ -113,7 +124,7 @@ net.Socket.prototype.nearcast = function() {
         var distance = (dx*dx)+(dz*dz);
         if( distance< (200*200)){
             try {
-                sys.puts( "sent to:"+ sk.addrString + " id:" + sk.clientID );
+                //                sys.puts( "sent to:"+ sk.addrString + " id:" + sk.clientID );
                 sk.write(json+"\n");
             } catch(e){
                 sys.puts( "nearcast: exception:"+e);
@@ -201,6 +212,7 @@ addRPC( "sum", sum );
 //addRPC( "delayed", delayed );
 addRPC( "move", move );
 addRPC( "getField", getField );
+addRPC( "dig", dig );
 
 server.listen(7000, "127.0.0.1");
 
