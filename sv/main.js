@@ -5,39 +5,18 @@
 // 必要なモジュールをロードする
 var sys = require('sys');
 var net = require('net');
-var Sequelize = require("./sequelize").Sequelize
+
+var modField = require("./field");
+
 
 // グローバル変数
 var sockets = new Array();
 var functions = {};
 
 
-// DBアクセス用コード
-/*
-var sequelize = new Sequelize('test', 'wise9', '', {  host: "localhost",  port: 3306 })
-
-var Character = sequelize.define('Character', {
-    name: Sequelize.STRING,
-    pass:     Sequelize.STRING,
-    data: Sequelize.TEXT
-})
-
-var Log = sequelize.define('Log', {
-    
-})
+var fld = modField.generate( 128, 128 );
 
 
-Character.sync(function(){ sys.puts( "character sync fin" ); })
-
-Character.find(  { name: charname }, function(ch) {
-    if( ch.pass == pass ) {
-        conn.call( "loginResult", 1 );
-    } else {
-        conn.call( "loginResult", 0 );
-    }
-})
-
-*/
 
 
 // RPC 関数定義
@@ -56,15 +35,30 @@ function delayed(a,b,c){
     }, 1000, this  );    
 }
 function move(x,y,z,pitch,yaw,dy,jm,dt){
-    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+jm+","+dt);
-    this.pos = [x/1000,y/1000,z/1000];
-    
+    //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+jm+","+dt);
+    var ix = x/1000;
+    var iy = y/1000;
+    var iz = z/1000;
+    this.pos = [ix,iy,iz];
+
     this.nearcast( "moveNotify",this.clientID, x,y,z,pitch,yaw,dy,jm,dt);
+}
+
+function getField(x0,y0,z0,x1,y1,z1){
+    if(this.gfcnt==undefined)this.gfcnt=0;else this.gfcnt++;
+    sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
+    var ary = fld.getBox( x0,y0,z0,x1,y1,z1);
+    if(ary==null){
+        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,[] );
+    } else {
+        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,ary );
+    }
 }
 
 function login() {
   sys.puts( "login" );
-  this.send( "loginResult", this.clientID );
+  this.pos = [ 2,20,2 ]; // 初期位置
+  this.send( "loginResult", this.clientID, this.pos[0], this.pos[1], this.pos[2] );
 }
 
 
@@ -92,6 +86,7 @@ net.Socket.prototype.send = function() {
     var json = makeJson( arguments );
 
     try {
+        //        sys.puts( "sending:"+json);
         this.write(json+"\n");
     } catch(e){
         sys.puts( "send: exception: "+e );
@@ -108,7 +103,7 @@ net.Socket.prototype.nearcast = function() {
 
         if( sk == this ) continue;
         if( sk.pos == undefined ){
-            sys.puts( "sk:"+ sk.addrString + " dont have position");            
+            //            sys.puts( "sk:"+ sk.addrString + " dont have position");            
             continue;
         }
 
@@ -151,7 +146,8 @@ var server = net.createServer(function (socket) {
             return;
         }
 
-        // データ行を文字列分割してJSON解析
+
+        // データ行を文字列分割してJSON解析. TODO: 改行の後に次のコマンドが中途半端に続いている場合、取り逃すはず。
         var ary = data.split("\n");
         for(var i=0;i<ary.length;i++){
             var line = ary[i];
@@ -204,6 +200,7 @@ addRPC( "echo", echo );
 addRPC( "sum", sum );
 //addRPC( "delayed", delayed );
 addRPC( "move", move );
+addRPC( "getField", getField );
 
 server.listen(7000, "127.0.0.1");
 
