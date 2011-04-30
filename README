@@ -1,0 +1,20 @@
+
+wise9.jp に連載投稿している「JavaScriptでMMOGをつくってみよう」シリーズのサーバとクライアントのコードです。
+
+記事URL:
+http://wise9.jp/archives/1224
+
+ソースコード利用方法
+
+1. サーバを起動
+
+cd sv/
+node main.js
+
+
+2. クライアントを起動
+./cli/fpstest1/Assets/Animation Event Test/Events.unity
+をUnity3D (3.1以降)で起動してビルド。
+localhostの7000に対して接続します。
+
+
