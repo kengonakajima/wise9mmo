@@ -24,10 +24,7 @@ function echo( a, b, c ) {
     sys.puts( "echo: abc:"+a+","+b+","+c);
     this.send( "echo", a,b,c);    
 }
-function sum( a, b, c ) {
-    sys.puts( "sum: abc:"+a+","+b+","+c);
-    this.send( "sum", a+b+c);
-}
+
 function delayed(a,b,c){
     sys.puts( "delayed: abc:"+a+","+b+","+c);
     setTimeout( function(sock) {
@@ -63,7 +60,9 @@ function dig(x,y,z){
         this.nearcast( "changeFieldNotify", x,y,z, modField.Enums.BlockType.AIR);
         sys.puts("digged");
     }    
-    
+}
+function jump(){
+    this.nearcast( "jumpNotify", this.clientID);
 }
 
 function login() {
@@ -208,11 +207,12 @@ var server = net.createServer(function (socket) {
 // RPC関数を登録
 addRPC( "login", login );
 addRPC( "echo", echo );
-addRPC( "sum", sum );
+
 //addRPC( "delayed", delayed );
 addRPC( "move", move );
 addRPC( "getField", getField );
 addRPC( "dig", dig );
+addRPC( "jump", jump );
 
 server.listen(7000, "127.0.0.1");
 

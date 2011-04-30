@@ -97,21 +97,15 @@ Field.prototype.getBox = function(x0,y0,z0,x1,y1,z1) {
 
 // 軸ごとのサイズ。 east-west size, north-south size, high-low size 
 exports.generate = function( hsize, vsize ) {
-
     var fld = new Field( hsize, vsize );
 
-    fld.fill( 0,0,0, hsize,vsize,hsize, Enums.BlockType.AIR );
-    fld.fill( 0,0,0, hsize,1,hsize, Enums.BlockType.STONE );
+    fld.fill( 0,0,0, hsize,vsize,hsize, Enums.BlockType.AIR ); // 世界を空気で満たす
+    fld.fill( 0,0,0, hsize,1,hsize, Enums.BlockType.STONE ); // 地盤を置く
 
-    
-    fld.fill( 5,1,5, 15,2,15, Enums.BlockType.STONE );
-    fld.fill( 7,2,7, 12,3,12, Enums.BlockType.WATER );    
-    
-    
-    fld.stats();
+    fld.fill( 5,1,5, 25,2,15, Enums.BlockType.STONE );   // 高台を置く
+    fld.fill( 7,2,7, 22,3,12, Enums.BlockType.WATER );   // その上に水を置く
 
     return fld;
-
 }
 
 
