@@ -2,11 +2,14 @@ var sys = require('sys');
 
 var Enums = new Object();
 
-Enums.BlockType = { AIR:0, STONE:1, SOIL:2, GRASS:3, WATER:4, LEAF:5, STEM:6 };
+Enums.BlockType = { AIR:0, STONE:1, SOIL:2, GRASS:3, WATER:4, LEAF:5, STEM:6, LADDER:7 };
+Enums.ItemType = { REDFLOWER:100, BLUEFLOWER:101 };
 
 
 exports.Enums = Enums;
 
+
+    
 
 function Field( hsize, vsize ) {
     this.hSize = hsize;
@@ -34,11 +37,11 @@ Field.prototype.fill = function( x0,y0,z0, x1,y1,z1, t ) {
     
 
 
-Field.prototype.stats = function() {
-    var counts = new Array(10);
+Field.prototype.stats = function( h) {
+    var counts = new Array(200);
     var ycounts = new Array( this.vSize );
     for(var i=0;i<counts.length;i++){counts[i]=0;}
-    for(var i=0;i<ycounts.length;i++){ycounts[i]=new Array(10);  for(var j=0;j<10;j++){ ycounts[i][j]=0;}}
+    for(var i=0;i<ycounts.length;i++){ycounts[i]=new Array(200);  for(var j=0;j<200;j++){ ycounts[i][j]=0;}}
     
     for(var x=0; x < this.hSize; x ++ ){
         for(var y=0; y < this.vSize; y++ ){
@@ -53,7 +56,7 @@ Field.prototype.stats = function() {
     for(var i=0;i<counts.length;i++){
         if( counts[i]>0) sys.puts( "" + i + ":" + counts[i] );
     }
-    for(var y=0;y<ycounts.length;y++){
+    for(var y=0;y<ycounts.length &&y<h;y++){
         var s = "y:"+y;
         for(var j=0;j<ycounts[y].length;j++){
             if( ycounts[y][j]>0) s += " "+ j + ":" + ycounts[y][j];
@@ -62,14 +65,28 @@ Field.prototype.stats = function() {
     }
 }
 Field.prototype.get = function(x,y,z){
-    if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize) throw "invalid block coord:"+x+","+y+","+z;
+    if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize)return null;
     return this.blocks[ toIndex( x,y,z,this.hSize) ];
 }
     
 Field.prototype.set = function(x,y,z,t){
-    if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize) throw "invalid block coord:"+x+","+y+","+z;
+    if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize)return;
     this.blocks[ toIndex( x,y,z,this.hSize) ] = t;
 }
+
+    Field.prototype.putTree = function(x,y,z) {
+        for(var ix=-1;ix<=1;ix++){
+            for(var iy=-1;iy<=1;iy++){
+                for(var iz=-1;iz<=1;iz++){
+                    this.set(x+ix,y+3+iy,z+iz, Enums.BlockType.LEAF);
+                }
+            }
+        }
+        this.set(x,y,z, Enums.BlockType.STEM);
+        this.set(x,y+1,z, Enums.BlockType.STEM);
+        this.set(x,y+2,z, Enums.BlockType.STEM);
+    }
+
     
 // 大きい一部取る
 // x1は含まない (0,0,0)-(1,1,1)は１セル分
@@ -106,7 +123,9 @@ Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
                 if( x<0 ||y<0||z<0||x>=this.hSize||y>=this.vSize||z>=this.hSize){
                     l=-1;
                 } else {
-                    if( this.blocks[ toIndex(x,y,z,this.hSize) ] == Enums.BlockType.AIR ){
+                    if( this.blocks[ toIndex(x,y,z,this.hSize) ] == Enums.BlockType.AIR
+                        || this.blocks[ toIndex(x,y,z,this.hSize) ] >= 100
+                        ){
                         l = 6;
                     } else {
                         l = -1;
@@ -131,14 +150,37 @@ exports.generate = function( hsize, vsize ) {
 
     var d = 20;
     fld.fill( 4,1,4, 8+d,2,8+d, Enums.BlockType.STONE );   // 高台を置く
-    fld.fill( 5,2,5, 7+d,3,7+d, Enums.BlockType.WATER );   // その上に水を置く
+    fld.fill( 5,2,5, 7+d,3,7+d, Enums.BlockType.SOIL );   // その上に水を置く
+    fld.fill( 6,3,6, 6+d,4,6+d, Enums.BlockType.GRASS );   // その上に水を置く    
+    fld.fill( 7,4,7, 5+d,5,5+d, Enums.BlockType.GRASS );   //
+    
+    fld.set( 8,5,8, Enums.ItemType.REDFLOWER );   //
+    fld.set( 8,5,10, Enums.ItemType.BLUEFLOWER );   //
 
-    fld.fill( 2,1,2, 3,2,4, Enums.BlockType.STONE );
-    fld.fill( 6,1,2, 8,2,5, Enums.BlockType.STONE );
-    fld.stats();
+    fld.putTree(12,5,12 );
+    fld.putTree(17,5,12 );
+    fld.putTree(17,5,17 );        
+    fld.putTree(12,5,17 );
+    
+    fld.fill( 2,0,2, 20,1,2, Enums.BlockType.WATER );   //
+    
+    fld.fill( 3,1,3, 4,10,4, Enums.BlockType.LADDER );   // 
+
+    fld.fill( 2,1,2, 3,2,4, Enums.ItemType.REDFLOWER );
+    //    fld.fill( 6,1,2, 8,2,5, Enums.BlockType.STONE );
+    fld.stats(30);
     return fld;
 }
 
-
-
-
+    exports.diggable = function(t){
+        if( t == Enums.BlockType.STONE
+            || t == Enums.BlockType.GRASS
+            || t == Enums.BlockType.SOIL
+            || t == Enums.BlockType.STEM
+            || t == Enums.BlockType.LEAF
+            ){
+            return true;
+        } else {
+            return false;
+        }
+    }

@@ -56,14 +56,34 @@ function dig(x,y,z){
     sys.puts("dig:"+x+","+y+","+z);
     // todo: 無条件に受けいれてる
     var b = fld.get(x,y,z);
-    if( b != null && b == modField.Enums.BlockType.STONE ){
+    if( b != null && modField.diggable(b) ){
         fld.set( x,y,z, modField.Enums.BlockType.AIR);
-        var lights = fld.getLightBox( x,y,z,x+1,y+1,z+1);
-        this.nearcast( "changeFieldNotify", x,y,z, modField.Enums.BlockType.AIR,lights);
-        this.send("changeFieldNotify", x,y,z, modField.Enums.BlockType.AIR,lights);
-        sys.puts("digged");
+        this.nearcast( "changeFieldNotify", x,y,z);
+        sys.puts("digged.");
     }    
 }
+// あいてる場所になにかおく
+function put(x,y,z,tname){
+    sys.puts("put:"+x+","+y+","+z+","+tname);
+    var b = fld.get(x,y,z);
+
+    var t = modField.Enums.ItemType[tname];
+    if( t == undefined || t == null ){
+        sys.puts("invalid tname");
+        return;
+    }
+    sys.puts( "t:" + t + " to:"+typeof(t));
+    
+    if( b != null && b == modField.Enums.BlockType.AIR ){
+        fld.set( x,y,z, modField.Enums.ItemType[tname] );
+        this.nearcast( "changeFieldNotify", x,y,z);
+        sys.puts("put.");
+        fld.stats(30);
+    } else {
+        sys.puts("invalid put");
+    }
+}
+
 function jump(){
     this.nearcast( "jumpNotify", this.clientID);
 }
@@ -216,6 +236,7 @@ addRPC( "move", move );
 addRPC( "getField", getField );
 addRPC( "dig", dig );
 addRPC( "jump", jump );
+addRPC( "put", put );
 
 server.listen(7000, "127.0.0.1");
 
