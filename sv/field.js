@@ -129,7 +129,7 @@ exports.generate = function( hsize, vsize ) {
     fld.fill( 0,0,0, hsize,vsize,hsize, Enums.BlockType.AIR ); // 世界を空気で満たす
     fld.fill( 0,0,0, hsize,1,hsize, Enums.BlockType.STONE ); // 地盤を置く
 
-    var d = 4;
+    var d = 20;
     fld.fill( 4,1,4, 8+d,2,8+d, Enums.BlockType.STONE );   // 高台を置く
     fld.fill( 5,2,5, 7+d,3,7+d, Enums.BlockType.WATER );   // その上に水を置く
 

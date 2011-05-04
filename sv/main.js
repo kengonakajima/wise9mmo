@@ -21,7 +21,7 @@ var fld = modField.generate( 128, 128 );
 
 // RPC 関数定義
 function echo( a, b, c ) {
-    sys.puts( "echo: abc:"+a+","+b+","+c);
+    //    sys.puts( "echo: abc:"+a+","+b+","+c);
     this.send( "echo", a,b,c);    
 }
 
