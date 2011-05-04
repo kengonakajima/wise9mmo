@@ -44,11 +44,12 @@ function move(x,y,z,pitch,yaw,dy,jm,dt){
 function getField(x0,y0,z0,x1,y1,z1){
     if(this.gfcnt==undefined)this.gfcnt=0;else this.gfcnt++;
     sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
-    var ary = fld.getBox( x0,y0,z0,x1,y1,z1);
-    if(ary==null){
+    var blkary = fld.getBlockBox(x0,y0,z0,x1,y1,z1);
+    var lgtary = fld.getLightBox(x0,y0,z0,x1,y1,z1);
+    if(blkary==null||lgtary==null){
         this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,[] );
     } else {
-        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,ary );
+        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,blkary,lgtary );
     }
 }
 function dig(x,y,z){
@@ -57,7 +58,9 @@ function dig(x,y,z){
     var b = fld.get(x,y,z);
     if( b != null && b == modField.Enums.BlockType.STONE ){
         fld.set( x,y,z, modField.Enums.BlockType.AIR);
-        this.nearcast( "changeFieldNotify", x,y,z, modField.Enums.BlockType.AIR);
+        var lights = fld.getLightBox( x,y,z,x+1,y+1,z+1);
+        this.nearcast( "changeFieldNotify", x,y,z, modField.Enums.BlockType.AIR,lights);
+        this.send("changeFieldNotify", x,y,z, modField.Enums.BlockType.AIR,lights);
         sys.puts("digged");
     }    
 }

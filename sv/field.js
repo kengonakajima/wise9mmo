@@ -2,7 +2,7 @@ var sys = require('sys');
 
 var Enums = new Object();
 
-Enums.BlockType = { AIR:0, STONE:1, WATER:2 };
+Enums.BlockType = { AIR:0, STONE:1, SOIL:2, GRASS:3, WATER:4, LEAF:5, STEM:6 };
 
 
 exports.Enums = Enums;
@@ -17,18 +17,16 @@ function Field( hsize, vsize ) {
 }
 
 function toIndex( x,y,z, hs ){
-    return y * hs * hs + z * hs + x ;
+    return x + z* hs + y * hs * hs; 
 }
 
 // yが高さ方向, zが奥行き xが左右
 
 Field.prototype.fill = function( x0,y0,z0, x1,y1,z1, t ) {
-    var i=0;
     for(var x=x0; x < x1; x ++ ){
         for(var y=y0; y < y1; y++ ){
             for(var z=z0; z < z1; z++ ){
                 this.blocks[ toIndex(x,y,z, this.hSize) ] = t;
-                i++;
             }
         }
     }
@@ -75,16 +73,16 @@ Field.prototype.set = function(x,y,z,t){
     
 // 大きい一部取る
 // x1は含まない (0,0,0)-(1,1,1)は１セル分
-Field.prototype.getBox = function(x0,y0,z0,x1,y1,z1) {
+Field.prototype.getBlockBox = function(x0,y0,z0,x1,y1,z1) {
     if( x0<0||y0<0||z0<0||x0>this.hSize||y0>this.vSize||z0>this.hSize
         ||x1<0||y1<0||z1<0||x1>this.hSize||y1>this.vSize||z1>this.hSize){
         return null;
     }
     var out = new Array( (x1-x0) * (y1-y0) * (z1-z0) );
     var i=0;
-    for(var x=x0; x < x1; x ++ ){
-        for(var y=y0; y < y1; y++ ){
-            for(var z=z0; z < z1; z++ ) {
+    for(var y=y0; y < y1; y++ ){
+        for(var z=z0; z < z1; z++ ) {
+            for(var x=x0; x < x1; x ++ ){
                 out[i]= this.blocks[ toIndex(x,y,z,this.hSize) ];
                 i++;
             }
@@ -92,7 +90,36 @@ Field.prototype.getBox = function(x0,y0,z0,x1,y1,z1) {
     }
     return out;                
 }
-
+// 明るさテーブルを取る0~15
+Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
+    if( x0<0||y0<0||z0<0||x0>this.hSize||y0>this.vSize||z0>this.hSize
+        ||x1<0||y1<0||z1<0||x1>this.hSize||y1>this.vSize||z1>this.hSize){
+        return null;
+    }
+    // 各軸について、-1側と+1側に1マスづつはみ出たデータ量が必要。
+    var out = new Array( (x1-x0 + 2) * (y1-y0 + 2) * (z1-z0 + 2) );
+    var i=0;
+    for(var y=y0-1; y < y1+1; y++ ){
+        for(var z=z0-1; z < z1+1; z++ ) {
+            for(var x=x0-1; x < x1+1; x ++ ){
+                var l=0;
+                if( x<0 ||y<0||z<0||x>=this.hSize||y>=this.vSize||z>=this.hSize){
+                    l=-1;
+                } else {
+                    if( this.blocks[ toIndex(x,y,z,this.hSize) ] == Enums.BlockType.AIR ){
+                        l = 6;
+                    } else {
+                        l = -1;
+                    }
+                }
+                out[i]=l;
+                i++;
+            }
+        }
+    }
+    return out;                
+}
+    
 
 
 // 軸ごとのサイズ。 east-west size, north-south size, high-low size 
@@ -102,9 +129,13 @@ exports.generate = function( hsize, vsize ) {
     fld.fill( 0,0,0, hsize,vsize,hsize, Enums.BlockType.AIR ); // 世界を空気で満たす
     fld.fill( 0,0,0, hsize,1,hsize, Enums.BlockType.STONE ); // 地盤を置く
 
-    fld.fill( 5,1,5, 25,2,15, Enums.BlockType.STONE );   // 高台を置く
-    fld.fill( 7,2,7, 22,3,12, Enums.BlockType.WATER );   // その上に水を置く
+    var d = 4;
+    fld.fill( 4,1,4, 8+d,2,8+d, Enums.BlockType.STONE );   // 高台を置く
+    fld.fill( 5,2,5, 7+d,3,7+d, Enums.BlockType.WATER );   // その上に水を置く
 
+    fld.fill( 2,1,2, 3,2,4, Enums.BlockType.STONE );
+    fld.fill( 6,1,2, 8,2,5, Enums.BlockType.STONE );
+    fld.stats();
     return fld;
 }
 
