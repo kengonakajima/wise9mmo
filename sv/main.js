@@ -47,7 +47,7 @@ function getField(x0,y0,z0,x1,y1,z1){
     var blkary = fld.getBlockBox(x0,y0,z0,x1,y1,z1);
     var lgtary = fld.getLightBox(x0,y0,z0,x1,y1,z1);
     if(blkary==null||lgtary==null){
-        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,[] );
+        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,[], [] );
     } else {
         this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,blkary,lgtary );
     }
@@ -58,6 +58,7 @@ function dig(x,y,z){
     var b = fld.get(x,y,z);
     if( b != null && modField.diggable(b) ){
         fld.set( x,y,z, modField.Enums.BlockType.AIR);
+        fld.recalcSunlight( x-1,z-1,x+1,z+1);
         this.nearcast( "changeFieldNotify", x,y,z);
         sys.puts("digged.");
     }    
