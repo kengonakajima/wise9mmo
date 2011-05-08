@@ -268,6 +268,7 @@ exports.generate = function( hsize, vsize ) {
 
     fld.fill( 0,0,0, hsize,vsize,hsize, Enums.BlockType.AIR ); // 世界を空気で満たす
     fld.fill( 0,0,0, hsize,1,hsize, Enums.BlockType.STONE ); // 地盤を置く
+    fld.fill( 4,0,4, 100,1,100, Enums.BlockType.WATER );   //水面
 
     var d = 20;
     fld.fill( 4,1,4, 8+d,2,8+d, Enums.BlockType.STONE );   // 高台を置く
@@ -278,17 +279,17 @@ exports.generate = function( hsize, vsize ) {
     fld.set( 8,5,8, Enums.ItemType.REDFLOWER );   //
     fld.set( 8,5,10, Enums.ItemType.BLUEFLOWER );   //
 
+    // 木を4本
     fld.putTree(12,12);
     fld.putTree(17,12);
     fld.putTree(17,17);        
     fld.putTree(12,17);
     
-    fld.fill( 2,0,2, 20,1,2, Enums.BlockType.WATER );   //
     
-    fld.fill( 3,1,3, 4,10,4, Enums.BlockType.LADDER );   // 
+    
+    fld.fill( 53,1,53, 54,20,54, Enums.BlockType.LADDER );   // 
 
-    fld.fill( 2,1,2, 3,2,4, Enums.ItemType.REDFLOWER );
-    //    fld.fill( 6,1,2, 8,2,5, Enums.BlockType.STONE );
+    // 山をいっぱいおく
     for(var i=0;i<40;i++){
         var mx = Math.floor(20 + Math.random() * hsize);
         var mz = Math.floor(20 + Math.random() * hsize);
@@ -303,11 +304,13 @@ exports.generate = function( hsize, vsize ) {
         fld.putMountain( mx,0,mz, msz, t);
     }
 
-    fld.fill( 9,15,9, 28,17,28, Enums.BlockType.SOIL );
-    fld.growGrass();
+    fld.fill( 9,15,9, 28,17,28, Enums.BlockType.SOIL ); // 土の天井
 
+    // 後処理
+    fld.growGrass();
     fld.recalcSunlight(0,0,hsize,hsize);
     fld.stats(30);
+    
     return fld;
 };
 
