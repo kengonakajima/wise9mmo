@@ -1,6 +1,6 @@
 var sys = require('sys');
 var g = require("./global");
-
+var main = require("./main");
 
 
 
@@ -39,7 +39,7 @@ function Actor( name, fld, pos ) {
     this.lastSentAt = this.nextMoveAt = this.lastMoveAt + defaultTick;
     
     this.field = fld;
-    this.pos = pos;
+    this.pos = new g.Vector3( pos.x, pos.y, pos.z );
 
     if(name=="zombie"){
         this.func = zombieMove;
@@ -62,21 +62,35 @@ function Actor( name, fld, pos ) {
 Actor.prototype.poll = function(curTime) {
         
     if( ( this.nextMoveAt >= curTime )  ) return;
-        
+
+    this.lastMoveAt = curTime;
+    this.nextMoveAt = curTime + defaultTick;
+    
     // 挙動関数呼び出し
     if( this.func != null ){
         this.func.apply( this, [curTime]);
-        this.lastMoveAt = curTime;
-        this.nextMoveAt = curTime + defaultTick;
         this.counter ++;
     }
         
     // 物理的に動かす
 
+    
     // 送信. 落ちてる最中ではない場合は、あまり多く送らない
     if( this.lastSentAt < (curTime-500)){
+
+        main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
+                       "moveNotify",
+                       1000000+ this.id, // TODO: refactor! clientIDが100万以上になったらかぶる
+                       Math.floor(this.pos.x*1000), // 固定少数に変換
+                       Math.floor(this.pos.y*1000),
+                       Math.floor(this.pos.z*1000),
+                       this.pitch,
+                       0,
+                       this.dy,
+                       curTime - this.lastSentAt );
         this.lastSentAt = curTime;
     }
+    
 };
 
 

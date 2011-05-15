@@ -67,7 +67,7 @@ exports.generate = function( hsize, vsize ) {
     fld.recalcSunlight(0,0,hsize,hsize);
     fld.stats(30);
 
-    fld.addMob( "zombie", new g.Pos(1,4,4) );
+    fld.addMob( "zombie", new g.Pos(2,2,4) );
     
     return fld;
 };
@@ -367,7 +367,8 @@ Field.prototype.poll = function(curTime){
     for( var k in actors ){
         var a = actors[k];
         if(a==null)continue;
-        a.poll(curTime);        
+        a.poll(curTime);
+        
     }
 };
 

@@ -51,11 +51,16 @@ function globalNearcast(x,y,z,except,args) {
         }
     }    
 };
+
 exports.nearcast = function () {
     if( arguments.length < 4 ) throw "inval"; // x,y,z, fn
+    var args = [];
+    for(var i= 3; i< arguments.length;i++){
+        args[i-3] = arguments[i];
+    }
     globalNearcast( arguments[0], arguments[1], arguments[2],
                     null, // except
-                    arguments.slice(3) );                    
+                    args );
                     
 }
     
@@ -72,15 +77,15 @@ function delayed(a,b,c){
         sock.send( "delayed", a,b,c);    
     }, 1000, this  );    
 }
-function move(x,y,z,pitch,yaw,dy,jm,dt){
-    //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+jm+","+dt);
+function move(x,y,z,pitch,yaw,dy,dt){
+    //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt);
     var ix = x/1000;
     var iy = y/1000;
     var iz = z/1000;
     this.pos = [ix,iy,iz];
 
     fld.updatePC( this.clientID, ix, iy, iz );
-    this.nearcast( "moveNotify",this.clientID, x,y,z,pitch,yaw,dy,jm,dt);
+    this.nearcast( "moveNotify",this.clientID, x,y,z,pitch,yaw,dy,dt);
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
