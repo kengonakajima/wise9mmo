@@ -2,11 +2,16 @@
   wise9 連載MMOG サーバー
 */
 
+
+
 // 必要なモジュールをロードする
 var sys = require('sys');
 var net = require('net');
+var fs = require('fs');
 
+var g = require('./global');
 var modField = require("./field");
+
 
 
 // グローバル変数
@@ -14,10 +19,46 @@ var sockets = new Array();
 var functions = {};
 
 
-var fld = modField.generate( 128, 128 );
+var fld = modField.generate( 64, 64 );
 
 
 
+function globalNearcast(x,y,z,except,args) {
+    var json = makeJson( args );
+    
+    for(var addr in sockets ){
+        var sk = sockets[addr];
+        
+        if( except != null && sk == except ) continue;
+        if( sk.pos == undefined ){
+            //            sys.puts( "sk:"+ sk.addrString + " dont have position");            
+            continue;
+        }
+
+        var dx = x-sk.pos[0];
+        var dz = z-sk.pos[2];
+        
+        var distance = (dx*dx)+(dz*dz);
+        if( distance< (200*200)){
+            try {
+                //                sys.puts( "sent to:"+ sk.addrString + " id:" + sk.clientID );
+                sk.write(json+"\n");
+            } catch(e){
+                sys.puts( "nearcast: exception:"+e);
+            }
+        } else {
+            sys.puts( "too far:"+ sk.addrString + " id:"+ sk.clientID );            
+        }
+    }    
+};
+exports.nearcast = function () {
+    if( arguments.length < 4 ) throw "inval"; // x,y,z, fn
+    globalNearcast( arguments[0], arguments[1], arguments[2],
+                    null, // except
+                    arguments.slice(3) );                    
+                    
+}
+    
 
 // RPC 関数定義
 function echo( a, b, c ) {
@@ -38,6 +79,7 @@ function move(x,y,z,pitch,yaw,dy,jm,dt){
     var iz = z/1000;
     this.pos = [ix,iy,iz];
 
+    fld.updatePC( this.clientID, ix, iy, iz );
     this.nearcast( "moveNotify",this.clientID, x,y,z,pitch,yaw,dy,jm,dt);
 }
 
@@ -57,7 +99,7 @@ function dig(x,y,z){
     // todo: 無条件に受けいれてる
     var b = fld.get(x,y,z);
     if( b != null && modField.diggable(b) ){
-        fld.set( x,y,z, modField.Enums.BlockType.AIR);
+        fld.set( x,y,z, g.BlockType.AIR);
         fld.recalcSunlight( x-1,z-1,x+1,z+1);
         this.nearcast( "changeFieldNotify", x,y,z);
         sys.puts("digged.");
@@ -68,15 +110,15 @@ function put(x,y,z,tname){
     sys.puts("put:"+x+","+y+","+z+","+tname);
     var b = fld.get(x,y,z);
 
-    var t = modField.Enums.ItemType[tname];
+    var t = g.ItemType[tname];
     if( t == undefined || t == null ){
         sys.puts("invalid tname");
         return;
     }
     sys.puts( "t:" + t + " to:"+typeof(t));
     
-    if( b != null && b == modField.Enums.BlockType.AIR ){
-        fld.set( x,y,z, modField.Enums.ItemType[tname] );
+    if( b != null && b == g.BlockType.AIR ){
+        fld.set( x,y,z, g.ItemType[tname] );
         this.nearcast( "changeFieldNotify", x,y,z);
         sys.puts("put.");
         fld.stats(30);
@@ -128,34 +170,10 @@ net.Socket.prototype.send = function() {
 }
 net.Socket.prototype.nearcast = function() {
     if( arguments.length < 1 )return;
-    var json = makeJson( arguments );
+
+    globalNearcast( this.pos[0], this.pos[1], this.pos[2], this, arguments );
 
 
-    
-    for(var addr in sockets ){
-        var sk = sockets[addr];
-
-        if( sk == this ) continue;
-        if( sk.pos == undefined ){
-            //            sys.puts( "sk:"+ sk.addrString + " dont have position");            
-            continue;
-        }
-
-        var dx = this.pos[0]-sk.pos[0];
-        var dz = this.pos[2]-sk.pos[2];
-        
-        var distance = (dx*dx)+(dz*dz);
-        if( distance< (200*200)){
-            try {
-                //                sys.puts( "sent to:"+ sk.addrString + " id:" + sk.clientID );
-                sk.write(json+"\n");
-            } catch(e){
-                sys.puts( "nearcast: exception:"+e);
-            }
-        } else {
-            sys.puts( "too far:"+ sk.addrString + " id:"+ sk.clientID );            
-        }
-    }
 }
 
 var g_cliIDcounter=0;
@@ -217,8 +235,12 @@ var server = net.createServer(function (socket) {
     
     // ソケットが切断したときのコールバック
     socket.addListener("end", function () {
+        fld.deletePC( socket.clientID );
+        
         delete sockets[ socket.clientID ];
         sys.puts( "end. socknum:" + sockets.length);
+
+
     });
 
     // エラーが起きたときのコールバック(SIGPIPEとか)
@@ -240,4 +262,21 @@ addRPC( "jump", jump );
 addRPC( "put", put );
 
 server.listen(7000, "127.0.0.1");
+
+
+// NPC動かすloop
+var loopCounter = 0;
+
+setInterval( function() {
+        var d = new Date();
+        var curTime = d.getTime();
+
+        fld.poll(curTime );
+        
+        loopCounter++;        
+    }, 1 );
+
+setInterval( function() {
+        sys.puts( "loop:" + loopCounter );
+    }, 1000 );
 

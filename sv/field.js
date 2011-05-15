@@ -1,15 +1,7 @@
+
 var sys = require('sys');
-
-var Enums = new Object();
-
-Enums.BlockType = { AIR:0, STONE:1, SOIL:2, GRASS:3, WATER:4, LEAF:5, STEM:6, LADDER:7 };
-Enums.ItemType = { REDFLOWER:100, BLUEFLOWER:101 };
-
-
-exports.Enums = Enums;
-
-
-    
+var g = require('./global');
+var modActor = require('./actor');
 
 function Field( hsize, vsize ) {
     this.hSize = hsize;
@@ -17,13 +9,85 @@ function Field( hsize, vsize ) {
 
     this.blocks = new Array( hsize * hsize * vsize );
     this.sunlight = new Array( hsize * hsize * vsize );
-       
+
+    this.pcs = {};
 }
 
 function toIndex( x,y,z, hs ){
     return x + z* hs + y * hs * hs; 
 }
 
+
+// 軸ごとのサイズ。 east-west size, north-south size, high-low size 
+exports.generate = function( hsize, vsize ) {
+    var fld = new Field( hsize, vsize );
+
+    fld.fill( 0,0,0, hsize,vsize,hsize, g.BlockType.AIR ); // 世界を空気で満たす
+    fld.fill( 0,0,0, hsize,1,hsize, g.BlockType.STONE ); // 地盤を置く
+    fld.fill( 4,0,4, 100,1,100, g.BlockType.WATER );   //水面
+
+    var d = 20;
+    fld.fill( 4,1,4, 8+d,2,8+d, g.BlockType.STONE );   // 高台を置く
+    fld.fill( 5,2,5, 7+d,3,7+d, g.BlockType.SOIL );   // その上に水を置く
+    fld.fill( 6,3,6, 6+d,4,6+d, g.BlockType.GRASS );   // その上に水を置く    
+    fld.fill( 7,4,7, 5+d,5,5+d, g.BlockType.GRASS );   //
+    
+    fld.set( 8,5,8, g.ItemType.REDFLOWER );   //
+    fld.set( 8,5,10, g.ItemType.BLUEFLOWER );   //
+
+    // 木を4本
+    fld.putTree(12,12);
+    fld.putTree(17,12);
+    fld.putTree(17,17);        
+    fld.putTree(12,17);
+    
+    
+    
+    fld.fill( 53,1,53, 54,20,54, g.BlockType.LADDER );   // 
+
+    // 山をいっぱいおく
+    for(var i=0;i<40;i++){
+        var mx = Math.floor(20 + Math.random() * hsize);
+        var mz = Math.floor(20 + Math.random() * hsize);
+        var msz = Math.floor(5 + Math.random() * 10);
+        if(mx+msz>=hsize||mz+msz>=hsize)continue;
+        var t;
+        if( Math.random() < 0.5 ){
+            t = g.BlockType.SOIL;
+        } else {
+            t = g.BlockType.STONE;
+        }
+        fld.putMountain( mx,0,mz, msz, t);
+    }
+
+    fld.fill( 9,15,9, 28,17,28, g.BlockType.SOIL ); // 土の天井
+
+    // 後処理
+    fld.growGrass();
+    fld.recalcSunlight(0,0,hsize,hsize);
+    fld.stats(30);
+
+    fld.addMob( "zombie", new g.Pos(1,4,4) );
+    
+    return fld;
+};
+
+exports.diggable = function(t){
+    if( t == g.BlockType.STONE
+        || t == g.BlockType.GRASS
+        || t == g.BlockType.SOIL
+        || t == g.BlockType.STEM
+        || t == g.BlockType.LEAF
+        ){
+        return true;
+    } else {
+        return false;
+    }
+};
+
+
+
+    
 // yが高さ方向, zが奥行き xが左右
 
 Field.prototype.fill = function( x0,y0,z0, x1,y1,z1, t ) {
@@ -34,7 +98,7 @@ Field.prototype.fill = function( x0,y0,z0, x1,y1,z1, t ) {
             }
         }
     }
-}
+};
     
 
 
@@ -96,7 +160,7 @@ Field.prototype.setSunlight = function(x,y,z,t){
 Field.prototype.putTree = function(x,z) {
     var y=-1;
     for(var by=this.vSize-1;by>=0;by--){
-        if( this.get(x,by,z) != Enums.BlockType.AIR ){
+        if( this.get(x,by,z) != g.BlockType.AIR ){
             y=by;
             break;
         }
@@ -106,13 +170,13 @@ Field.prototype.putTree = function(x,z) {
     for(var ix=-1;ix<=1;ix++){
         for(var iy=-1;iy<=1;iy++){
             for(var iz=-1;iz<=1;iz++){
-                this.set(x+ix,y+3+iy,z+iz, Enums.BlockType.LEAF);
+                this.set(x+ix,y+3+iy,z+iz, g.BlockType.LEAF);
             }
         }
     }
-    this.set(x,y,z, Enums.BlockType.STEM);
-    this.set(x,y+1,z, Enums.BlockType.STEM);
-    this.set(x,y+2,z, Enums.BlockType.STEM);
+    this.set(x,y,z, g.BlockType.STEM);
+    this.set(x,y+1,z, g.BlockType.STEM);
+    this.set(x,y+2,z, g.BlockType.STEM);
 };
 
 
@@ -139,8 +203,8 @@ Field.prototype.growGrass = function() {
     for(var x=0;x<this.hSize;x++){
         for(var z=0;z<this.hSize;z++){
             for(var y=this.vSize-1;y>=0;y--){
-                if( this.get(x,y,z) == Enums.BlockType.SOIL ){
-                    this.set(x,y,z,Enums.BlockType.GRASS );
+                if( this.get(x,y,z) == g.BlockType.SOIL ){
+                    this.set(x,y,z,g.BlockType.GRASS );
                     break;
                 }
             }
@@ -163,7 +227,7 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
     for(var x=x0;x<x1;x++){
         for(var z=z0;z<z1;z++){
             for(var y=this.vSize-1;y>=0;y--){
-                if( this.get(x,y,z) == Enums.BlockType.AIR ){
+                if( this.get(x,y,z) == g.BlockType.AIR ){
                     this.setSunlight(x,y,z,7);
                 } else {
                     break;
@@ -178,14 +242,14 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
             for(var z=z0;z<z1;z++){
                 for(var y=0;y<this.vSize;y++){
                     var cb = this.get(x,y,z);
-                    if( cb != Enums.BlockType.AIR
-                        && cb != Enums.ItemType.REDFLOWER
-                        && cb != Enums.ItemType.BLUEFLOWER
+                    if( cb != g.BlockType.AIR
+                        && cb != g.ItemType.REDFLOWER
+                        && cb != g.ItemType.BLUEFLOWER
                         ){
                         this.setSunlight(x,y,z,0);
                         continue;
                     }
-                    //  if( this.get(x,y,z) != Enums.BlockType.AIR )continue;
+                    //  if( this.get(x,y,z) != g.BlockType.AIR )continue;
                     var curlv=this.getSunlight(x,y,z);
                     var sz0 = this.getSunlight(x,y,z-1);
                     var sz1 = this.getSunlight(x,y,z+1);
@@ -204,7 +268,7 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
             }
         }
     }
-}
+};
     
     
     
@@ -244,7 +308,7 @@ Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
                 if( x<0 ||y<0||z<0||x>=this.hSize||y>=this.vSize||z>=this.hSize){
                     l=-1;
                 } else {
-                    if( this.blocks[ toIndex(x,y,z,this.hSize) ] == Enums.BlockType.AIR
+                    if( this.blocks[ toIndex(x,y,z,this.hSize) ] == g.BlockType.AIR
                         || this.blocks[ toIndex(x,y,z,this.hSize) ] >= 100
                         ){
                         l = this.sunlight[ toIndex(x,y,z,this.hSize) ];
@@ -259,70 +323,51 @@ Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
     }
     return out;                
 };
+
+// PCの位置を記録する
+Field.prototype.updatePC = function( id, x,y,z ) {
+    if( x>this.hSize || z >this.hSize || y > this.vSize ) throw "coord error";
+    var d = new Date();
+    this.pcs[id] = { "id":id, "pos": new g.Pos(x,y,z), "at":d.getTime() };
     
-
-
-// 軸ごとのサイズ。 east-west size, north-south size, high-low size 
-exports.generate = function( hsize, vsize ) {
-    var fld = new Field( hsize, vsize );
-
-    fld.fill( 0,0,0, hsize,vsize,hsize, Enums.BlockType.AIR ); // 世界を空気で満たす
-    fld.fill( 0,0,0, hsize,1,hsize, Enums.BlockType.STONE ); // 地盤を置く
-    fld.fill( 4,0,4, 100,1,100, Enums.BlockType.WATER );   //水面
-
-    var d = 20;
-    fld.fill( 4,1,4, 8+d,2,8+d, Enums.BlockType.STONE );   // 高台を置く
-    fld.fill( 5,2,5, 7+d,3,7+d, Enums.BlockType.SOIL );   // その上に水を置く
-    fld.fill( 6,3,6, 6+d,4,6+d, Enums.BlockType.GRASS );   // その上に水を置く    
-    fld.fill( 7,4,7, 5+d,5,5+d, Enums.BlockType.GRASS );   //
-    
-    fld.set( 8,5,8, Enums.ItemType.REDFLOWER );   //
-    fld.set( 8,5,10, Enums.ItemType.BLUEFLOWER );   //
-
-    // 木を4本
-    fld.putTree(12,12);
-    fld.putTree(17,12);
-    fld.putTree(17,17);        
-    fld.putTree(12,17);
-    
-    
-    
-    fld.fill( 53,1,53, 54,20,54, Enums.BlockType.LADDER );   // 
-
-    // 山をいっぱいおく
-    for(var i=0;i<40;i++){
-        var mx = Math.floor(20 + Math.random() * hsize);
-        var mz = Math.floor(20 + Math.random() * hsize);
-        var msz = Math.floor(5 + Math.random() * 10);
-        if(mx+msz>=hsize||mz+msz>=hsize)continue;
-        var t;
-        if( Math.random() < 0.5 ){
-            t = Enums.BlockType.SOIL;
-        } else {
-            t = Enums.BlockType.STONE;
-        }
-        fld.putMountain( mx,0,mz, msz, t);
-    }
-
-    fld.fill( 9,15,9, 28,17,28, Enums.BlockType.SOIL ); // 土の天井
-
-    // 後処理
-    fld.growGrass();
-    fld.recalcSunlight(0,0,hsize,hsize);
-    fld.stats(30);
-    
-    return fld;
+};
+Field.prototype.deletePC = function( id ){
+    this.pcs[id]=null;
 };
 
-exports.diggable = function(t){
-    if( t == Enums.BlockType.STONE
-        || t == Enums.BlockType.GRASS
-        || t == Enums.BlockType.SOIL
-        || t == Enums.BlockType.STEM
-        || t == Enums.BlockType.LEAF
-        ){
-        return true;
-    } else {
-        return false;
+// PCを探して配列を返す
+Field.prototype.searchLatestNearPC = function ( pos, dia, thresTime ) {
+    var out=[];
+    for( var pcid in this.pcs ) {
+        var pc = this.pcs[pcid];
+        if(pc!=null){
+            var d = pc.pos.distance(pos);
+            sys.puts( "d:" + d + " dia:"+dia + " id:"+pcid + " x:" + pc.pos.x + " y:"+pc.pos.y + " z:" + pc.pos.z );
+            if( d < dia ) out.push(pc);
+        }
     }
+    return out;
+};
+
+
+
+///////////////////////////////
+// Actor
+/////////////////////////////
+var actors = {};
+
+// 敵を1体出す
+Field.prototype.addMob = function(name, pos) {
+    var act = new modActor.Actor(name, this, pos );
+    actors[act.id] = act;
 }
+
+
+Field.prototype.poll = function(curTime){
+    for( var k in actors ){
+        var a = actors[k];
+        if(a==null)continue;
+        a.poll(curTime);        
+    }
+};
+
