@@ -24,7 +24,7 @@ exports.generate = function( hsize, vsize ) {
 
     fld.fill( 0,0,0, hsize,vsize,hsize, g.BlockType.AIR ); // 世界を空気で満たす
     fld.fill( 0,0,0, hsize,1,hsize, g.BlockType.STONE ); // 地盤を置く
-    fld.fill( 4,0,4, 100,1,100, g.BlockType.WATER );   //水面
+    fld.fill( 4,0,4, hsize,1,hsize, g.BlockType.WATER );   //水面
 
     var d = 20;
     fld.fill( 4,1,4, 8+d,2,8+d, g.BlockType.STONE );   // 高台を置く
@@ -67,7 +67,7 @@ exports.generate = function( hsize, vsize ) {
     fld.recalcSunlight(0,0,hsize,hsize);
     fld.stats(30);
 
-    fld.addMob( "zombie", new g.Pos(2,2,4) );
+    fld.addMob( "zombie", new g.Pos(5,8,2) ); // 落ちてくる
     
     return fld;
 };

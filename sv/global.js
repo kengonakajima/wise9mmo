@@ -32,28 +32,46 @@ function Vector3(x,y,z){
     this.x = x*1.0;
     this.y = y*1.0;
     this.z = z*1.0;
-    sys.puts( "tof:" + typeof( this.x ) );
+    //    sys.puts( "tof:" + typeof( this.x ) );
 };
 Vector3.prototype.ix = function() { return Math.floor(this.x); };
 Vector3.prototype.iy = function() { return Math.floor(this.y); };
 Vector3.prototype.iz = function() { return Math.floor(this.z); };
-
-Vector3.prototype.toPos = function() {
-    return new Pos( this.ix(), this.iy(), this.iz() );                    
+Vector3.prototype.mul = function(v) { return new Vector3( this.x*v, this.y*v, this.z*v); };
+Vector3.prototype.add = function(v) {
+    if( v.x == undefined || v.y == undefined || v.z == undefined ) throw"inval";
+    return new Vector3( this.x+v.x, this.y+v.y, this.z+v.z);
 };
-Vector3.prototype.diff = function(v){return new Pos( v.x - this.x, v.y - this.y, v.z - this.z );};
+
+Vector3.prototype.distance = function(pos){
+    return Math.sqrt( (pos.x-this.x)*(pos.x-this.x) +
+                      (pos.y-this.y)*(pos.y-this.y) +
+                      (pos.z-this.z)*(pos.z-this.z) );
+};
+Vector3.prototype.hDistance = function(pos){
+    return Math.sqrt( (pos.x-this.x)*(pos.x-this.x) +
+                      (pos.z-this.z)*(pos.z-this.z) );
+};    
+Vector3.prototype.toPos = function() {
+    return new Vector3( this.ix(), this.iy(), this.iz() );                    
+};
+Vector3.prototype.diff = function(v){return new Vector3( v.x - this.x, v.y - this.y, v.z - this.z );};
 // (0,0)-(dv)からpitchを返す
 Vector3.prototype.getPitch = function( dv ) {
     var rot = 0;
     if( dv.x == 0 ){
-        rot = ( dv.y >= 0 ? 1 : -1 ) * 3.14159 / 2.0;
+        rot = ( dv.z >= 0 ? 1 : -1 ) * Math.PI / 2.0;
     } else if( dv.x < 0 ){
-        rot = Math.atan( dv.y / dv.x) + 3.14159;
+        rot = Math.atan( dv.z / dv.x) + Math.PI;
     } else {
-        rot = Math.atan( dv.y / dv.x);
+        rot = Math.atan( dv.z / dv.x);
     }
     return rot;
 };
+Vector3.prototype.to_s = function(){
+    return "{"+this.x+","+this.y+","+this.z+"}";
+};
+    
 
 //
 
