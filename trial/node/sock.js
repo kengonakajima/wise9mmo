@@ -36,5 +36,7 @@ var server = net.createServer(function (socket) {
         sys.puts( "end. socknum:" + sockets.length);
     });
 });
+
+
 server.listen(7000, "127.0.0.1");
 
