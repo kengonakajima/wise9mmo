@@ -68,6 +68,8 @@ var actorID = 1;
 function Actor( name, fld, pos ) {
 
     var d = new Date();
+
+    this.typeName = name;
     this.lastMoveAt = d.getTime();
     this.lastSentAt = this.nextMoveAt = this.lastMoveAt + defaultTick;
     
@@ -229,10 +231,9 @@ Actor.prototype.poll = function(curTime) {
     if( this.lastSentAt < (curTime-500) ) toSend = true;
     if( this.falling && this.dy != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
     if( toSend ){
-        sys.puts("nc" );
         main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
                        "moveNotify",
-                       this.id, // TODO: refactor! clientIDが100万以上になったらかぶる
+                       this.id, 
                        Math.floor(this.pos.x*1000), // 固定少数に変換
                        Math.floor(this.pos.y*1000),
                        Math.floor(this.pos.z*1000),

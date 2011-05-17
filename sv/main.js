@@ -30,21 +30,21 @@ function globalNearcast(x,y,z,except,args) {
         var sk = sockets[addr];
         
         if( except != null && sk == except ) continue;
-        if( sk.pos == undefined ){
+        if( sk.pc == undefined ){
             //            sys.puts( "sk:"+ sk.addrString + " dont have position");            
             continue;
         }
 
-        var dx = x-sk.pos[0];
-        var dz = z-sk.pos[2];
+        var dx = x-sk.pc.pos.x;
+        var dz = z-sk.pc.pos.z;
         
         var distance = (dx*dx)+(dz*dz);
         if( distance< (200*200)){
             try {
-                //                sys.puts( "sent to:"+ sk.addrString + " id:" + sk.clientID );
                 sk.write(json+"\n");
             } catch(e){
                 sys.puts( "nearcast: exception:"+e);
+                delete sockets[ sk.clientID ];
             }
         } else {
             sys.puts( "too far:"+ sk.addrString + " id:"+ sk.clientID );            
@@ -82,10 +82,11 @@ function move(x,y,z,sp,pitch,yaw,dy,dt){
     var ix = x/1000;
     var iy = y/1000;
     var iz = z/1000;
-    this.pos = [ix,iy,iz];
+    
+    this.pc.pos = new g.Vector3(x/1000.0,y/1000.0,z/1000.0);
 
-    fld.updatePC( this.clientID, ix, iy, iz );
-    this.nearcast( "moveNotify",this.clientID, x,y,z,sp,pitch,yaw,dy,dt);
+    fld.updatePC( this.pc.id, ix, iy, iz );
+    this.nearcast( "moveNotify",this.pc.id, x,y,z,sp,pitch,yaw,dy,dt);
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
@@ -133,13 +134,16 @@ function put(x,y,z,tname){
 }
 
 function jump(dy){
-    this.nearcast( "jumpNotify", this.clientID, dy);
+    this.nearcast( "jumpNotify", this.pc.id, dy);
 }
 
 function login() {
   sys.puts( "login" );
-  this.pos = [ 2,20,2 ]; // 初期位置
-  this.send( "loginResult", this.clientID, this.pos[0], this.pos[1], this.pos[2], 5.0 );
+  var p = new g.Pos( 2,20,2 ); // 初期位置
+
+  this.pc = fld.addPC( "guest", p );
+
+  this.send( "loginResult", this.pc.id, p.x, p.y, p.z, 5.0 );
 }
 
 
@@ -176,9 +180,11 @@ net.Socket.prototype.send = function() {
 net.Socket.prototype.nearcast = function() {
     if( arguments.length < 1 )return;
 
-    globalNearcast( this.pos[0], this.pos[1], this.pos[2], this, arguments );
-
-
+    if( this.pc ){
+        globalNearcast( this.pc.pos.x, this.pc.pos.y, this.pc.pos.z, this, arguments );
+    } else {
+        sys.puts("no pc");
+    }
 }
 
 var g_cliIDcounter=0;
@@ -237,16 +243,15 @@ var server = net.createServer(function (socket) {
         }
         
     });
-    
+        
     // ソケットが切断したときのコールバック
     socket.addListener("end", function () {
-        fld.deletePC( socket.clientID );
-        
-        delete sockets[ socket.clientID ];
-        sys.puts( "end. socknum:" + sockets.length);
-
-
-    });
+            if( socket.pc ){
+                fld.deletePC( socket.pc.id );
+                delete sockets[ socket.pc.id ];
+            }
+            sys.puts( "end. socknum:" + sockets.length);
+        });
 
     // エラーが起きたときのコールバック(SIGPIPEとか)
     socket.addListener("error", function () {

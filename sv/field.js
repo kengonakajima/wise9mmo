@@ -360,8 +360,14 @@ var actors = {};
 Field.prototype.addMob = function(name, pos) {
     var act = new modActor.Actor(name, this, pos );
     actors[act.id] = act;
-}
-
+    return act;
+};
+Field.prototype.addPC = function(name,pos) {
+    var act = new modActor.Actor("pc",this,pos);
+    act.playerName = name;
+    actors[act.id]=act;
+    return act;
+};
 
 Field.prototype.poll = function(curTime){
     for( var k in actors ){
