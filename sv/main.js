@@ -77,7 +77,7 @@ function delayed(a,b,c){
         sock.send( "delayed", a,b,c);    
     }, 1000, this  );    
 }
-function move(x,y,z,pitch,yaw,dy,dt){
+function move(x,y,z,sp,pitch,yaw,dy,dt){
     //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt);
     var ix = x/1000;
     var iy = y/1000;
@@ -85,12 +85,12 @@ function move(x,y,z,pitch,yaw,dy,dt){
     this.pos = [ix,iy,iz];
 
     fld.updatePC( this.clientID, ix, iy, iz );
-    this.nearcast( "moveNotify",this.clientID, x,y,z,pitch,yaw,dy,dt);
+    this.nearcast( "moveNotify",this.clientID, x,y,z,sp,pitch,yaw,dy,dt);
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
     if(this.gfcnt==undefined)this.gfcnt=0;else this.gfcnt++;
-    sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
+    //    sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
     var blkary = fld.getBlockBox(x0,y0,z0,x1,y1,z1);
     var lgtary = fld.getLightBox(x0,y0,z0,x1,y1,z1);
     if(blkary==null||lgtary==null){
@@ -132,14 +132,14 @@ function put(x,y,z,tname){
     }
 }
 
-function jump(){
-    this.nearcast( "jumpNotify", this.clientID);
+function jump(dy){
+    this.nearcast( "jumpNotify", this.clientID, dy);
 }
 
 function login() {
   sys.puts( "login" );
   this.pos = [ 2,20,2 ]; // 初期位置
-  this.send( "loginResult", this.clientID, this.pos[0], this.pos[1], this.pos[2] );
+  this.send( "loginResult", this.clientID, this.pos[0], this.pos[1], this.pos[2], 5.0 );
 }
 
 

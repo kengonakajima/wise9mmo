@@ -29,16 +29,35 @@ function zombieMove( curTime ) {
         targetPos = new g.Vector3(2,2,2);
     }
     var diff = this.pos.diff( targetPos ) ;
-    sys.puts("z: tgt:" + targetPos.to_s() + " d:" + diff.to_s() );
+        
 
     
     this.pitch = this.pos.getPitch( diff );
 
     if( this.pos.hDistance( targetPos ) < 1.0 ){
         this.vVel = 0;
-        sys.puts( "zombie: enough near target!") ;
+        //        sys.puts( "zombie: enough near target!") ;
     } else {
         this.vVel = 1.0;
+    }
+
+    /////////////
+    
+    if( ( this.counter % 50 ) == 0 ){
+        sys.puts("z: lastxyz:" + this.lastXOK + "," + this.lastZOK + " dy:" + this.dy );
+        if( ( this.lastXOK == false || this.lastZOK == false ) && this.dy == 0 ){
+            this.dy = 4.0;
+            this.falling = true;
+            sys.puts( "JJJJJJJJJJJJUMP!");
+            main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
+                           "jumpNotify",
+                           this.id,// TODO
+                           this.dy*1000 ); 
+        }
+    }
+
+    if( this.dy != 0){
+        sys.puts("z: falling: dy:"+this.dy + " vv:"+this.vVel + " y:" + this.pos.y );
     }
 
 }
@@ -63,7 +82,7 @@ function Actor( name, fld, pos ) {
     } else {
         this.func = null;
     }
-    this.id = actorID;
+    this.id = actorID + 1000000; // TODO: cliidとかぶるので仮にこうなってるリファクタせよ
     actorID++;
 
     this.counter = 0;
@@ -115,7 +134,7 @@ Actor.prototype.poll = function(curTime) {
 
     
     if(this.falling){
-        this.dy -= 0.03;
+        this.dy -= 6.5 * dTime;
     }    
 
     if( this.pos.y < 0 ){
@@ -128,7 +147,7 @@ Actor.prototype.poll = function(curTime) {
     var hoge = dv.mul( dTime * this.speedPerSec );
     var nextpos = this.pos.add( hoge );
 
-    sys.puts("pos:" + this.id + ":"+ this.pos.x+","+this.pos.y+","+this.pos.z+" np:"+nextpos.x+","+nextpos.y+","+nextpos.z + " dt:"+dTime + " sp:" + this.speedPerSec + " pt:"+ this.pitch );
+    //    sys.puts("pos:" + this.id + ":"+ this.pos.x+","+this.pos.y+","+this.pos.z+" np:"+nextpos.x+","+nextpos.y+","+nextpos.z + " dt:"+dTime + " sp:" + this.speedPerSec + " pt:"+ this.pitch );
 
 
     
@@ -158,9 +177,9 @@ Actor.prototype.poll = function(curTime) {
             //            }
             this.falling = true;
         } else {
-            //            if( this.falling == true ){
-            //                sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
-            //            }
+            //                        if( this.falling == true ){
+            //                            sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
+            //                        }
             nextpos.y = blkhity + 1;
             this.falling = false;
             this.dy =0 ;
@@ -195,24 +214,32 @@ Actor.prototype.poll = function(curTime) {
 
     this.pos = finalnextpos;
 
-    if(this.pos.x<0)this.pos.x=0;
-    if(this.pos.z<0)this.pos.z=0;
+    if(this.pos.x<0){ this.pos.x=0; x_ok=false; }
+    if(this.pos.z<0){ this.pos.z=0; z_ok=false; }
+
+    this.lastXOK = x_ok;
+    this.lastYOK = y_ok;
+    this.lastZOK = z_ok;
     
     
 
     
     // 送信. 落ちてる最中ではない場合は、あまり多く送らない
-    if( this.lastSentAt < (curTime-500)){
-
+    var toSend = false;
+    if( this.lastSentAt < (curTime-500) ) toSend = true;
+    if( this.falling && this.dy != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
+    if( toSend ){
+        sys.puts("nc" );
         main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
                        "moveNotify",
-                       1000000+ this.id, // TODO: refactor! clientIDが100万以上になったらかぶる
+                       this.id, // TODO: refactor! clientIDが100万以上になったらかぶる
                        Math.floor(this.pos.x*1000), // 固定少数に変換
                        Math.floor(this.pos.y*1000),
                        Math.floor(this.pos.z*1000),
+                       this.speedPerSec*1000,
                        this.pitch*1000,
                        0,
-                       this.dy,
+                       this.dy*1000,
                        curTime - this.lastSentAt );
         this.lastSentAt = curTime;
     }
