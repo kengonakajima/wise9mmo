@@ -239,7 +239,7 @@ Actor.prototype.poll = function(curTime) {
                        Math.floor(this.pos.z*1000),
                        this.speedPerSec*1000,
                        this.pitch*1000,
-                       0,
+                       this.yaw*1000,
                        this.dy*1000,
                        curTime - this.lastSentAt );
         this.lastSentAt = curTime;
@@ -247,6 +247,22 @@ Actor.prototype.poll = function(curTime) {
 
 };
 
+// すべて float 
+Actor.prototype.setMove = function( x, y, z, pitch, yaw, dy, dt ) {
+    this.yaw = yaw;
+    this.pitch = pitch;
+    
+    this.pos.x = x;
+    this.pos.y = y;
+    this.pos.z = z;
+
+    sys.puts("xx");
+    // ポイントは、座標をセットするのではなく通常の物理挙動処理を使うこと。
+    // そのためには、hVel, vVelを求める必要がある。
+    // クライアントからのmoveのときにそれを受信し、ふつうに使う。
+    
+};
+  
 
 
 //
