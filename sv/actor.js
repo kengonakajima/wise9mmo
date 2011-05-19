@@ -52,7 +52,7 @@ function zombieMove( curTime ) {
             main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
                            "jumpNotify",
                            this.id,// TODO
-                           this.dy*1000 ); 
+                           this.dy ); 
         }
     }
 
@@ -84,7 +84,7 @@ function Actor( name, fld, pos ) {
     } else {
         this.func = null;
     }
-    this.id = actorID + 1000000; // TODO: cliidとかぶるので仮にこうなってるリファクタせよ
+    this.id = actorID + 1000000; 
     actorID++;
 
     this.counter = 0;
@@ -92,10 +92,10 @@ function Actor( name, fld, pos ) {
 
     // 以下、移動関連
     this.dy = 0;
-    
+
     this.falling = false;
     this.pitch = 0.0;
-
+    this.yaw = 0.0;
     this.hVel = 0.0;
     this.vVel = 0.0;
 };
@@ -234,14 +234,14 @@ Actor.prototype.poll = function(curTime) {
         main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
                        "moveNotify",
                        this.id, 
-                       Math.floor(this.pos.x*1000), // 固定少数に変換
-                       Math.floor(this.pos.y*1000),
-                       Math.floor(this.pos.z*1000),
-                       this.speedPerSec*1000,
-                       this.pitch*1000,
-                       this.yaw*1000,
-                       this.dy*1000,
-                       curTime - this.lastSentAt );
+                       this.pos.x,
+                       this.pos.y,
+                       this.pos.z,
+                       this.speedPerSec,
+                       this.pitch,
+                       this.yaw,
+                       this.dy,
+                       (curTime - this.lastSentAt) / 1000.0 );
         this.lastSentAt = curTime;
     }
 
@@ -256,7 +256,7 @@ Actor.prototype.setMove = function( x, y, z, pitch, yaw, dy, dt ) {
     this.pos.y = y;
     this.pos.z = z;
 
-    sys.puts("xx");
+    sys.puts("p x:"+x+ ","+y+","+z);
     // ポイントは、座標をセットするのではなく通常の物理挙動処理を使うこと。
     // そのためには、hVel, vVelを求める必要がある。
     // クライアントからのmoveのときにそれを受信し、ふつうに使う。

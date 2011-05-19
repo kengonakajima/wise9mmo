@@ -27,7 +27,7 @@ function toString(x) : String {
         out= ""+x;
         break;
     case "System.Single":
-        out= ""+parseInt(x*1000);
+        out= ""+x;
         break;
     case "System.Int32[]":
         out=arrayToJson(x);
@@ -131,14 +131,16 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
 }
 
 function rpcMoveNotify( cliID, x,y,z, speed, pitch, yaw, dy, dt ){
+    print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+    
     // idからpcを検索
-    var pos:Vector3 = Vector3( x/1000.0, y/1000.0, z/1000.0 );
+    var pos:Vector3 = Vector3( x, y, z );
     var pc = ensurePC( cliID, pos );
 
     var hs = pc.GetComponent( "HeroScript");
-    hs.SetMove( speed/1000.0, pitch/1000.0, yaw/1000.0, pos, dy/1000.0, dt/1000.0 );
+    hs.SetMove( speed, pitch, yaw, pos, dy, dt );
 
-    //    print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+        
     
 }
 
@@ -156,7 +158,7 @@ function rpcJumpNotify( cliID, dy ) {
     var pc = searchPC(cliID);
     if(pc==null)return;
     var hs = pc.GetComponent( "HeroScript");
-    hs.JumpByRemote(dy/1000);
+    hs.JumpByRemote(dy);
 }
 
 // 通信をするobj
@@ -176,7 +178,11 @@ function Start () {
 function doProtocol() {
 
     // 受信
-    var ary = protocol.readJSON();
+    try {
+        var ary = protocol.readJSON();
+    } catch(e){
+        print( "readJSON exception! :"  + e );
+    }
 
     if(ary!=null){
         for(var i=0;i<ary.Count; i++){
@@ -219,7 +225,7 @@ function doProtocolOne( h ){
     if( h == null )return;
 
     
-    //                                               		print( "data from server:"+h )        ;
+                                                   		print( "data from server:"+h )        ;
     var f = rpcfunctions[ h["method"].str ];
     //                print( "from server:'"+h["method"].str+"' , len:" + h["params"].list.Count );
     var args = h["params"].list;

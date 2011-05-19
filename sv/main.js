@@ -79,14 +79,11 @@ function delayed(a,b,c){
 }
 function move(x,y,z,sp,pitch,yaw,dy,dt){
     //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt);
-    var ix = x/1000;
-    var iy = y/1000;
-    var iz = z/1000;
     
     //    this.pc.pos = new g.Vector3(x/1000.0,y/1000.0,z/1000.0);
-    this.pc.setMove( x/1000.0, y/1000.0, z/1000.0, pitch/1000.0, yaw/1000.0, dy/1000.0, dt / 1000.0 );
+    this.pc.setMove( x, y, z, pitch, yaw, dy, dt );
     
-    fld.updatePC( this.pc.id, ix, iy, iz );
+    fld.updatePC( this.pc.id, x, y, z );
     //    this.nearcast( "moveNotify",this.pc.id, x,y,z,sp,pitch,yaw,dy,dt);
 }
 
