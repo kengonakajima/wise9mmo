@@ -117,7 +117,7 @@ function rpcEcho( any ) {
 }
 
 // xyz:初期位置
-function rpcLoginResult( cliID, x,y,z ) {
+function rpcLoginResult( cliID, x,y,z, speedps ) {
     print( "rpcLoginResult:" +cliID );
 	myClientID = cliID;
 
@@ -125,22 +125,21 @@ function rpcLoginResult( cliID, x,y,z ) {
     var hs = hero.GetComponent("HeroScript" );
     hs.clientID = myClientID;
 
-    hs.SetMove( 0, 0, Vector3( x,y,z ), 0, 1 );
+    hs.SetMove( speedps, 0, 0, Vector3( x,y,z ), 0, 1 );
 
 
 }
 
-function rpcMoveNotify( cliID, x,y,z, pitch, yaw, dy, dt ){
-
-    print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z);
-
+function rpcMoveNotify( cliID, x,y,z, speed, pitch, yaw, dy, dt ){
     // idからpcを検索
-
     var pos:Vector3 = Vector3( x/1000.0, y/1000.0, z/1000.0 );
     var pc = ensurePC( cliID, pos );
 
     var hs = pc.GetComponent( "HeroScript");
-    hs.SetMove( pitch/1000.0, yaw/1000.0, pos, dy/1000.0, dt/1000.0 );
+    hs.SetMove( speed/1000.0, pitch/1000.0, yaw/1000.0, pos, dy/1000.0, dt/1000.0 );
+
+    //    print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+    
 }
 
 //変化のお知らせがあったので地形要求
@@ -153,11 +152,11 @@ function rpcChangeFieldNotify( x,y,z ) {
     sendGetFieldEdges(chx,chy,chz);
 }
 
-function rpcJumpNotify( cliID ) {
+function rpcJumpNotify( cliID, dy ) {
     var pc = searchPC(cliID);
     if(pc==null)return;
     var hs = pc.GetComponent( "HeroScript");
-    hs.JumpByRemote();
+    hs.JumpByRemote(dy/1000);
 }
 
 // 通信をするobj
@@ -177,105 +176,25 @@ function Start () {
 function doProtocol() {
 
     // 受信
-
     var ary = protocol.readJSON();
-
 
     if(ary!=null){
         for(var i=0;i<ary.Count; i++){
-
             doProtocolOne( ary[i] );
         }
     }
 
-    
-}
-function doProtocolOne( h ){
-    if( h != null ){
+    // 送信
 
-        //                                               		print( "data from server:"+h )        ;
-        var f = rpcfunctions[ h["method"].str ];
-        //                print( "from server:'"+h["method"].str+"' , len:" + h["params"].list.Count );
-		var args = h["params"].list;
-        var ra = new Array();
-        for( var i=0;i<args.Count;i++){
-            if( args[i] == null ){continue;}
-
-            switch( args[i].type ){
-            case 0: //NULL
-                ra[i] = null;
-                break;
-            case 1: // string
-                ra[i] = args[i].str;
-                break;
-            case 2: // number
-                ra[i] = args[i].n;
-                break;
-            case 3: // object
-                ra[i] = null;
-                print( "json objval: not implemented" );
-                break;
-            case 4: // array
-                //               print( "array! num:"+args[i].list.Count );
-                var aa = new Array(args[i].list.Count);
-                for(var ii=0;ii<args[i].list.Count;ii++){
-                    switch(args[i].list[ii].type){
-                    case 1: // str
-                        aa[ii] = args[i].list[ii].str;
-                        break;                    
-                    case 2: // number
-                        aa[ii] = args[i].list[ii].n;
-                        break;
-                    case 5: // bool
-                        aa[ii] = args[i].list[ii].b;
-                        break;
-                    default:
-                        aa[ii] = null;
-                        break;
-                    }
-                }
-                ra[i]=aa;                    
-                break;
-            case 5: // bool
-                ra[i] = args[i].b;
-                break;
-            default:
-                ra[i] = null;
-                print( "json unknownval: not implemented" );
-                break;
-            } 
-        }
-
-        try {
-            switch( args.Count ){
-            case 0:	f(); break;
-            case 1: f( ra[0] ); break;
-            case 2: f( ra[0], ra[1] ); break;
-            case 3: f( ra[0], ra[1], ra[2] ); break;
-            case 4: f( ra[0], ra[1], ra[2], ra[3] ); break;
-            case 5: f( ra[0], ra[1], ra[2], ra[3], ra[4] ); break;
-            case 6: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5] ); break;
-            case 7: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6] ); break;
-            case 8: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7] ); break;
-            case 9: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8] ); break;
-            default: throw "too many args from server"; 
-            }
-        } catch(e){
-            print("caught exception in rpc. from server:" + h);
-        }
-    }
-    
     if( protocol.isReady() && loginSent == false){
         loginSent = true;
         send( "login" );
     }
-        
-    // 送信
 
+    
     // 現在の状態を送る
     var hero = GameObject.Find( "HeroCube" );
     var hs = hero.GetComponent("HeroScript" );
-
     var t = Time.realtimeSinceStartup;
     var thresSec = 0.2;
     if( hs.falling ) thresSec = 0.05;
@@ -284,6 +203,7 @@ function doProtocolOne( h ){
               hero.transform.position.x,
               hero.transform.position.y,
               hero.transform.position.z,
+              hs.speedPerSec,
               hs.pitch,
               hs.yaw,
               hs.dy,
@@ -292,6 +212,87 @@ function doProtocolOne( h ){
         protocolLastSent = t;
 		hs.needSend = false;
     }
+
+    
+}
+function doProtocolOne( h ){
+    if( h == null )return;
+
+    
+    //                                               		print( "data from server:"+h )        ;
+    var f = rpcfunctions[ h["method"].str ];
+    //                print( "from server:'"+h["method"].str+"' , len:" + h["params"].list.Count );
+    var args = h["params"].list;
+    var ra = new Array();
+    for( var i=0;i<args.Count;i++){
+        if( args[i] == null ){continue;}
+
+        switch( args[i].type ){
+        case 0: //NULL
+            ra[i] = null;
+            break;
+        case 1: // string
+            ra[i] = args[i].str;
+            break;
+        case 2: // number
+            ra[i] = args[i].n;
+            break;
+        case 3: // object
+            ra[i] = null;
+            print( "json objval: not implemented" );
+            break;
+        case 4: // array
+                //               print( "array! num:"+args[i].list.Count );
+            var aa = new Array(args[i].list.Count);
+            for(var ii=0;ii<args[i].list.Count;ii++){
+                switch(args[i].list[ii].type){
+                case 1: // str
+                    aa[ii] = args[i].list[ii].str;
+                    break;                    
+                case 2: // number
+                    aa[ii] = args[i].list[ii].n;
+                    break;
+                case 5: // bool
+                    aa[ii] = args[i].list[ii].b;
+                    break;
+                default:
+                    aa[ii] = null;
+                    break;
+                }
+            }
+            ra[i]=aa;
+
+            break;
+        case 5: // bool
+            ra[i] = args[i].b;
+            break;
+        default:
+            ra[i] = null;
+            print( "json unknownval: not implemented" );
+            break;
+        } 
+    }
+
+    try {
+        switch( args.Count ){
+        case 0:	f(); break;
+        case 1: f( ra[0] ); break;
+        case 2: f( ra[0], ra[1] ); break;
+        case 3: f( ra[0], ra[1], ra[2] ); break;
+        case 4: f( ra[0], ra[1], ra[2], ra[3] ); break;
+        case 5: f( ra[0], ra[1], ra[2], ra[3], ra[4] ); break;
+        case 6: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5] ); break;
+        case 7: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6] ); break;
+        case 8: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7] ); break;
+        case 9: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8] ); break;
+        default: throw "too many args from server"; 
+        }
+    } catch(e){
+        print("caught exception in rpc. from server:" + h);
+    }
+
+    
+
 
 }
 
@@ -454,6 +455,7 @@ function getChunk(chx,chy,chz){
     if( chx<0||chy<0||chz<0||chx>=CHUNKMAX||chy>=CHUNKMAX||chz>=CHUNKMAX) return null;
     return chunks[ toChunkIndex( chx, chy, chz ) ];
 }
+
 function updateChunk( chx,chy,chz, blkary,lgtary ) {
     try{
     var chk = getChunk(chx,chy,chz);
@@ -529,11 +531,13 @@ var BLUEFLOWER=101;
 
 
 function Update () {
+
+    
     send("echo",123); // 何故か送らないと受信できない
     doProtocol();
 
     counter++;
-    if( (counter%5)==0){
+    if( (counter%10)==0){
         chs = chunkStat();
     }
 
@@ -546,11 +550,13 @@ function Update () {
     nt = statText.GetComponent( "GUIText" );
     nt.text = "v:"+hero.transform.position+" chunk:"+chs + " ray:"+ray.origin + ">"+ray.direction + " nose:"+hs.nose;
 
-    
-    
+    // ここまでで0.03 ~ 0.04
     ensureChunks( hero.transform.position.x, hero.transform.position.y, hero.transform.position.z );
 
-    var upChk = findUpdatedChunk();
+    // 0.04 ~ 0.055
+    var upChk = findUpdatedChunk(); // 軽い
+
+    
     if( upChk != null){
         var p;
         var po;
@@ -560,6 +566,7 @@ function Update () {
         //        if(po)Destroy(po);
         
 
+        
         if( upChk.countBlocks() > 0 ){
             if(p==null){
                 p = Instantiate( prefabMultiCube,
@@ -570,7 +577,9 @@ function Update () {
             var maker = p.GetComponent( "ChunkMaker" );
             maker.SetField( upChk.blocks, upChk.lights, CHUNKSZ );
             maker.objmode=0;
-        }        
+        }
+
+        
         if( upChk.countItems() > 0 ){
             if(po==null){
                 po = Instantiate( prefabMultiObjCube,
@@ -582,7 +591,7 @@ function Update () {
             objmaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
             objmaker.objmode=1;
         }
-        
+
         
         upChk.needUpdate=false;
 

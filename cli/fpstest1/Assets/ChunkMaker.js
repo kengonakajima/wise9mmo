@@ -325,6 +325,8 @@ function toLightIndex(x,y,z,sz) {
 // lights: あかるさ0~7 (sz+2)^3 のサイズが必要。
 function SetField( blocks: int[], lights:int[], sz:int ) {
 
+
+    
     if( blocks.length != sz*sz*sz ) throw "invalid block cnt:"+blocks.length.ToString() + " sz:"+sz;
     if( lights.length != (sz+2)*(sz+2)*(sz+2) ) throw "invalid light cnt:"+lights.length.ToString() + " sz:"+sz;
 	var mesh : Mesh = GetComponent(MeshFilter).mesh;
@@ -340,7 +342,12 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
     var ti:int=0;
     
 
+    var makeNum=0;
+    var skipNum=0;
 
+    var lts:int[] = new int[6*4]; // Z=0 Z=1 X=0 X=1 Y=0 Y=1 の順
+    var drawflags:int[] = new int[6]; // 各面を描画するかどうかのフラグ
+    
     for( var y:int = 0; y < sz; y++ ){
         for( var z:int = 0; z < sz; z++ ){
             for( var x:int = 0; x < sz; x++ ){
@@ -350,9 +357,20 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                 var ly=y+1;
                 var lz=z+1;                
                 if( i > 0 && i <100 && objmode==0){
-                    var lts:int[] = new int[6*4]; // Z=0 Z=1 X=0 X=1 Y=0 Y=1 の順
-                    var drawflags:int[] = new int[6]; // 各面を描画するかどうかのフラグ
+
+                    // 周囲をみて完全に埋まってるのはキューブ作ること自体しない
+                    if( lights[ toLightIndex(lx-1,ly,lz,sz+2)]==-1
+                        && lights[ toLightIndex(lx,ly-1,lz,sz+2)]==-1
+                        && lights[ toLightIndex(lx,ly,lz-1,sz+2)]==-1
+                        && lights[ toLightIndex(lx+1,ly,lz,sz+2)]==-1
+                        && lights[ toLightIndex(lx,ly+1,lz,sz+2)]==-1
+                        && lights[ toLightIndex(lx,ly,lz+1,sz+2)]==-1 ){
+                        skipNum++;
+                        continue;
+                    }
+
                     
+                    makeNum++;  
                     // normalは２４個で、面あたり角で３個。
                     // 下にあればあるほど暗い
                     // light配列で-1ならその位置にブロックがあるということ 0以上１５以下なら空間で、光。
@@ -488,6 +506,8 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
     mesh.triangles = triangles;
     mesh.normals = normals;
     //    mesh.RecalculateNormals();
+
+
     
 }
 

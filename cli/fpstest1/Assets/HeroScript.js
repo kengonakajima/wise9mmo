@@ -6,7 +6,7 @@ var yaw : float;
 
 var dy : float;
 
-var heroSpeed : float;
+var speedPerSec : float;
 
 var nose : Vector3; // こういう風に関数の外に変数定義するとGUIで見える
 var falling = false;
@@ -41,7 +41,8 @@ var gotoTime : float;
 var gotoDiffTime : float;
 var gotoOrigPos : Vector3;
 
-function SetMove( pt, yw, pos, _dy, dt ) {
+function SetMove( speedps, pt, yw, pos, _dy, dt ) {
+    speedPerSec = speedps;
     yaw = yw;
     pitch = pt;
     gotoPos = pos;
@@ -49,8 +50,8 @@ function SetMove( pt, yw, pos, _dy, dt ) {
 	gotoDiffTime = dt;	
 	gotoOrigPos = transform.position;
 }
-function JumpByRemote() {
-    dy = 0.2;
+function JumpByRemote( _dy) {
+    dy = _dy;
     falling=true;
 }
 
@@ -74,13 +75,12 @@ function Update () {
     transform.LookAt( nose );
     
     var dtr : Vector3;
-    dtr = dnose * vVel/4 + dside * hVel/4;
+    dtr = dnose * vVel * speedPerSec + dside * hVel * speedPerSec;
 
     vVel = hVel = 0;
 
     if(falling){
-        //                print( "dy:"+ (0.01 * dTime * heroSpeed ) + ":" + dTime + " hs:" + heroSpeed );
-        dy -= 0.6 * dTime;
+        dy -= 6.5 * dTime;
     }
     
     // 絶対的な世界の底
@@ -92,7 +92,7 @@ function Update () {
 
     dtr.y = dy;
 
-    var nextpos = transform.position + dtr * dTime * heroSpeed;
+    var nextpos = transform.position + dtr * dTime;
     
     //地形判定
     var com = GameObject.Find("CommunicatorCube");

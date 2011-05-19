@@ -16,7 +16,7 @@ function Update () {
         
     var dv = hs.nose - hero.transform.position;
 
-    transform.position = hero.transform.position + Vector3(0,1,0) - dv.normalized*0.3;
+    transform.position = hero.transform.position + Vector3(0,1,0) - dv.normalized*0.5;
     transform.LookAt( hs.nose );
 
 

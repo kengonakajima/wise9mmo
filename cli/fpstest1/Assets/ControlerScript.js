@@ -20,14 +20,14 @@ function Update () {
     var j = Input.GetButton( "Jump" );
     if(j){
         if( herosc.dy == 0 ){
-            herosc.dy = 0.3;
+            herosc.dy = 4.0;
             herosc.falling = true;
 			herosc.needSend = true;
 
 
             var com = GameObject.Find("CommunicatorCube");
             var cs = com.GetComponent("CommunicatorScript");
-            cs.send("jump");
+            cs.send("jump", herosc.dy );
         }
     }
 
