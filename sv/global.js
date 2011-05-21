@@ -5,6 +5,7 @@ var sys = require("sys");
 exports.BlockType = { AIR:0, STONE:1, SOIL:2, GRASS:3, WATER:4, LEAF:5, STEM:6, LADDER:7 };
 exports.ItemType = { REDFLOWER:100, BLUEFLOWER:101 };
 
+exports.PlayerSpeed = 5.0;
 
 
 // 整数で位置を示す
@@ -42,11 +43,21 @@ Vector3.prototype.add = function(v) {
     if( v.x == undefined || v.y == undefined || v.z == undefined ) throw"inval";
     return new Vector3( this.x+v.x, this.y+v.y, this.z+v.z);
 };
-
+Vector3.prototype.reverted = function() {
+    return new Vector3( this.x * -1, this.y * -1, this.z * -1 );
+};
 Vector3.prototype.distance = function(pos){
     return Math.sqrt( (pos.x-this.x)*(pos.x-this.x) +
                       (pos.y-this.y)*(pos.y-this.y) +
                       (pos.z-this.z)*(pos.z-this.z) );
+};
+Vector3.prototype.normalized = function() {
+    var d = this.length();
+    if( d == 0 ) return new Vector3( 0,0,0);
+    return new Vector3( this.x/d, this.y/d, this.z/d);
+};
+Vector3.prototype.length = function() {
+    return this.distance( new Vector3(0,0,0));
 };
 Vector3.prototype.hDistance = function(pos){
     return Math.sqrt( (pos.x-this.x)*(pos.x-this.x) +
@@ -69,7 +80,8 @@ Vector3.prototype.getPitch = function( dv ) {
     return rot;
 };
 Vector3.prototype.to_s = function(){
-    return "{"+this.x+","+this.y+","+this.z+"}";
+    
+    return "{"+(Math.round(this.x*100)/100)+","+(Math.round(this.y*100)/100)+","+(Math.round(this.z*100)/100)+"}";
 };
     
 

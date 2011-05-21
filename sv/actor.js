@@ -42,23 +42,22 @@ function zombieMove( curTime ) {
     }
 
     /////////////
-    
+
+    // 障害物あったらジャンプ
     if( ( this.counter % 50 ) == 0 ){
         sys.puts("z: lastxyz:" + this.lastXOK + "," + this.lastZOK + " dy:" + this.dy );
         if( ( this.lastXOK == false || this.lastZOK == false ) && this.dy == 0 ){
             this.dy = 4.0;
             this.falling = true;
-            sys.puts( "JJJJJJJJJJJJUMP!");
-            main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
+            sys.puts( "zombie jump!");
+            main.nearcast( this.pos,
                            "jumpNotify",
                            this.id,// TODO
                            this.dy ); 
         }
     }
 
-    if( this.dy != 0){
-        sys.puts("z: falling: dy:"+this.dy + " vv:"+this.vVel + " y:" + this.pos.y );
-    }
+    //    if( this.dy != 0) sys.puts("z: falling: dy:"+this.dy + " vv:"+this.vVel + " y:" + this.pos.y );
 
 }
 
@@ -80,11 +79,11 @@ function Actor( name, fld, pos ) {
     
     if(name=="zombie"){
         this.func = zombieMove;
-        this.speedPerSec = 4.0;
+        this.speedPerSec = 2.0;
     } else {
         this.func = null;
     }
-    this.id = actorID + 1000000; 
+    this.id = actorID + 1000; 
     actorID++;
 
     this.counter = 0;
@@ -150,8 +149,34 @@ Actor.prototype.poll = function(curTime) {
     var nextpos = this.pos.add( hoge );
 
     //    sys.puts("pos:" + this.id + ":"+ this.pos.x+","+this.pos.y+","+this.pos.z+" np:"+nextpos.x+","+nextpos.y+","+nextpos.z + " dt:"+dTime + " sp:" + this.speedPerSec + " pt:"+ this.pitch );
+    
+    if( this.toPos != undefined && this.toPos != null ) {
+        // 目的地が設定されてる場合は
+
+        var toV = this.pos.diff(this.toPos);  // this.pos -> toPos
+
+        if( toV.length() < 0.01 ){
+            this.toPos = null;
+        } else {
+
+            //            sys.puts("to go: pos:" + this.pos.to_s() + " topos:" + this.toPos.to_s() + " tov:" + toV.to_s() + " toVd:" + toV.mul(dTime).to_s() + " ixyz:" + this.pos.ix() + ","+this.pos.iy() + "," + this.pos.iz()  + " dy:" + this.dy );
+
+            toV = toV.normalized().mul(this.speedPerSec);
+            nextpos = new g.Vector3( this.pos.x + toV.mul(dTime).x,
+                                     this.pos.y + this.dy * dTime,
+                                     this.pos.z + toV.mul(dTime).z );
+        }
+        
+
+    }
 
 
+    // ポイントは、座標をセットするのではなく通常の物理挙動処理を使うこと。
+    // そのためには、hVel, vVelを求める必要がある。
+    // クライアントからのmoveのときにそれを受信し、ふつうに使う。
+
+
+    
     
     var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
     if( blkcur != null && blkcur != g.BlockType.AIR ){
@@ -159,7 +184,7 @@ Actor.prototype.poll = function(curTime) {
         nextpos.y += 1;
         this.falling = false;
         this.dy = 0;
-    }
+     }
 
     var blkfound=false;
     var blkhity=999;
@@ -173,18 +198,21 @@ Actor.prototype.poll = function(curTime) {
     }
     if( blkfound ){
         var pcy = nextpos.iy();
+        //        if(this.typeName=="pc") sys.puts( "pcy:" + pcy + " blkhity:" + blkhity  + " falling:" + this.falling );
         if( blkhity < pcy ){
-            //            if( this.falling == false ){
             //                sys.puts( "start falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
-            //            }
+
             this.falling = true;
         } else {
-            //                        if( this.falling == true ){
-            //                            sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
-            //                        }
+            // 落ち終わった。高速で落ちた場合はダメージ等の計算
+            if( this.hitGroundFunc ) this.hitGroundFunc.apply( this, [this.dy] );
+            
+            //                sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
+
             nextpos.y = blkhity + 1;
             this.falling = false;
             this.dy =0 ;
+            
         }
     }
 
@@ -231,9 +259,10 @@ Actor.prototype.poll = function(curTime) {
     if( this.lastSentAt < (curTime-500) ) toSend = true;
     if( this.falling && this.dy != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
     if( toSend ){
-        main.nearcast( this.pos.ix(), this.pos.iy(), this.pos.iz(),
+        main.nearcast( this.pos,
                        "moveNotify",
-                       this.id, 
+                       this.id,
+                       this.typeName,
                        this.pos.x,
                        this.pos.y,
                        this.pos.z,
@@ -247,26 +276,42 @@ Actor.prototype.poll = function(curTime) {
 
 };
 
-// すべて float 
+// args: すべて float 
 Actor.prototype.setMove = function( x, y, z, pitch, yaw, dy, dt ) {
     this.yaw = yaw;
     this.pitch = pitch;
-    
-    this.pos.x = x;
-    this.pos.y = y;
-    this.pos.z = z;
-
-    sys.puts("p x:"+x+ ","+y+","+z);
-    // ポイントは、座標をセットするのではなく通常の物理挙動処理を使うこと。
-    // そのためには、hVel, vVelを求める必要がある。
-    // クライアントからのmoveのときにそれを受信し、ふつうに使う。
-    
+    this.toPos = new g.Vector3(x,y,z);
+};
+// dy: float
+Actor.prototype.jump = function( dy ) {
+    this.dy = dy;
 };
   
 
 
-//
+// PC
+
+function pcHitGround(dy) {
+    if( dy < -4 ){
+        var dmg = Math.round( ( dy + 4 ) / 2 ); // 負の値
+        if( dmg != 0 ){
+            this.hp += dmg;
+            sys.puts( "fall damage! me: " + this.typeName + " dy:" + dmg );
+            main.nearcast( this.pos, "statusChange", this.id, this.hp );
+        }
+    }
+};
+
+function PlayerCharacter( fld, pos, name ) {
+    var pc = new Actor( "pc", fld, pos);
+    pc.playerName = name;
+    pc.hp = 10;
+    pc.hitGroundFunc = pcHitGround;
+    pc.speedPerSec = g.PlayerSpeed;    
+    return pc;
+};
+    
 
 
 exports.Actor = Actor;
-
+exports.PlayerCharacter = PlayerCharacter;

@@ -3,6 +3,7 @@ var sys = require('sys');
 var g = require('./global');
 var modActor = require('./actor');
 
+
 function Field( hsize, vsize ) {
     this.hSize = hsize;
     this.vSize = vsize;
@@ -342,7 +343,7 @@ Field.prototype.searchLatestNearPC = function ( pos, dia, thresTime ) {
         var pc = this.pcs[pcid];
         if(pc!=null){
             var d = pc.pos.distance(pos);
-            sys.puts( "d:" + d + " dia:"+dia + " id:"+pcid + " x:" + pc.pos.x + " y:"+pc.pos.y + " z:" + pc.pos.z );
+            //            sys.puts( "d:" + d + " dia:"+dia + " id:"+pcid + " x:" + pc.pos.x + " y:"+pc.pos.y + " z:" + pc.pos.z );
             if( d < dia ) out.push(pc);
         }
     }
@@ -362,11 +363,16 @@ Field.prototype.addMob = function(name, pos) {
     actors[act.id] = act;
     return act;
 };
-Field.prototype.addPC = function(name,pos) {
-    var act = new modActor.Actor("pc",this,pos);
-    act.playerName = name;
-    actors[act.id]=act;
-    return act;
+
+Field.prototype.addPC = function(name,pos,sock) {
+    var pc = new modActor.PlayerCharacter(this,pos,name);
+    
+    //    var act = new modActor.Actor("pc",this,pos);
+    //    act.playerName = name;
+    //    act.hp = 10;
+    //    act.hitGroundFunc = pcHitGround;
+    actors[pc.id]=pc;
+    return pc;
 };
 
 Field.prototype.poll = function(curTime){

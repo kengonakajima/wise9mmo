@@ -23,7 +23,7 @@ var fld = modField.generate( 64, 64 );
 
 
 
-function globalNearcast(x,y,z,except,args) {
+function globalNearcast(pos,except,args) {
     var json = makeJson( args );
     
     for(var addr in sockets ){
@@ -35,8 +35,8 @@ function globalNearcast(x,y,z,except,args) {
             continue;
         }
 
-        var dx = x-sk.pc.pos.x;
-        var dz = z-sk.pc.pos.z;
+        var dx = pos.x-sk.pc.pos.x;
+        var dz = pos.z-sk.pc.pos.z;
         
         var distance = (dx*dx)+(dz*dz);
         if( distance< (200*200)){
@@ -53,12 +53,12 @@ function globalNearcast(x,y,z,except,args) {
 };
 
 exports.nearcast = function () {
-    if( arguments.length < 4 ) throw "inval"; // x,y,z, fn
+    if( arguments.length < 2 ) throw "inval"; // x,y,z, fn
     var args = [];
-    for(var i= 3; i< arguments.length;i++){
-        args[i-3] = arguments[i];
+    for(var i= 1; i< arguments.length;i++){
+        args[i-1] = arguments[i];
     }
-    globalNearcast( arguments[0], arguments[1], arguments[2],
+    globalNearcast( arguments[0],
                     null, // except
                     args );
                     
@@ -79,12 +79,13 @@ function delayed(a,b,c){
 }
 function move(x,y,z,sp,pitch,yaw,dy,dt){
     //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt);
-    
-    //    this.pc.pos = new g.Vector3(x/1000.0,y/1000.0,z/1000.0);
     this.pc.setMove( x, y, z, pitch, yaw, dy, dt );
-    
     fld.updatePC( this.pc.id, x, y, z );
-    //    this.nearcast( "moveNotify",this.pc.id, x,y,z,sp,pitch,yaw,dy,dt);
+}
+function jump(dy){
+    exports.nearcast( this.pc.pos, "jumpNotify", this.pc.id, dy);
+    this.pc.jump( dy );
+    
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
@@ -131,17 +132,15 @@ function put(x,y,z,tname){
     }
 }
 
-function jump(dy){
-    this.nearcast( "jumpNotify", this.pc.id, dy);
-}
 
 function login() {
   sys.puts( "login" );
-  var p = new g.Pos( 2,20,2 ); // 初期位置
+  var p = new g.Pos( 2,2,2 ); // 初期位置
 
-  this.pc = fld.addPC( "guest", p );
+  this.pc = fld.addPC( "guest", p, this );
 
-  this.send( "loginResult", this.pc.id, p.x, p.y, p.z, 5.0 );
+  this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerSpeed );
+
 }
 
 
@@ -231,13 +230,13 @@ var server = net.createServer(function (socket) {
                 socket.send( "error", "func not found", "name:" + decoded.method );
                 return;
             }
-            try {
+            //            try {
                 f.apply( socket, decoded.params );
-            } catch(e){
-                socket.send( "error", "exception in rpc", "line:"+line+ "e:"+e );
-                sys.print( "exception in rpc. string:" + line+ "e:"+e );
-                return;
-            }
+                //            } catch(e){
+                //                socket.send( "error", "exception in rpc", "line:"+line+ "e:"+e );
+                //                sys.print( "exception in rpc. string:" + line+ "e:"+e );
+                //                return;
+                //            }
         }
         
     });
