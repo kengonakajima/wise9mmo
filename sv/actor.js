@@ -152,13 +152,10 @@ Actor.prototype.poll = function(curTime) {
     
     if( this.toPos != undefined && this.toPos != null ) {
         // 目的地が設定されてる場合は
-
         var toV = this.pos.diff(this.toPos);  // this.pos -> toPos
-
         if( toV.length() < 0.01 ){
             this.toPos = null;
         } else {
-
             //            sys.puts("to go: pos:" + this.pos.to_s() + " topos:" + this.toPos.to_s() + " tov:" + toV.to_s() + " toVd:" + toV.mul(dTime).to_s() + " ixyz:" + this.pos.ix() + ","+this.pos.iy() + "," + this.pos.iz()  + " dy:" + this.dy );
 
             toV = toV.normalized().mul(this.speedPerSec);
@@ -166,8 +163,6 @@ Actor.prototype.poll = function(curTime) {
                                      this.pos.y + this.dy * dTime,
                                      this.pos.z + toV.mul(dTime).z );
         }
-        
-
     }
 
 

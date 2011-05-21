@@ -79,8 +79,12 @@ function delayed(a,b,c){
 }
 function move(x,y,z,sp,pitch,yaw,dy,dt){
     //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt);
+
     this.pc.setMove( x, y, z, pitch, yaw, dy, dt );
     fld.updatePC( this.pc.id, x, y, z );
+
+    //    g.sleep(Math.random() * 100 );
+
 }
 function jump(dy){
     exports.nearcast( this.pc.pos, "jumpNotify", this.pc.id, dy);
@@ -140,6 +144,7 @@ function login() {
   this.pc = fld.addPC( "guest", p, this );
 
   this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerSpeed );
+  this.send( "statusChange", this.pc.id, this.pc.hp );
 
 }
 

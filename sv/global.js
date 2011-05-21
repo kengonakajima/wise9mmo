@@ -89,3 +89,14 @@ Vector3.prototype.to_s = function(){
 
 exports.Pos = Pos;
 exports.Vector3 = Vector3;
+
+exports.sleep = function( ms ) {
+    var st = new Date();    
+    while(true){
+        var nt = new Date();
+        if( nt.getTime() > ( st.getTime() + ms ) ){
+            break;
+        }
+    }    
+};
+    
