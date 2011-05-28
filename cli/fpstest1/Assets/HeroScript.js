@@ -205,7 +205,6 @@ function Update () {
 
     // 頭は別のgameobjectなのでそれを合わせる
     if( headObj ){
-        print(" lc:" + transform.localScale );
         var sv = Vector3( 0, 1.4 * transform.localScale.y, 0 );//-0.125 * transform.localScale.z ) ;
         headObj.transform.position = transform.position + sv;
         headObj.transform.localScale = transform.localScale;
@@ -214,7 +213,6 @@ function Update () {
 
     // アニメーションの設定
     var moveSpeed:float = Vector3.Distance( prevPos, transform.position ) / dTime;
-    print( "speed:" + moveSpeed + " id:" + clientID );
     for( var t :Transform  in transform ) {
         var a : AnimationState;
         if( moveSpeed < 0.01 ){

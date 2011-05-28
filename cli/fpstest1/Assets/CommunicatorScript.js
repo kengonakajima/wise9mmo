@@ -135,7 +135,7 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
 }
 
 function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt ){
-    //    print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+        print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
     
     // idからpcを検索
     var pos:Vector3 = Vector3( x, y, z );
