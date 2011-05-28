@@ -30,7 +30,7 @@ function zombieMove( curTime ) {
     }
     var diff = this.pos.diff( targetPos ) ;
         
-
+    //    this.yaw = Math.random();
     
     this.pitch = this.pos.getPitch( diff );
 

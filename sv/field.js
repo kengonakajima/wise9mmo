@@ -333,7 +333,9 @@ Field.prototype.updatePC = function( id, x,y,z ) {
     
 };
 Field.prototype.deletePC = function( id ){
+    sys.puts( "delete pc. id:" + id );
     this.pcs[id]=null;
+    actors[id]=null;
 };
 
 // PCを探して配列を返す
