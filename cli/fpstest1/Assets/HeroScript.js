@@ -74,8 +74,32 @@ function JumpByRemote( _dy) {
     falling=true;
 }
 
+var texture:Texture;
+
+function setMaterial(tex) {
+    texture = tex;
+    
+    renderer.material.mainTexture = tex;
+
+    var layernames = [ "minecraftchar_body_3_animated/minecraftchar_body_3:Layer3",
+                       "minecraftchar_body_3_animated/minecraftchar_body_3:Layer4",
+                       "minecraftchar_body_3_animated/minecraftchar_body_3:Layer5",
+                       "minecraftchar_body_3_animated/minecraftchar_body_3:Layer6",
+                       "minecraftchar_body_3_animated/minecraftchar_body_3:Layer7"
+                       ];
+
+    for( var nm in layernames ){
+        var t = transform.Find(nm);
+        t.renderer.material.mainTexture = tex;
+    }
+}
+
+
 function Update () {
-    prevPos = this.transform.position;    
+
+
+    
+    prevPos = this.transform.position;
     
     var dTime = Time.realtimeSinceStartup - lastInterval;
     lastInterval = Time.realtimeSinceStartup;
@@ -212,6 +236,8 @@ function Update () {
         headObj.transform.position = transform.position + sv;
         headObj.transform.localScale = transform.localScale;
         headObj.transform.LookAt( nose + sv ); //rotation = transform.rotation;
+
+        headObj.renderer.material.mainTexture = texture; // TODO: 重い. サボってる
     }
 
     // アニメーションの設定
@@ -248,9 +274,5 @@ function OnGUI () {
 }
 
     
-
-
-
-
 
 

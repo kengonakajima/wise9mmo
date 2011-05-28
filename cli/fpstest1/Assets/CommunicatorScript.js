@@ -100,6 +100,9 @@ function searchPC( id:int ){
     return GameObject.Find(""+id);
 }
 
+var zombieTexture : Texture;
+var pcTexture : Texture;
+
 function ensurePC( id:int, typeName:String, pos:Vector3 ){
 
     var pc = searchPC(id);
@@ -118,9 +121,11 @@ function ensurePC( id:int, typeName:String, pos:Vector3 ){
         if( typeName == "zombie" ){
             hs.walkAnimName = "zwalk";
             hs.idleAnimName = "zidle";
+            hs.setMaterial( zombieTexture );
         } else {
             hs.walkAnimName = "walk";
-            hs.idleAnimName = "idle";            
+            hs.idleAnimName = "idle";
+            hs.setMaterial( pcTexture );
         }
     }
     return pc;
@@ -145,7 +150,7 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
 }
 
 function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt ){
-        print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+    //        print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
     
     // idからpcを検索
     var pos:Vector3 = Vector3( x, y, z );
