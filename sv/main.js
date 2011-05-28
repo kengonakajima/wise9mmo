@@ -78,7 +78,8 @@ function delayed(a,b,c){
     }, 1000, this  );    
 }
 function move(x,y,z,sp,pitch,yaw,dy,dt){
-    //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt);
+
+    //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt + "  cur:" + this.pc.pos.to_s() );
 
     this.pc.setMove( x, y, z, pitch, yaw, dy, dt );
     fld.updatePC( this.pc.id, x, y, z );

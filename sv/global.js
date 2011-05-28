@@ -67,6 +67,17 @@ Vector3.prototype.toPos = function() {
     return new Vector3( this.ix(), this.iy(), this.iz() );                    
 };
 Vector3.prototype.diff = function(v){return new Vector3( v.x - this.x, v.y - this.y, v.z - this.z );};
+Vector3.prototype.diffSign = function(v){
+    var ret = new Vector3(0,0,0);
+    if( v.x > this.x ) ret.x = 1; else if( v.x < this.x ) ret.x = -1;
+    if( v.y > this.y ) ret.y = 1; else if( v.y < this.y ) ret.y = -1;
+    if( v.z > this.z ) ret.z = 1; else if( v.z < this.z ) ret.z = -1;
+    return ret;
+};
+Vector3.prototype.equal = function(v){
+    if( v.x == this.x && v.y == this.y && v.z == this.z ) return true; else return false;
+}
+    
 // (0,0)-(dv)からpitchを返す
 Vector3.prototype.getPitch = function( dv ) {
     var rot = 0;
@@ -81,7 +92,7 @@ Vector3.prototype.getPitch = function( dv ) {
 };
 Vector3.prototype.to_s = function(){
     
-    return "{"+(Math.round(this.x*100)/100)+","+(Math.round(this.y*100)/100)+","+(Math.round(this.z*100)/100)+"}";
+    return "{"+(Math.round(this.x*1000)/1000)+","+(Math.round(this.y*1000)/1000)+","+(Math.round(this.z*1000)/1000)+"}";
 };
     
 

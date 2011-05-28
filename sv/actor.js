@@ -52,7 +52,7 @@ function zombieMove( curTime ) {
             sys.puts( "zombie jump!");
             main.nearcast( this.pos,
                            "jumpNotify",
-                           this.id,// TODO
+                           this.id,
                            this.dy ); 
         }
     }
@@ -148,7 +148,8 @@ Actor.prototype.poll = function(curTime) {
     var hoge = dv.mul( dTime * this.speedPerSec );
     var nextpos = this.pos.add( hoge );
 
-    //    sys.puts("pos:" + this.id + ":"+ this.pos.x+","+this.pos.y+","+this.pos.z+" np:"+nextpos.x+","+nextpos.y+","+nextpos.z + " dt:"+dTime + " sp:" + this.speedPerSec + " pt:"+ this.pitch );
+    //        sys.puts("pos:" + this.id + ":"+ this.pos.x+","+this.pos.y+","+this.pos.z+" np:"+nextpos.x+","+nextpos.y+","+nextpos.z + " dt:"+dTime + " sp:" + this.speedPerSec + " pt:"+ this.pitch );
+
     
     if( this.toPos != undefined && this.toPos != null ) {
         // 目的地が設定されてる場合は
@@ -159,9 +160,19 @@ Actor.prototype.poll = function(curTime) {
             //            sys.puts("to go: pos:" + this.pos.to_s() + " topos:" + this.toPos.to_s() + " tov:" + toV.to_s() + " toVd:" + toV.mul(dTime).to_s() + " ixyz:" + this.pos.ix() + ","+this.pos.iy() + "," + this.pos.iz()  + " dy:" + this.dy );
 
             toV = toV.normalized().mul(this.speedPerSec);
+
             nextpos = new g.Vector3( this.pos.x + toV.mul(dTime).x,
                                      this.pos.y + this.dy * dTime,
                                      this.pos.z + toV.mul(dTime).z );
+            
+            // 到達したらtoposを初期化
+            var cursign = this.toPos.diffSign( this.pos );
+            var nextsign = this.toPos.diffSign( nextpos );
+            if( cursign.diff( nextsign ).equal( new g.Vector3(0,0,0)) == false ){
+                nextpos = this.toPos;
+                this.toPos = null;
+                //                sys.puts( "goal! pos:" + this.pos.to_s() );
+            }            
         }
     }
 
@@ -275,7 +286,10 @@ Actor.prototype.poll = function(curTime) {
 Actor.prototype.setMove = function( x, y, z, pitch, yaw, dy, dt ) {
     this.yaw = yaw;
     this.pitch = pitch;
-    this.toPos = new g.Vector3(x,y,z);
+    var v = new g.Vector3(x,y,z);
+    if( this.pos.equal(v) == false ){
+        this.toPos = v;
+    }
 };
 // dy: float
 Actor.prototype.jump = function( dy ) {
