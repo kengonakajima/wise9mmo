@@ -1,6 +1,8 @@
 
 var headTextPrefab : GameObject;
 
+var headPrefab : GameObject;
+
 var pitch : float;
 var yaw : float;
 
@@ -18,11 +20,17 @@ var clientID = -1; // サーバ内のid
 
 var lastInterval : float;
 
+var showName : String;
 
+var headObj : GameObject;
 
 function Start () {
     pitch = 0;
     dy = 0;
+
+    if( headPrefab ){
+        headObj = Instantiate(  headPrefab, transform.position + Vector3(-0.125,1.4,0), transform.rotation );
+    }
     
 }
 
@@ -40,11 +48,19 @@ var gotoPos : Vector3;
 var gotoTime : float;
 var gotoDiffTime : float;
 var gotoOrigPos : Vector3;
+var gotoYaw : float;
+var gotoOrigYaw : float;
+var gotoPitch : float;
+var gotoOrigPitch : float;
+
+var prevPos : Vector3;
 
 function SetMove( speedps, pt, yw, pos, _dy, dt ) {
     speedPerSec = speedps;
-    yaw = yw;
-    pitch = pt;
+    gotoYaw = yw;
+    gotoOrigYaw = yaw;
+    gotoPitch = pt;
+    gotoOrigPitch = pitch;
     gotoPos = pos;
 	gotoTime = Time.realtimeSinceStartup + dt;	
 	gotoDiffTime = dt;	
@@ -56,6 +72,7 @@ function JumpByRemote( _dy) {
 }
 
 function Update () {
+    prevPos = this.transform.position;    
     
     var dTime = Time.realtimeSinceStartup - lastInterval;
     lastInterval = Time.realtimeSinceStartup;
@@ -72,7 +89,8 @@ function Update () {
 
 
     nose = transform.position + dnose ;
-    transform.LookAt( nose );
+    var flatNose = Vector3( nose.x, transform.position.y, nose.z );
+    transform.LookAt( flatNose );
     
     var dtr : Vector3;
     dtr = dnose * vVel * speedPerSec + dside * hVel * speedPerSec;
@@ -168,17 +186,50 @@ function Update () {
     dnose.y = yaw;
     dnose.z = 1.0 * Mathf.Sin(pitch);
     nose = transform.position + dnose ;
-    
-    
+
+    // ネットワーク経由での移動指示
 	if( gotoTime > Time.realtimeSinceStartup ) {
 		var v : Vector3;
 		var dv = gotoPos - gotoOrigPos;
 		var rate = ( gotoTime - Time.realtimeSinceStartup ) / gotoDiffTime;
 		var nextv = gotoOrigPos + dv * (1.0-rate);
 		transform.position.x = nextv.x;
-		transform.position.z = nextv.z; 
+		transform.position.z = nextv.z;
+        var dyaw = gotoYaw - gotoOrigYaw;
+        var nextyaw = gotoOrigYaw + dyaw * (1.0-rate);
+        yaw = nextyaw;
+        var dpitch = gotoPitch - gotoOrigPitch;
+        var nextpitch = gotoOrigPitch + dpitch * (1.0-rate);
+        pitch = nextpitch;
 	}
 
+    // 頭は別のgameobjectなのでそれを合わせる
+    if( headObj ){
+        print(" lc:" + transform.localScale );
+        var sv = Vector3( 0, 1.4 * transform.localScale.y, 0 );//-0.125 * transform.localScale.z ) ;
+        headObj.transform.position = transform.position + sv;
+        headObj.transform.localScale = transform.localScale;
+        headObj.transform.LookAt( nose + sv ); //rotation = transform.rotation;
+    }
+
+    // アニメーションの設定
+    var moveSpeed:float = Vector3.Distance( prevPos, transform.position ) / dTime;
+    print( "speed:" + moveSpeed + " id:" + clientID );
+    for( var t :Transform  in transform ) {
+        var a : AnimationState;
+        if( moveSpeed < 0.01 ){
+            //            t.animation.Stop("walk");
+            t.animation.CrossFade("idle",0.5);
+                               //            t.animation.Play("idle");
+        } else {
+            a = t.animation["walk"];
+            if(a != null ){
+                a.speed = moveSpeed;
+            }
+            t.animation.Play("walk");
+        }
+    }
+    
 }
 
 
@@ -191,7 +242,7 @@ function OnGUI () {
 
     if( clientID != -1 &&  v.x>0&&v.y>0&&v.z > 2.0 ){
 //        print("t:" + v.x + "," + v.y + "," + v.z );        
-        GUI.Label( Rect( v.x, Screen.height-v.y  - 50, 100,50 ), ""+clientID);
+        GUI.Label( Rect( v.x, Screen.height-v.y  - 50, 100,50 ), showName  );
     }
     
     

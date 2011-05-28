@@ -97,17 +97,21 @@ function sendWithParams(meth, params ){
 }
 
 function searchPC( id:int ){
-    var name = "guest_" + id;
-    return GameObject.Find(name);
+    return GameObject.Find(""+id);
 }
 
-function ensurePC( id:int, pos:Vector3 ){
+function ensurePC( id:int, typeName:String, pos:Vector3 ){
+
     var pc = searchPC(id);
     if(pc==null){
         pc = Instantiate( prefabGuest, pos,  Quaternion.identity );
-        pc.name = "guest_"+id;
+        pc.name = "" + id;
         var hs = pc.GetComponent( "HeroScript" );
         hs.clientID = id;
+        hs.showName =  typeName + "_" + id;
+        if( hs.clientID == myClientID ){
+            pc.transform.localScale = Vector3(0.2,0.2,0.2);
+        }
     }
     return pc;
 }
@@ -118,7 +122,7 @@ function rpcEcho( any ) {
 
 // xyz:初期位置
 function rpcLoginResult( cliID, x,y,z, speedps ) {
-    print( "rpcLoginResult:" +cliID );
+    AppendLog( "LoginResult: new cliID:" +cliID );
 	myClientID = cliID;
 
     var hero = GameObject.Find( "HeroCube" );
@@ -130,18 +134,29 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
 
 }
 
-function rpcMoveNotify( cliID, x,y,z, speed, pitch, yaw, dy, dt ){
-    print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt ){
+    //    print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
     
     // idからpcを検索
     var pos:Vector3 = Vector3( x, y, z );
-    var pc = ensurePC( cliID, pos );
+    var pc = ensurePC( cliID, typeName, pos );
 
     var hs = pc.GetComponent( "HeroScript");
     hs.SetMove( speed, pitch, yaw, pos, dy, dt );
 
-        
-    
+    // 遠すぎたら強制ワープ
+    var hero = GameObject.Find( "HeroCube" );
+    //    print( "distance:" + Vector3.Distance(  pos,  hero.transform.position ) );
+    if( cliID == myClientID && Vector3.Distance(  pos,  hero.transform.position ) > 5 ){        
+        hero.transform.position = pos;
+    }
+}
+function rpcStatusChange( cliID, hp ) {
+    print( "statusChange:" + cliID + " hp:" + hp );
+    if( cliID == myClientID ){
+        AppendLog( "Damage! new HP:" + hp );
+        currentHP = hp;
+    }
 }
 
 //変化のお知らせがあったので地形要求
@@ -171,6 +186,7 @@ function Start () {
     addRPC( "changeFieldNotify", rpcChangeFieldNotify );
     addRPC( "jumpNotify", rpcJumpNotify );
     addRPC( "echo",rpcEcho);
+    addRPC( "statusChange", rpcStatusChange );
 }
 
 
@@ -225,7 +241,7 @@ function doProtocolOne( h ){
     if( h == null )return;
 
     
-                                                   		print( "data from server:"+h )        ;
+    //                                                     		print( "data from server:"+h )        ;
     var f = rpcfunctions[ h["method"].str ];
     //                print( "from server:'"+h["method"].str+"' , len:" + h["params"].list.Count );
     var args = h["params"].list;
@@ -279,26 +295,20 @@ function doProtocolOne( h ){
         } 
     }
 
-    try {
-        switch( args.Count ){
-        case 0:	f(); break;
-        case 1: f( ra[0] ); break;
-        case 2: f( ra[0], ra[1] ); break;
-        case 3: f( ra[0], ra[1], ra[2] ); break;
-        case 4: f( ra[0], ra[1], ra[2], ra[3] ); break;
-        case 5: f( ra[0], ra[1], ra[2], ra[3], ra[4] ); break;
-        case 6: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5] ); break;
-        case 7: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6] ); break;
-        case 8: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7] ); break;
-        case 9: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8] ); break;
-        default: throw "too many args from server"; 
-        }
-    } catch(e){
-        print("caught exception in rpc. from server:" + h);
+    switch( args.Count ){
+    case 0:	f(); break;
+    case 1: f( ra[0] ); break;
+    case 2: f( ra[0], ra[1] ); break;
+    case 3: f( ra[0], ra[1], ra[2] ); break;
+    case 4: f( ra[0], ra[1], ra[2], ra[3] ); break;
+    case 5: f( ra[0], ra[1], ra[2], ra[3], ra[4] ); break;
+    case 6: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5] ); break;
+    case 7: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6] ); break;
+    case 8: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7] ); break;
+    case 9: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8] ); break;
+    case 10: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9] ); break;        
+    default: throw "too many args from server"; 
     }
-
-    
-
 
 }
 
@@ -318,10 +328,28 @@ var prefabGuest : GameObject;
 var prefabMultiCube : GameObject;
 var prefabMultiObjCube : GameObject;
 
+var currentHP :int;
+
+var logs = new Array();
+
+function AppendLog( s:String ) {
+    if( logs.length > 10 ){
+        logs = new Array();
+    }
+    logs[ logs.length] = s;
+}
+
+
 function OnGUI() {
-    
-    //    if( GUI.Button( Rect( 20,40,80,20), "Clear" )) {
-    //    }
+    // キャラクタステータス表示
+    GUI.Label( Rect( 20,20,50,30 ), "HP:" + currentHP );    
+
+    // ログ表示
+    for( var i=0;i<logs.length;i++){
+        if( logs[logs.length-1-i].Length > 0 ){
+            GUI.Label( Rect( 0, 80+i*20, 300, 20 ), logs[i] );
+        }
+    }
 }
 
 

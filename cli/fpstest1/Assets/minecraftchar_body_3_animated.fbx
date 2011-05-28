@@ -1,0 +1,3090 @@
+; FBX 6.1.0 project file
+; Copyright (C) 1997-2008 Autodesk Inc. and/or its licensors.
+; All rights reserved.
+; ----------------------------------------------------
+
+FBXHeaderExtension:  {
+    FBXHeaderVersion: 1003
+    FBXVersion: 6100
+    CreationTimeStamp:  {
+        Version: 1000
+        Year: 2011
+        Month: 5
+        Day: 28
+        Hour: 17
+        Minute: 5
+        Second: 40
+        Millisecond: 0
+    }
+    Creator: "FBX SDK/FBX Plugins version 2009.3"
+    OtherFlags:  {
+        FlagPLE: 0
+    }
+}
+CreationTime: "2011-05-28 17:05:40:000"
+Creator: "FBX SDK/FBX Plugins build 20080926"
+
+; Document Description
+;------------------------------------------------------------------
+
+Document:  {
+    Name: ""
+}
+
+; Document References
+;------------------------------------------------------------------
+
+References:  {
+}
+
+; Object definitions
+;------------------------------------------------------------------
+
+Definitions:  {
+    Version: 100
+    Count: 45
+    ObjectType: "Model" {
+        Count: 12
+    }
+    ObjectType: "Material" {
+        Count: 10
+    }
+    ObjectType: "Texture" {
+        Count: 5
+    }
+    ObjectType: "Video" {
+        Count: 5
+    }
+    ObjectType: "SceneInfo" {
+        Count: 1
+    }
+    ObjectType: "GlobalSettings" {
+        Count: 1
+    }
+    ObjectType: "Deformer" {
+        Count: 5
+    }
+    ObjectType: "SubDeformer" {
+        Count: 5
+    }
+    ObjectType: "Pose" {
+        Count: 1
+    }
+}
+
+; Object properties
+;------------------------------------------------------------------
+
+Objects:  {
+    Model: "Model::minecraftchar_body_3:Layer3", "Mesh" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,0,0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
+            Property: "BBoxMin", "Vector3D", "N",0,0,0
+            Property: "BBoxMax", "Vector3D", "N",0,0,0
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: T
+        Culling: "CullingOff"
+        Vertices: -100,300,50,100,300,50,100,600,50,-100,600,50,-100,300,-50,100,300,-50,100,600,-50,-100,600,-50,0,450,0,0,450,55.0000011920929
+        
+        PolygonVertexIndex: 3,7,4,-1,4,5,1,-1,5,6,2,-2,2,6,7,-4,1,2,3,-1,7,6,5,-5
+        GeometryVersion: 124
+        LayerElementNormal: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "Direct"
+            Normals: -1,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,0,-1,-0,0,-1,-0,0,-1,-0,0,-1,-0,1,0,-0,1,0,-0,1,0,-0,1,0,-0,0,1,-0,0,1,-0,0,1
+             ,-0,0,1,-0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,-1,0,0,-1,0,0,-1,0,0,-1
+        }
+        LayerElementUV: 0 {
+            Version: 101
+            Name: "_UV Texture"
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "IndexToDirect"
+            UV: 0.0587583631277084,0.425223112106323,0.0292416419833899,0.425223112106323,0.0292416419833899,0.306776940822601
+             ,0.0587583631277084,0.306776940822601,0.229241654276848,0.306776940822601,0.158758372068405,0.306776940822601
+             ,0.129241645336151,0.306776940822601,0.158758372068405,0.425223112106323,0.129241645336151,0.425223112106323
+             ,0.229241654276848,0.425223112106323
+            UVIndex: 0,1,2,3,4,5,6,3,5,7,8,6,8,7,9,0,6,8,0,3,9,7,5,4
+        }
+        LayerElementMaterial: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            Materials: 1,1,1,1,1,1
+        }
+        LayerElementTexture: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            BlendMode: "Translucent"
+            TextureAlpha: 1
+            TextureId: 0,0,0,0,0,0
+        }
+        Layer: 0 {
+            Version: 100
+            LayerElement:  {
+                Type: "LayerElementNormal"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementMaterial"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementTexture"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementUV"
+                TypedIndex: 0
+            }
+        }
+        NodeAttributeName: "Geometry::minecraftchar_body_3:Layer3_ncl1_1"
+    }
+    Model: "Model::body", "Root" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,450,-0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",-0,-180.000005008956,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Size", "double", "N",100
+            Property: "LimbLength", "double", "N",1
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: Y
+        Culling: "CullingOff"
+        TypeFlags: "Null", "Skeleton", "Root"
+        NodeAttributeName: "NodeAttribute::body_ncl1_1"
+    }
+    Model: "Model::minecraftchar_body_3:Layer4", "Mesh" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,0,0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
+            Property: "BBoxMin", "Vector3D", "N",0,0,0
+            Property: "BBoxMax", "Vector3D", "N",0,0,0
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: T
+        Culling: "CullingOff"
+        Vertices: -100,550,0,-200,550,0,-200,300,50,-100,300,50,-100,600,50,-200,600,50,-200,300,-50,-100,300,-50,-100,600,-50,-200
+        ,600,-50,-100,550,-50,-200,550,-50
+        PolygonVertexIndex: 5,9,6,-3,6,7,3,-3,7,8,4,-4,4,8,9,-6,3,4,5,-3,9,8,7,-7
+        GeometryVersion: 124
+        LayerElementNormal: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "Direct"
+            Normals: -1,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,0,-1,-0,0,-1,-0,0,-1,-0,0,-1,-0,1,0,-0,1,0,-0,1,0,-0,1,0,-0,0,1,-0,0,1,-0,0,1
+             ,-0,0,1,-0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,-1,0,0,-1,0,0,-1,0,0,-1
+        }
+        LayerElementUV: 0 {
+            Version: 101
+            Name: "_UV Texture"
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "IndexToDirect"
+            UV: 0.318554013967514,0.433089792728424,0.265854030847549,0.433089792728424,0.265854030847549,0.281406134366989,0.318554013967514
+             ,0.281406134366989,0.476654022932053,0.281406134366989,0.423954010009766,0.281406134366989,0.371253997087479
+             ,0.281406134366989,0.423954010009766,0.433089792728424,0.371253997087479,0.433089792728424,0.476654022932053
+             ,0.433089792728424
+            UVIndex: 0,1,2,3,4,5,6,3,5,7,8,6,8,7,9,0,6,8,0,3,9,7,5,4
+        }
+        LayerElementMaterial: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            Materials: 1,1,1,1,1,1
+        }
+        LayerElementTexture: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            BlendMode: "Translucent"
+            TextureAlpha: 1
+            TextureId: 0,0,0,0,0,0
+        }
+        Layer: 0 {
+            Version: 100
+            LayerElement:  {
+                Type: "LayerElementNormal"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementMaterial"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementTexture"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementUV"
+                TypedIndex: 0
+            }
+        }
+        NodeAttributeName: "Geometry::minecraftchar_body_3:Layer4_ncl1_1"
+    }
+    Model: "Model::righthand", "Root" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",-100,550,-0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",-0,90.0000025044782,-90.0000025044782
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Size", "double", "N",100
+            Property: "LimbLength", "double", "N",1
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: Y
+        Culling: "CullingOff"
+        TypeFlags: "Null", "Skeleton", "Root"
+        NodeAttributeName: "NodeAttribute::righthand_ncl1_1"
+    }
+    Model: "Model::minecraftchar_body_3:Layer5", "Mesh" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,0,0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
+            Property: "BBoxMin", "Vector3D", "N",0,0,0
+            Property: "BBoxMax", "Vector3D", "N",0,0,0
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: T
+        Culling: "CullingOff"
+        Vertices: 100,300,50,200,300,50,200,600,50,100,600,50,100,300,-50,200,300,-50,200,600,-50,100,600,-50,100,550,0,200,550,0
+        PolygonVertexIndex: 3,7,4,-1,4,5,1,-1,5,6,2,-2,2,6,7,-4,1,2,3,-1,7,6,5,-5
+        GeometryVersion: 124
+        LayerElementNormal: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "Direct"
+            Normals: -1,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,0,-1,-0,0,-1,-0,0,-1,-0,0,-1,-0,1,0,-0,1,0,-0,1,0,-0,1,0,-0,0,1,-0,0,1,-0,0,1
+             ,-0,0,1,-0,0,0,1,0,0,1,0,0,1,0,0,1,0,0,-1,0,0,-1,0,0,-1,0,0,-1
+        }
+        LayerElementUV: 0 {
+            Version: 101
+            Name: "_UV Texture"
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "IndexToDirect"
+            UV: 0.573091089725494,0.442509084939957,0.519499003887177,0.442509084939957,0.519499003887177,0.288257956504822,0.573091089725494
+             ,0.288257956504822,0.733867049217224,0.288257956504822,0.680275082588196,0.288257956504822,0.626683056354523
+             ,0.288257956504822,0.680275082588196,0.442509084939957,0.626683056354523,0.442509084939957,0.733867049217224
+             ,0.442509084939957
+            UVIndex: 0,1,2,3,4,5,6,3,5,7,8,6,8,7,9,0,6,8,0,3,9,7,5,4
+        }
+        LayerElementMaterial: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            Materials: 1,1,1,1,1,1
+        }
+        LayerElementTexture: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            BlendMode: "Translucent"
+            TextureAlpha: 1
+            TextureId: 0,0,0,0,0,0
+        }
+        Layer: 0 {
+            Version: 100
+            LayerElement:  {
+                Type: "LayerElementNormal"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementMaterial"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementTexture"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementUV"
+                TypedIndex: 0
+            }
+        }
+        NodeAttributeName: "Geometry::minecraftchar_body_3:Layer5_ncl1_1"
+    }
+    Model: "Model::lefthand", "Root" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",100,550,-0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",-0,-90.0000025044782,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Size", "double", "N",100
+            Property: "LimbLength", "double", "N",1
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: Y
+        Culling: "CullingOff"
+        TypeFlags: "Null", "Skeleton", "Root"
+        NodeAttributeName: "NodeAttribute::lefthand_ncl1_1"
+    }
+    Model: "Model::minecraftchar_body_3:Layer6", "Mesh" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,0,0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
+            Property: "BBoxMin", "Vector3D", "N",0,0,0
+            Property: "BBoxMax", "Vector3D", "N",0,0,0
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: T
+        Culling: "CullingOff"
+        Vertices: -100,0,50,-100,0,-50,0,0,-50,0,0,50,-100,300,50,-100,300,-50,0,300,-50,0,300,50,0,250,0,-100,250,0
+        PolygonVertexIndex: 3,7,4,-1,4,5,1,-1,1,5,6,-3,2,6,7,-4,1,2,3,-1,7,6,5,-5
+        GeometryVersion: 124
+        LayerElementNormal: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "Direct"
+            Normals: 0,0,1,0,0,1,0,0,1,0,0,1,-1,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,-1,1,0,-0,1,0,-0,1,0,-0
+             ,1,0,-0,0,-1,-0,0,-1,-0,0,-1,-0,0,-1,-0,0,1,-0,0,1,-0,0,1,-0,0,1,-0
+        }
+        LayerElementUV: 0 {
+            Version: 101
+            Name: "_UV Texture"
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "IndexToDirect"
+            UV: 0.87090003490448,0.299039393663406,0.87090003490448,0.428560584783554,0.825900018215179,0.428560584783554,0.825900018215179
+             ,0.299039393663406,0.780900001525879,0.428560584783554,0.780900001525879,0.299039393663406,0.960900008678436
+             ,0.299039393663406,0.960900008678436,0.428560584783554,0.915899991989136,0.428560584783554,0.915899991989136
+             ,0.299039393663406
+            UVIndex: 0,1,2,3,2,4,5,3,6,7,8,9,9,8,1,0,6,9,0,3,1,8,7,2
+        }
+        LayerElementMaterial: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            Materials: 1,1,1,1,1,1
+        }
+        LayerElementTexture: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            BlendMode: "Translucent"
+            TextureAlpha: 1
+            TextureId: 0,0,0,0,0,0
+        }
+        Layer: 0 {
+            Version: 100
+            LayerElement:  {
+                Type: "LayerElementNormal"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementMaterial"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementTexture"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementUV"
+                TypedIndex: 0
+            }
+        }
+        NodeAttributeName: "Geometry::minecraftchar_body_3:Layer6_ncl1_1"
+    }
+    Model: "Model::rightleg", "Root" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,250,-0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",-0,90.0000025044782,-90.0000025044782
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Size", "double", "N",100
+            Property: "LimbLength", "double", "N",1
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: Y
+        Culling: "CullingOff"
+        TypeFlags: "Null", "Skeleton", "Root"
+        NodeAttributeName: "NodeAttribute::rightleg_ncl1_1"
+    }
+    Model: "Model::minecraftchar_body_3:Layer7", "Mesh" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,0,0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
+            Property: "BBoxMin", "Vector3D", "N",0,0,0
+            Property: "BBoxMax", "Vector3D", "N",0,0,0
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: T
+        Culling: "CullingOff"
+        Vertices: 0,0,50,0,0,-50,100,0,-50,100,0,50,0,300,50,0,300,-50,100,300,-50,100,300,50,0,250,0,94.9999988079071,250,0
+        PolygonVertexIndex: 4,5,1,-1,2,6,7,-4,1,2,3,-1,3,7,4,-1,1,5,6,-3,7,6,5,-5
+        GeometryVersion: 124
+        LayerElementNormal: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "Direct"
+            Normals: -1,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,1,0,-0,1,0,-0,1,0,-0,1,0,-0,0,-1,-0,0,-1,-0,0,-1,-0,0,-1,-0,0,0,1,0,0,1,0,0,1
+             ,0,0,1,0,-0,-1,0,-0,-1,0,-0,-1,0,-0,-1,0,1,-0,0,1,-0,0,1,-0,0,1,-0
+        }
+        LayerElementUV: 0 {
+            Version: 101
+            Name: "_UV Texture"
+            MappingInformationType: "ByPolygonVertex"
+            ReferenceInformationType: "IndexToDirect"
+            UV: 0.0822999998927116,0.180760622024536,0.0372999981045723,0.180760622024536,0.0372999981045723,0.0512394271790981
+             ,0.0822999998927116,0.0512394271790981,0.17229999601841,0.0512394271790981,0.17229999601841,0.180760622024536
+             ,0.12729999423027,0.180760622024536,0.12729999423027,0.0512394271790981,0.217299997806549,0.0512394271790981
+             ,0.217299997806549,0.180760622024536
+            UVIndex: 0,1,2,3,4,5,6,7,8,4,7,3,7,6,0,3,8,9,5,4,6,5,9,0
+        }
+        LayerElementMaterial: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            Materials: 1,1,1,1,1,1
+        }
+        LayerElementTexture: 0 {
+            Version: 101
+            Name: ""
+            MappingInformationType: "ByPolygon"
+            ReferenceInformationType: "IndexToDirect"
+            BlendMode: "Translucent"
+            TextureAlpha: 1
+            TextureId: 0,0,0,0,0,0
+        }
+        Layer: 0 {
+            Version: 100
+            LayerElement:  {
+                Type: "LayerElementNormal"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementMaterial"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementTexture"
+                TypedIndex: 0
+            }
+            LayerElement:  {
+                Type: "LayerElementUV"
+                TypedIndex: 0
+            }
+        }
+        NodeAttributeName: "Geometry::minecraftchar_body_3:Layer7_ncl1_1"
+    }
+    Model: "Model::leftleg", "Root" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,250,-0
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",-0,-90.0000025044782,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Size", "double", "N",100
+            Property: "LimbLength", "double", "N",1
+        }
+        MultiLayer: 0
+        MultiTake: 1
+        Shading: Y
+        Culling: "CullingOff"
+        TypeFlags: "Null", "Skeleton", "Root"
+        NodeAttributeName: "NodeAttribute::leftleg_ncl1_1"
+    }
+    Model: "Model::Light", "Light" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",-90,0,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",-200,200,200
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",-34.9999989573305,-44.999998659425,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Color", "Color", "A+N",1,1,1
+            Property: "LightType", "enum", "N",1
+            Property: "CastLightOnObject", "bool", "N",1
+            Property: "DrawVolumetricLight", "bool", "N",1
+            Property: "DrawGroundProjection", "bool", "N",1
+            Property: "DrawFrontFacingVolumetricLight", "bool", "N",0
+            Property: "Intensity", "Number", "A+N",100
+            Property: "HotSpot", "Number", "A+N",0
+            Property: "Cone angle", "Number", "A+N",45
+            Property: "Fog", "Number", "A+N",50
+            Property: "DecayType", "enum", "N",0
+            Property: "DecayStart", "Number", "A+N",0
+            Property: "FileName", "KString", "N", ""
+            Property: "EnableNearAttenuation", "bool", "N",0
+            Property: "NearAttenuationStart", "Number", "A+N",0
+            Property: "NearAttenuationEnd", "Number", "A+N",0
+            Property: "EnableFarAttenuation", "bool", "N",0
+            Property: "FarAttenuationStart", "Number", "A+N",0
+            Property: "FarAttenuationEnd", "Number", "A+N",0
+            Property: "CastShadows", "bool", "N",0
+            Property: "ShadowColor", "Color", "A+N",0,0,0
+        }
+        MultiLayer: 0
+        MultiTake: 0
+        Shading: Y
+        Culling: "CullingOff"
+        TypeFlags: "Light"
+        GeometryVersion: 124
+        NodeAttributeName: "NodeAttribute::Light_ncl1_1"
+    }
+    Model: "Model::Camera", "Camera" {
+        Version: 232
+        Properties60:  {
+            Property: "QuaternionInterpolate", "bool", "",0
+            Property: "RotationOffset", "Vector3D", "",0,0,0
+            Property: "RotationPivot", "Vector3D", "",0,0,0
+            Property: "ScalingOffset", "Vector3D", "",0,0,0
+            Property: "ScalingPivot", "Vector3D", "",0,0,0
+            Property: "TranslationActive", "bool", "",0
+            Property: "TranslationMin", "Vector3D", "",0,0,0
+            Property: "TranslationMax", "Vector3D", "",0,0,0
+            Property: "TranslationMinX", "bool", "",0
+            Property: "TranslationMinY", "bool", "",0
+            Property: "TranslationMinZ", "bool", "",0
+            Property: "TranslationMaxX", "bool", "",0
+            Property: "TranslationMaxY", "bool", "",0
+            Property: "TranslationMaxZ", "bool", "",0
+            Property: "RotationOrder", "enum", "",4
+            Property: "RotationSpaceForLimitOnly", "bool", "",0
+            Property: "RotationStiffnessX", "double", "",0
+            Property: "RotationStiffnessY", "double", "",0
+            Property: "RotationStiffnessZ", "double", "",0
+            Property: "AxisLen", "double", "",10
+            Property: "PreRotation", "Vector3D", "",0,0,0
+            Property: "PostRotation", "Vector3D", "",0,-90,0
+            Property: "RotationActive", "bool", "",1
+            Property: "RotationMin", "Vector3D", "",0,0,0
+            Property: "RotationMax", "Vector3D", "",0,0,0
+            Property: "RotationMinX", "bool", "",0
+            Property: "RotationMinY", "bool", "",0
+            Property: "RotationMinZ", "bool", "",0
+            Property: "RotationMaxX", "bool", "",0
+            Property: "RotationMaxY", "bool", "",0
+            Property: "RotationMaxZ", "bool", "",0
+            Property: "InheritType", "enum", "",0
+            Property: "ScalingActive", "bool", "",0
+            Property: "ScalingMin", "Vector3D", "",1,1,1
+            Property: "ScalingMax", "Vector3D", "",1,1,1
+            Property: "ScalingMinX", "bool", "",0
+            Property: "ScalingMinY", "bool", "",0
+            Property: "ScalingMinZ", "bool", "",0
+            Property: "ScalingMaxX", "bool", "",0
+            Property: "ScalingMaxY", "bool", "",0
+            Property: "ScalingMaxZ", "bool", "",0
+            Property: "GeometricTranslation", "Vector3D", "",0,0,0
+            Property: "GeometricRotation", "Vector3D", "",0,0,0
+            Property: "GeometricScaling", "Vector3D", "",1,1,1
+            Property: "MinDampRangeX", "double", "",0
+            Property: "MinDampRangeY", "double", "",0
+            Property: "MinDampRangeZ", "double", "",0
+            Property: "MaxDampRangeX", "double", "",0
+            Property: "MaxDampRangeY", "double", "",0
+            Property: "MaxDampRangeZ", "double", "",0
+            Property: "MinDampStrengthX", "double", "",0
+            Property: "MinDampStrengthY", "double", "",0
+            Property: "MinDampStrengthZ", "double", "",0
+            Property: "MaxDampStrengthX", "double", "",0
+            Property: "MaxDampStrengthY", "double", "",0
+            Property: "MaxDampStrengthZ", "double", "",0
+            Property: "PreferedAngleX", "double", "",0
+            Property: "PreferedAngleY", "double", "",0
+            Property: "PreferedAngleZ", "double", "",0
+            Property: "LookAtProperty", "object", ""
+            Property: "UpVectorProperty", "object", ""
+            Property: "Show", "bool", "",1
+            Property: "NegativePercentShapeSupport", "bool", "",1
+            Property: "DefaultAttributeIndex", "int", "",0
+            Property: "Lcl Translation", "Lcl Translation", "A+",0,300,1590.99998474121
+            Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
+            Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+            Property: "Visibility", "Visibility", "A+",1
+            Property: "Position", "Vector", "A+N",0,0,-50
+            Property: "UpVector", "Vector", "A+N",0,1,0
+            Property: "InterestPosition", "Vector", "A+N",0,0,0
+            Property: "Roll", "Roll", "A+N",0
+            Property: "OpticalCenterX", "OpticalCenterX", "A+N",0
+            Property: "OpticalCenterY", "OpticalCenterY", "A+N",0
+            Property: "BackgroundColor", "Color", "A+N",0.63,0.63,0.63
+            Property: "TurnTable", "Number", "A+N",0
+            Property: "DisplayTurnTableIcon", "bool", "N",0
+            Property: "UseMotionBlur", "bool", "N",0
+            Property: "UseRealTimeMotionBlur", "bool", "N",1
+            Property: "Motion Blur Intensity", "Number", "A+N",1
+            Property: "AspectRatioMode", "enum", "N",0
+            Property: "AspectWidth", "double", "N",320
+            Property: "AspectHeight", "double", "N",200
+            Property: "PixelAspectRatio", "double", "N",1
+            Property: "FilmOffset", "Vector2D", "N",0,0
+            Property: "FilmWidth", "double", "N",0.590551167300153
+            Property: "FilmHeight", "double", "N",0.590551167300153
+            Property: "FilmAspectRatio", "double", "N",1
+            Property: "FilmSqueezeRatio", "double", "N",1
+            Property: "FilmFormatIndex", "enum", "N",0
+            Property: "ApertureMode", "enum", "N",3
+            Property: "GateFit", "enum", "N",3
+            Property: "FieldOfView", "FieldOfView", "A+N",25.1149997711182
+            Property: "FieldOfViewX", "FieldOfViewX", "A+N",40
+            Property: "FieldOfViewY", "FieldOfViewY", "A+N",40
+            Property: "FocalLength", "Number", "A+N",17.9999998658895
+            Property: "CameraFormat", "enum", "N",0
+            Property: "UseFrameColor", "bool", "N",0
+            Property: "FrameColor", "ColorRGB", "N",0.3,0.3,0.3
+            Property: "ShowName", "bool", "N",1
+            Property: "ShowInfoOnMoving", "bool", "N",1
+            Property: "ShowGrid", "bool", "N",1
+            Property: "ShowOpticalCenter", "bool", "N",0
+            Property: "ShowAzimut", "bool", "N",1
+            Property: "ShowTimeCode", "bool", "N",0
+            Property: "ShowAudio", "bool", "N",0
+            Property: "AudioColor", "ColorRGB", "N",0,1,0
+            Property: "NearPlane", "double", "N",10
+            Property: "FarPlane", "double", "N",4000
+            Property: "AutoComputeClipPanes", "bool", "N",0
+            Property: "ViewFrustum", "bool", "N",1
+            Property: "ViewFrustumNearFarPlane", "bool", "N",0
+            Property: "ViewFrustumBackPlaneMode", "enum", "N",2
+            Property: "BackPlaneDistance", "double", "N",100
+            Property: "BackPlaneDistanceMode", "enum", "N",0
+            Property: "ViewCameraToLookAt", "bool", "N",1
+            Property: "LockMode", "bool", "N",0
+            Property: "LockInterestNavigation", "bool", "N",0
+            Property: "FitImage", "bool", "N",0
+            Property: "Crop", "bool", "N",0
+            Property: "Center", "bool", "N",1
+            Property: "KeepRatio", "bool", "N",1
+            Property: "BackgroundMode", "enum", "N",0
+            Property: "BackgroundAlphaTreshold", "double", "N",0.5
+            Property: "FrontPlateFitImage", "bool", "N",0
+            Property: "FrontPlateCrop", "bool", "N",0
+            Property: "FrontPlateCenter", "bool", "N",1
+            Property: "FrontPlateKeepRatio", "bool", "N",1
+            Property: "ShowFrontPlate", "bool", "N",0
+            Property: "ViewFrustumFrontPlaneMode", "enum", "N",2
+            Property: "FrontPlaneDistance", "double", "N",100
+            Property: "ForegroundAlpha", "double", "N",0.5
+            Property: "DisplaySafeArea", "bool", "N",0
+            Property: "DisplaySafeAreaOnRender", "bool", "N",0
+            Property: "SafeAreaDisplayStyle", "enum", "N",1
+            Property: "SafeAreaAspectRatio", "double", "N",1.33333333333333
+            Property: "Use2DMagnifierZoom", "bool", "N",0
+            Property: "2D Magnifier Zoom", "Number", "A+N",100
+            Property: "2D Magnifier X", "Number", "A+N",50
+            Property: "2D Magnifier Y", "Number", "A+N",50
+            Property: "CameraProjectionType", "enum", "N",0
+            Property: "OrthoZoom", "double", "N",1
+            Property: "UseRealTimeDOFAndAA", "bool", "N",0
+            Property: "UseDepthOfField", "bool", "N",0
+            Property: "FocusSource", "enum", "N",0
+            Property: "FocusAngle", "double", "N",3.5
+            Property: "FocusDistance", "double", "N",200
+            Property: "UseAntialiasing", "bool", "N",0
+            Property: "AntialiasingIntensity", "double", "N",0.77777
+            Property: "AntialiasingMethod", "enum", "N",0
+            Property: "UseAccumulationBuffer", "bool", "N",0
+            Property: "FrameSamplingCount", "int", "N",7
+            Property: "FrameSamplingType", "enum", "N",1
+            Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
+        }
+        MultiLayer: 0
+        MultiTake: 0
+        Shading: Y
+        Culling: "CullingOff"
+        TypeFlags: "Camera"
+        GeometryVersion: 124
+        Position: 0,0,-50
+        Up: 0,1,0
+        LookAt: 0,0,0
+        ShowInfoOnMoving: 1
+        ShowAudio: 0
+        AudioColor: 0,1,0
+        CameraOrthoZoom: 1
+        NodeAttributeName: "NodeAttribute::Camera_ncl1_1"
+    }
+    SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
+        Type: "UserData"
+        Version: 100
+        MetaData:  {
+            Version: 100
+            Title: ""
+            Subject: "FBX Scene"
+            Author: "Lightwave FBX Exporter"
+            Keywords: "Scene"
+            Revision: "rev. 1.0"
+            Comment: "Lightwave Scene export"
+        }
+        Properties60:  {
+            Property: "DocumentUrl", "KString", "", "//Users/ringo/minecraftchar_body_3_animated.fbx"
+            Property: "SrcDocumentUrl", "KString", "", "//Users/ringo/minecraftchar_body_3_animated.fbx"
+            Property: "Original", "Compound", ""
+            Property: "Original|ApplicationVendor", "KString", "", ""
+            Property: "Original|ApplicationName", "KString", "", ""
+            Property: "Original|ApplicationVersion", "KString", "", ""
+            Property: "Original|DateTime_GMT", "DateTime", "", ""
+            Property: "Original|FileName", "KString", "", ""
+            Property: "LastSaved", "Compound", ""
+            Property: "LastSaved|ApplicationVendor", "KString", "", ""
+            Property: "LastSaved|ApplicationName", "KString", "", ""
+            Property: "LastSaved|ApplicationVersion", "KString", "", ""
+            Property: "LastSaved|DateTime_GMT", "DateTime", "", ""
+        }
+    }
+    Pose: "Pose::Default Pose", "BindPose" {
+        Type: "BindPose"
+        Version: 100
+        Properties60:  {
+        }
+        NbPoseNodes: 10
+        PoseNode:  {
+            Node: "Model::minecraftchar_body_3:Layer3"
+            Matrix: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+        }
+        PoseNode:  {
+            Node: "Model::body"
+            Matrix: -0.999999999999996,0,-8.74227800037247e-08,0,0,1,0,0,8.74227800037247e-08,0,-0.999999999999996,0,0,450,0,1
+        }
+        PoseNode:  {
+            Node: "Model::minecraftchar_body_3:Layer4"
+            Matrix: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+        }
+        PoseNode:  {
+            Node: "Model::righthand"
+            Matrix: 1.91068561589492e-15,-0.999999999999999,4.37113900018624e-08,0,-4.37113900018624e-08,-4.37113900018624e-08,-0.999999999999998
+             ,0,0.999999999999999,0,-4.37113900018624e-08,0,-100,550,0,1
+        }
+        PoseNode:  {
+            Node: "Model::minecraftchar_body_3:Layer5"
+            Matrix: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+        }
+        PoseNode:  {
+            Node: "Model::lefthand"
+            Matrix: -4.37113900018624e-08,0,0.999999999999999,0,0,1,0,0,-0.999999999999999,0,-4.37113900018624e-08,0,100,550,0,1
+             
+        }
+        PoseNode:  {
+            Node: "Model::minecraftchar_body_3:Layer6"
+            Matrix: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+        }
+        PoseNode:  {
+            Node: "Model::rightleg"
+            Matrix: 1.91068561589492e-15,-0.999999999999999,4.37113900018624e-08,0,-4.37113900018624e-08,-4.37113900018624e-08,-0.999999999999998
+             ,0,0.999999999999999,0,-4.37113900018624e-08,0,0,250,0,1
+        }
+        PoseNode:  {
+            Node: "Model::minecraftchar_body_3:Layer7"
+            Matrix: 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1
+        }
+        PoseNode:  {
+            Node: "Model::leftleg"
+            Matrix: -4.37113900018624e-08,0,0.999999999999999,0,0,1,0,0,-0.999999999999999,0,-4.37113900018624e-08,0,0,250,0,1
+        }
+    }
+    Material: "Material::Default_ncl1_4", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",1,1,1
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",1,1,1
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Default", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",1,1,1
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",1,1,1
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Bone_ncl1_1", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Default_ncl1_1", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",1,1,1
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",1,1,1
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Bone_ncl1_2", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Default_ncl1_2", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",1,1,1
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",1,1,1
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Bone_ncl1_3", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Default_ncl1_3", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",1,1,1
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",1,1,1
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Bone_ncl1_4", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Material: "Material::Bone", "" {
+        Version: 102
+        ShadingModel: "phong"
+        MultiLayer: 0
+        Properties60:  {
+            Property: "ShadingModel", "KString", "", "Phong"
+            Property: "MultiLayer", "bool", "",0
+            Property: "EmissiveColor", "ColorRGB", "",0,0,0
+            Property: "EmissiveFactor", "double", "",1
+            Property: "AmbientColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "AmbientFactor", "double", "",1
+            Property: "DiffuseColor", "ColorRGB", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "DiffuseFactor", "double", "",1
+            Property: "Bump", "Vector3D", "",0,0,0
+            Property: "NormalMap", "Vector3D", "",0,0,0
+            Property: "BumpFactor", "double", "",1
+            Property: "TransparentColor", "ColorRGB", "",0,0,0
+            Property: "TransparencyFactor", "double", "",0
+            Property: "SpecularColor", "ColorRGB", "",0.2,0.2,0.2
+            Property: "SpecularFactor", "double", "",1
+            Property: "ShininessExponent", "double", "",20
+            Property: "ReflectionColor", "ColorRGB", "",0,0,0
+            Property: "ReflectionFactor", "double", "",1
+            Property: "Emissive", "Vector3D", "",0,0,0
+            Property: "Ambient", "Vector3D", "",0.2,0.2,0.2
+            Property: "Diffuse", "Vector3D", "",0.7843137383461,0.7843137383461,0.7843137383461
+            Property: "Specular", "Vector3D", "",0.2,0.2,0.2
+            Property: "Shininess", "double", "",20
+            Property: "Opacity", "double", "",1
+            Property: "Reflectivity", "double", "",0
+        }
+    }
+    Deformer: "Deformer::Skin minecraftchar_body_3:Layer3", "Skin" {
+        Version: 100
+        Properties60:  {
+        }
+        Link_DeformAcuracy: 50
+    }
+    Deformer: "Deformer::Skin minecraftchar_body_3:Layer4", "Skin" {
+        Version: 100
+        Properties60:  {
+        }
+        Link_DeformAcuracy: 50
+    }
+    Deformer: "Deformer::Skin minecraftchar_body_3:Layer5", "Skin" {
+        Version: 100
+        Properties60:  {
+        }
+        Link_DeformAcuracy: 50
+    }
+    Deformer: "Deformer::Skin minecraftchar_body_3:Layer6", "Skin" {
+        Version: 100
+        Properties60:  {
+        }
+        Link_DeformAcuracy: 50
+    }
+    Deformer: "Deformer::Skin minecraftchar_body_3:Layer7", "Skin" {
+        Version: 100
+        Properties60:  {
+        }
+        Link_DeformAcuracy: 50
+    }
+    Deformer: "SubDeformer::Cluster body", "Cluster" {
+        Version: 100
+        Properties60:  {
+            Property: "SrcModel", "object", ""
+            Property: "SrcModelReference", "object", ""
+        }
+        Mode: "Total1"
+        UserData: "", ""
+        Indexes: 0,1,2,3,4,5,6,7,8,9
+        Weights: 1,0.999999940395355,0.999999940395355,1,1,1,1,1,1,1
+        Transform: -0.999999999999996,1.22464669208533e-16,8.74227800037247e-08,0,1.22464679914735e-16,1,1.22464669208533e-16,0,-8.74227800037247e-08
+        ,1.22464679914735e-16,-0.999999999999996,0,-5.51091059616307e-14,-450,-5.51091011438396e-14,1
+        TransformLink: -0.999999999999996,1.22464679914735e-16,-8.74227800037247e-08,0,1.22464669208533e-16,1,1.22464679914735e-16,0,8.74227800037247e-08
+        ,1.22464669208533e-16,-0.999999999999996,0,0,450,0,1
+    }
+    Deformer: "SubDeformer::Cluster righthand", "Cluster" {
+        Version: 100
+        Properties60:  {
+            Property: "SrcModel", "object", ""
+            Property: "SrcModelReference", "object", ""
+        }
+        Mode: "Total1"
+        UserData: "", ""
+        Indexes: 0,1,2,3,4,5,6,7,8,9,10,11
+        Weights: 1,1,1,1,0.999999940395355,0.999999940395355,1,1,0.999999940395355,0.999999940395355,1,1
+        Transform: 1.83758917935762e-15,-4.37113900018623e-08,0.999999999999999,0,-0.999999999999999,-4.37113900018624e-08,-7.30964365373e-17
+        ,0,4.37113900018624e-08,-0.999999999999998,-4.37113900018624e-08,0,550,1.96701255008381e-05,100,1
+        TransformLink: 1.83758917935762e-15,-0.999999999999999,4.37113900018624e-08,0,-4.37113900018623e-08,-4.37113900018624e-08,-0.999999999999998
+        ,0,0.999999999999999,-7.30964365372996e-17,-4.37113900018624e-08,0,-100,550,0,1
+    }
+    Deformer: "SubDeformer::Cluster lefthand", "Cluster" {
+        Version: 100
+        Properties60:  {
+            Property: "SrcModel", "object", ""
+            Property: "SrcModelReference", "object", ""
+        }
+        Mode: "Total1"
+        UserData: "", ""
+        Indexes: 0,1,2,3,4,5,6,7,8,9
+        Weights: 1,1,0.999999940395355,0.999999940395355,1,1,0.999999940395355,0.999999940395355,1,1
+        Transform: 6.12323399573677e-17,0,-1,0,0,1,0,0,1,-0,6.12323399573677e-17,0,-6.12323399573677e-15,-550,100,1
+        TransformLink: 6.12323399573676e-17,0,1,0,0,1,-0,0,-1,0,6.12323399573676e-17,0,100,550,0,1
+    }
+    Deformer: "SubDeformer::Cluster rightleg", "Cluster" {
+        Version: 100
+        Properties60:  {
+            Property: "SrcModel", "object", ""
+            Property: "SrcModelReference", "object", ""
+        }
+        Mode: "Total1"
+        UserData: "", ""
+        Indexes: 0,1,2,3,4,5,6,7,8,9
+        Weights: 1,1,1,1,0.999999940395355,0.999999940395355,0.999999940395355,0.999999940395355,1,1
+        Transform: 1.83758917935762e-15,-4.37113900018623e-08,0.999999999999999,0,-0.999999999999999,-4.37113900018624e-08,-7.30964365373e-17
+        ,0,4.37113900018624e-08,-0.999999999999998,-4.37113900018624e-08,0,250,1.09278475004656e-05,1.8274109134325e-14,1
+        
+        TransformLink: 1.83758917935762e-15,-0.999999999999999,4.37113900018624e-08,0,-4.37113900018623e-08,-4.37113900018624e-08,-0.999999999999998
+        ,0,0.999999999999999,-7.30964365372996e-17,-4.37113900018624e-08,0,0,250,0,1
+    }
+    Deformer: "SubDeformer::Cluster leftleg", "Cluster" {
+        Version: 100
+        Properties60:  {
+            Property: "SrcModel", "object", ""
+            Property: "SrcModelReference", "object", ""
+        }
+        Mode: "Total1"
+        UserData: "", ""
+        Indexes: 0,1,2,3,4,5,6,7,8,9
+        Weights: 1,1,1,1,1,1,1,1,1,1
+        Transform: 6.12323399573677e-17,0,-1,0,0,1,0,0,1,-0,6.12323399573677e-17,0,0,-250,0,1
+        TransformLink: 6.12323399573676e-17,0,1,0,0,1,-0,0,-1,0,6.12323399573676e-17,0,0,250,0,1
+    }
+    Video: "Video::128x128uvBase.png", "Clip" {
+        Type: "Clip"
+        Properties60:  {
+            Property: "FrameRate", "double", "",0
+            Property: "LastFrame", "int", "",0
+            Property: "Width", "int", "",0
+            Property: "Height", "int", "",0
+            Property: "Path", "KString", "", "128x128uvBase.png"
+            Property: "StartFrame", "int", "",0
+            Property: "StopFrame", "int", "",0
+            Property: "PlaySpeed", "double", "",0
+            Property: "Offset", "KTime", "",0
+            Property: "InterlaceMode", "enum", "",0
+            Property: "FreeRunning", "bool", "",0
+            Property: "Loop", "bool", "",0
+            Property: "AccessMode", "enum", "",0
+        }
+        UseMipMap: 0
+        Filename: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+    }
+    Video: "Video::128x128uvBase.png_ncl1_1", "Clip" {
+        Type: "Clip"
+        Properties60:  {
+            Property: "FrameRate", "double", "",0
+            Property: "LastFrame", "int", "",0
+            Property: "Width", "int", "",0
+            Property: "Height", "int", "",0
+            Property: "Path", "KString", "", "128x128uvBase.png"
+            Property: "StartFrame", "int", "",0
+            Property: "StopFrame", "int", "",0
+            Property: "PlaySpeed", "double", "",0
+            Property: "Offset", "KTime", "",0
+            Property: "InterlaceMode", "enum", "",0
+            Property: "FreeRunning", "bool", "",0
+            Property: "Loop", "bool", "",0
+            Property: "AccessMode", "enum", "",0
+        }
+        UseMipMap: 0
+        Filename: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+    }
+    Video: "Video::128x128uvBase.png_ncl1_2", "Clip" {
+        Type: "Clip"
+        Properties60:  {
+            Property: "FrameRate", "double", "",0
+            Property: "LastFrame", "int", "",0
+            Property: "Width", "int", "",0
+            Property: "Height", "int", "",0
+            Property: "Path", "KString", "", "128x128uvBase.png"
+            Property: "StartFrame", "int", "",0
+            Property: "StopFrame", "int", "",0
+            Property: "PlaySpeed", "double", "",0
+            Property: "Offset", "KTime", "",0
+            Property: "InterlaceMode", "enum", "",0
+            Property: "FreeRunning", "bool", "",0
+            Property: "Loop", "bool", "",0
+            Property: "AccessMode", "enum", "",0
+        }
+        UseMipMap: 0
+        Filename: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+    }
+    Video: "Video::128x128uvBase.png_ncl1_3", "Clip" {
+        Type: "Clip"
+        Properties60:  {
+            Property: "FrameRate", "double", "",0
+            Property: "LastFrame", "int", "",0
+            Property: "Width", "int", "",0
+            Property: "Height", "int", "",0
+            Property: "Path", "KString", "", "128x128uvBase.png"
+            Property: "StartFrame", "int", "",0
+            Property: "StopFrame", "int", "",0
+            Property: "PlaySpeed", "double", "",0
+            Property: "Offset", "KTime", "",0
+            Property: "InterlaceMode", "enum", "",0
+            Property: "FreeRunning", "bool", "",0
+            Property: "Loop", "bool", "",0
+            Property: "AccessMode", "enum", "",0
+        }
+        UseMipMap: 0
+        Filename: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+    }
+    Video: "Video::128x128uvBase.png_ncl1_4", "Clip" {
+        Type: "Clip"
+        Properties60:  {
+            Property: "FrameRate", "double", "",0
+            Property: "LastFrame", "int", "",0
+            Property: "Width", "int", "",0
+            Property: "Height", "int", "",0
+            Property: "Path", "KString", "", "128x128uvBase.png"
+            Property: "StartFrame", "int", "",0
+            Property: "StopFrame", "int", "",0
+            Property: "PlaySpeed", "double", "",0
+            Property: "Offset", "KTime", "",0
+            Property: "InterlaceMode", "enum", "",0
+            Property: "FreeRunning", "bool", "",0
+            Property: "Loop", "bool", "",0
+            Property: "AccessMode", "enum", "",0
+        }
+        UseMipMap: 0
+        Filename: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+    }
+    Texture: "Texture::128x128uvBase.png", "" {
+        Type: "TextureVideoClip"
+        Version: 202
+        TextureName: "Texture::128x128uvBase.png"
+        Properties60:  {
+            Property: "TextureTypeUse", "enum", "",0
+            Property: "Texture alpha", "Number", "A+",1
+            Property: "CurrentMappingType", "enum", "",0
+            Property: "WrapModeU", "enum", "",0
+            Property: "WrapModeV", "enum", "",0
+            Property: "UVSwap", "bool", "",0
+            Property: "Translation", "Vector", "A+",0,0,0
+            Property: "Rotation", "Vector", "A+",0,0,0
+            Property: "Scaling", "Vector", "A+",1,1,1
+            Property: "TextureRotationPivot", "Vector3D", "",0,0,0
+            Property: "TextureScalingPivot", "Vector3D", "",0,0,0
+            Property: "UseMaterial", "bool", "",1
+            Property: "UseMipMap", "bool", "",0
+            Property: "CurrentTextureBlendMode", "enum", "",1
+            Property: "UVSet", "KString", "", "default"
+        }
+        Media: "Video::128x128uvBase.png"
+        FileName: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+        ModelUVTranslation: 0,0
+        ModelUVScaling: 1,1
+        Texture_Alpha_Source: "None"
+        Cropping: 0,0,0,0
+    }
+    Texture: "Texture::128x128uvBase.png_ncl1_1", "" {
+        Type: "TextureVideoClip"
+        Version: 202
+        TextureName: "Texture::128x128uvBase.png_ncl1_1"
+        Properties60:  {
+            Property: "TextureTypeUse", "enum", "",0
+            Property: "Texture alpha", "Number", "A+",1
+            Property: "CurrentMappingType", "enum", "",0
+            Property: "WrapModeU", "enum", "",0
+            Property: "WrapModeV", "enum", "",0
+            Property: "UVSwap", "bool", "",0
+            Property: "Translation", "Vector", "A+",0,0,0
+            Property: "Rotation", "Vector", "A+",0,0,0
+            Property: "Scaling", "Vector", "A+",1,1,1
+            Property: "TextureRotationPivot", "Vector3D", "",0,0,0
+            Property: "TextureScalingPivot", "Vector3D", "",0,0,0
+            Property: "UseMaterial", "bool", "",1
+            Property: "UseMipMap", "bool", "",0
+            Property: "CurrentTextureBlendMode", "enum", "",1
+            Property: "UVSet", "KString", "", "default"
+        }
+        Media: "Video::128x128uvBase.png_ncl1_1"
+        FileName: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+        ModelUVTranslation: 0,0
+        ModelUVScaling: 1,1
+        Texture_Alpha_Source: "None"
+        Cropping: 0,0,0,0
+    }
+    Texture: "Texture::128x128uvBase.png_ncl1_2", "" {
+        Type: "TextureVideoClip"
+        Version: 202
+        TextureName: "Texture::128x128uvBase.png_ncl1_2"
+        Properties60:  {
+            Property: "TextureTypeUse", "enum", "",0
+            Property: "Texture alpha", "Number", "A+",1
+            Property: "CurrentMappingType", "enum", "",0
+            Property: "WrapModeU", "enum", "",0
+            Property: "WrapModeV", "enum", "",0
+            Property: "UVSwap", "bool", "",0
+            Property: "Translation", "Vector", "A+",0,0,0
+            Property: "Rotation", "Vector", "A+",0,0,0
+            Property: "Scaling", "Vector", "A+",1,1,1
+            Property: "TextureRotationPivot", "Vector3D", "",0,0,0
+            Property: "TextureScalingPivot", "Vector3D", "",0,0,0
+            Property: "UseMaterial", "bool", "",1
+            Property: "UseMipMap", "bool", "",0
+            Property: "CurrentTextureBlendMode", "enum", "",1
+            Property: "UVSet", "KString", "", "default"
+        }
+        Media: "Video::128x128uvBase.png_ncl1_2"
+        FileName: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+        ModelUVTranslation: 0,0
+        ModelUVScaling: 1,1
+        Texture_Alpha_Source: "None"
+        Cropping: 0,0,0,0
+    }
+    Texture: "Texture::128x128uvBase.png_ncl1_3", "" {
+        Type: "TextureVideoClip"
+        Version: 202
+        TextureName: "Texture::128x128uvBase.png_ncl1_3"
+        Properties60:  {
+            Property: "TextureTypeUse", "enum", "",0
+            Property: "Texture alpha", "Number", "A+",1
+            Property: "CurrentMappingType", "enum", "",0
+            Property: "WrapModeU", "enum", "",0
+            Property: "WrapModeV", "enum", "",0
+            Property: "UVSwap", "bool", "",0
+            Property: "Translation", "Vector", "A+",0,0,0
+            Property: "Rotation", "Vector", "A+",0,0,0
+            Property: "Scaling", "Vector", "A+",1,1,1
+            Property: "TextureRotationPivot", "Vector3D", "",0,0,0
+            Property: "TextureScalingPivot", "Vector3D", "",0,0,0
+            Property: "UseMaterial", "bool", "",1
+            Property: "UseMipMap", "bool", "",0
+            Property: "CurrentTextureBlendMode", "enum", "",1
+            Property: "UVSet", "KString", "", "default"
+        }
+        Media: "Video::128x128uvBase.png_ncl1_3"
+        FileName: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+        ModelUVTranslation: 0,0
+        ModelUVScaling: 1,1
+        Texture_Alpha_Source: "None"
+        Cropping: 0,0,0,0
+    }
+    Texture: "Texture::128x128uvBase.png_ncl1_4", "" {
+        Type: "TextureVideoClip"
+        Version: 202
+        TextureName: "Texture::128x128uvBase.png_ncl1_4"
+        Properties60:  {
+            Property: "TextureTypeUse", "enum", "",0
+            Property: "Texture alpha", "Number", "A+",1
+            Property: "CurrentMappingType", "enum", "",0
+            Property: "WrapModeU", "enum", "",0
+            Property: "WrapModeV", "enum", "",0
+            Property: "UVSwap", "bool", "",0
+            Property: "Translation", "Vector", "A+",0,0,0
+            Property: "Rotation", "Vector", "A+",0,0,0
+            Property: "Scaling", "Vector", "A+",1,1,1
+            Property: "TextureRotationPivot", "Vector3D", "",0,0,0
+            Property: "TextureScalingPivot", "Vector3D", "",0,0,0
+            Property: "UseMaterial", "bool", "",1
+            Property: "UseMipMap", "bool", "",0
+            Property: "CurrentTextureBlendMode", "enum", "",1
+            Property: "UVSet", "KString", "", "default"
+        }
+        Media: "Video::128x128uvBase.png_ncl1_4"
+        FileName: "128x128uvBase.png"
+        RelativeFilename: "//Users/ringo/128x128uvBase.png"
+        ModelUVTranslation: 0,0
+        ModelUVScaling: 1,1
+        Texture_Alpha_Source: "None"
+        Cropping: 0,0,0,0
+    }
+    GlobalSettings:  {
+        Version: 1000
+        Properties60:  {
+            Property: "UpAxis", "int", "",1
+            Property: "UpAxisSign", "int", "",1
+            Property: "FrontAxis", "int", "",2
+            Property: "FrontAxisSign", "int", "",1
+            Property: "CoordAxis", "int", "",0
+            Property: "CoordAxisSign", "int", "",1
+            Property: "UnitScaleFactor", "double", "",0.999999977648258
+        }
+    }
+}
+
+; Object connections
+;------------------------------------------------------------------
+
+Connections:  {
+    Connect: "OO", "Model::minecraftchar_body_3:Layer3", "Model::Scene"
+    Connect: "OO", "Model::minecraftchar_body_3:Layer4", "Model::Scene"
+    Connect: "OO", "Model::minecraftchar_body_3:Layer5", "Model::Scene"
+    Connect: "OO", "Model::minecraftchar_body_3:Layer6", "Model::Scene"
+    Connect: "OO", "Model::minecraftchar_body_3:Layer7", "Model::Scene"
+    Connect: "OO", "Model::Light", "Model::Scene"
+    Connect: "OO", "Model::Camera", "Model::Scene"
+    Connect: "OO", "Material::Bone", "Model::minecraftchar_body_3:Layer3"
+    Connect: "OO", "Material::Default", "Model::minecraftchar_body_3:Layer3"
+    Connect: "OO", "Model::body", "Model::minecraftchar_body_3:Layer3"
+    Connect: "OO", "Texture::128x128uvBase.png", "Model::minecraftchar_body_3:Layer3"
+    Connect: "OO", "Video::128x128uvBase.png", "Texture::128x128uvBase.png"
+    Connect: "OO", "Deformer::Skin minecraftchar_body_3:Layer3", "Model::minecraftchar_body_3:Layer3"
+    Connect: "OO", "Material::Bone_ncl1_1", "Model::minecraftchar_body_3:Layer4"
+    Connect: "OO", "Material::Default_ncl1_1", "Model::minecraftchar_body_3:Layer4"
+    Connect: "OO", "Model::righthand", "Model::minecraftchar_body_3:Layer4"
+    Connect: "OO", "Texture::128x128uvBase.png_ncl1_1", "Model::minecraftchar_body_3:Layer4"
+    Connect: "OO", "Video::128x128uvBase.png_ncl1_1", "Texture::128x128uvBase.png_ncl1_1"
+    Connect: "OO", "Deformer::Skin minecraftchar_body_3:Layer4", "Model::minecraftchar_body_3:Layer4"
+    Connect: "OO", "Material::Bone_ncl1_2", "Model::minecraftchar_body_3:Layer5"
+    Connect: "OO", "Material::Default_ncl1_2", "Model::minecraftchar_body_3:Layer5"
+    Connect: "OO", "Model::lefthand", "Model::minecraftchar_body_3:Layer5"
+    Connect: "OO", "Texture::128x128uvBase.png_ncl1_2", "Model::minecraftchar_body_3:Layer5"
+    Connect: "OO", "Video::128x128uvBase.png_ncl1_2", "Texture::128x128uvBase.png_ncl1_2"
+    Connect: "OO", "Deformer::Skin minecraftchar_body_3:Layer5", "Model::minecraftchar_body_3:Layer5"
+    Connect: "OO", "Material::Bone_ncl1_3", "Model::minecraftchar_body_3:Layer6"
+    Connect: "OO", "Material::Default_ncl1_3", "Model::minecraftchar_body_3:Layer6"
+    Connect: "OO", "Model::rightleg", "Model::minecraftchar_body_3:Layer6"
+    Connect: "OO", "Texture::128x128uvBase.png_ncl1_3", "Model::minecraftchar_body_3:Layer6"
+    Connect: "OO", "Video::128x128uvBase.png_ncl1_3", "Texture::128x128uvBase.png_ncl1_3"
+    Connect: "OO", "Deformer::Skin minecraftchar_body_3:Layer6", "Model::minecraftchar_body_3:Layer6"
+    Connect: "OO", "Material::Bone_ncl1_4", "Model::minecraftchar_body_3:Layer7"
+    Connect: "OO", "Material::Default_ncl1_4", "Model::minecraftchar_body_3:Layer7"
+    Connect: "OO", "Model::leftleg", "Model::minecraftchar_body_3:Layer7"
+    Connect: "OO", "Texture::128x128uvBase.png_ncl1_4", "Model::minecraftchar_body_3:Layer7"
+    Connect: "OO", "Video::128x128uvBase.png_ncl1_4", "Texture::128x128uvBase.png_ncl1_4"
+    Connect: "OO", "Deformer::Skin minecraftchar_body_3:Layer7", "Model::minecraftchar_body_3:Layer7"
+    Connect: "OO", "SubDeformer::Cluster body", "Deformer::Skin minecraftchar_body_3:Layer3"
+    Connect: "OO", "Model::body", "SubDeformer::Cluster body"
+    Connect: "OO", "SubDeformer::Cluster righthand", "Deformer::Skin minecraftchar_body_3:Layer4"
+    Connect: "OO", "Model::righthand", "SubDeformer::Cluster righthand"
+    Connect: "OO", "SubDeformer::Cluster lefthand", "Deformer::Skin minecraftchar_body_3:Layer5"
+    Connect: "OO", "Model::lefthand", "SubDeformer::Cluster lefthand"
+    Connect: "OO", "SubDeformer::Cluster rightleg", "Deformer::Skin minecraftchar_body_3:Layer6"
+    Connect: "OO", "Model::rightleg", "SubDeformer::Cluster rightleg"
+    Connect: "OO", "SubDeformer::Cluster leftleg", "Deformer::Skin minecraftchar_body_3:Layer7"
+    Connect: "OO", "Model::leftleg", "SubDeformer::Cluster leftleg"
+}
+;Takes and animation section
+;----------------------------------------------------
+
+Takes:  {
+    Current: "Default LW Animation"
+    Take: "Default LW Animation" {
+        FileName: "Default_LW_Animation.tak"
+        LocalTime: 0,138558474000
+        ReferenceTime: 0,138558474000
+        
+        ;Models animation
+        ;----------------------------------------------------
+        Model: "Model::minecraftchar_body_3:Layer3" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::body" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "T" {
+                    Channel: "X" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 450
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,450,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,450,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,450,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,450,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,450,U
+                                        ,s,0,0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 1
+                }
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -180
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-180,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-180,U,s,-0,-0
+                                        ,a,0.333333343267441,0.333333343267441,107767702000,-180,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,123163088000,-180,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,138558474000,-180,U,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::minecraftchar_body_3:Layer4" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::righthand" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "T" {
+                    Channel: "X" {
+                        Default: -100
+                        KeyVer: 4005
+                        KeyCount: 10
+                        Key: 0,-100,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,-100,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-100,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-100,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,-100,U
+                                        ,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,-100,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,92372316000,-100,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,107767702000,-100,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,-100
+                                        ,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,-100,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 550
+                        KeyVer: 4005
+                        KeyCount: 10
+                        Key: 0,550,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,550,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,550,U,s,0,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,550,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,550,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,550,U,s,0,0,a,0.333333343267441,0.333333343267441,92372316000
+                                        ,550,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000,550,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,123163088000,550,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,138558474000,550,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 10
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,92372316000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,123163088000,-0,U
+                                        ,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U,s,-0,-0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 1
+                }
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 10
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,92372316000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,123163088000,-0,U
+                                        ,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U,s,-0,-0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 90
+                        KeyVer: 4005
+                        KeyCount: 10
+                        Key: 0,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,90,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,92372316000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,107767702000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,123163088000,90,U
+                                        ,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,90,U,s,-0,-0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: -90
+                        KeyVer: 4005
+                        KeyCount: 10
+                        Key: 0,-90,U,s,-69.9999923706055,3.41509462487011e-06,a,0.333333343267441,0.333333343267441
+                                        ,15395386000,-160,U,s,3.41509462487011e-06,70,a,0.333333343267441,0.333333343267441
+                                        ,30790772000,-89.9999923706055,U,s,70,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,-20,U,s,0,-35,a,0.333333343267441,0.333333343267441,61581544000,-89.9999923706055
+                                        ,U,s,-35,-35,a,0.333333343267441,0.333333343267441,76976930000,-89.9999923706055,U
+                                        ,s,-35,0,a,0.333333343267441,0.333333343267441,92372316000,-160,U,s,0,35,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-89.9999923706055,U,s,35,0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-89.9999923706055,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000
+                                        ,-89.9999923706055,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::minecraftchar_body_3:Layer5" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::lefthand" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "T" {
+                    Channel: "X" {
+                        Default: 100
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,100,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,100,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,100,U,s,0,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,100,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,100,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,100,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,100,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,100,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,100,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 550
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,550,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,550,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,550,U,s,0,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,550,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,550,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,550,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,550,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,550,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,550,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 1
+                }
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -90
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-90,U,s,-0,-0,a
+                                        ,0.333333343267441,0.333333343267441,30790772000,-90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,46186158000,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,61581544000,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-90,U
+                                        ,s,-0,-0,a,0.333333343267441,0.333333343267441,107767702000,-90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,123163088000,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,138558474000,-90,U,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,0,U,s,-70,0,a,0.333333343267441,0.333333343267441,15395386000,-70,U,s,0,70,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,0,U,s,70,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,70,U,s,0,-35,a,0.333333343267441,0.333333343267441,61581544000,0,U,s,-35,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::minecraftchar_body_3:Layer6" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::rightleg" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "T" {
+                    Channel: "X" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 250
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,250,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,250,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,250,U,s,0,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,250,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,250,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,250,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,250,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,250,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,250,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 1
+                }
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 90
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,90,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,90,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: -90
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-90,U,s,70,3.41509462487011e-06,a,0.333333343267441,0.333333343267441,15395386000
+                                        ,-20,U,s,3.41509462487011e-06,-70,a,0.333333343267441,0.333333343267441,30790772000
+                                        ,-89.9999923706055,U,s,-70,0,a,0.333333343267441,0.333333343267441,46186158000,-160
+                                        ,U,s,0,35,a,0.333333343267441,0.333333343267441,61581544000,-89.9999923706055,U,s
+                                        ,35,0,a,0.333333343267441,0.333333343267441,76976930000,-89.9999923706055,U,s,0,0
+                                        ,a,0.333333343267441,0.333333343267441,107767702000,-89.9999923706055,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,123163088000,-89.9999923706055,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,138558474000,-89.9999923706055,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::minecraftchar_body_3:Layer7" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::leftleg" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "T" {
+                    Channel: "X" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 250
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,250,U,s,0,0,a,0.333333343267441,0.333333343267441,15395386000,250,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,250,U,s,0,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,250,U,s,0,0,a,0.333333343267441,0.333333343267441,61581544000,250,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,250,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,250,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,250,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,250,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 1
+                }
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,46186158000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,61581544000,-0,U,s
+                                        ,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -90
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,15395386000,-90,U,s,-0,-0,a
+                                        ,0.333333343267441,0.333333343267441,30790772000,-90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,46186158000,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,61581544000,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-90,U
+                                        ,s,-0,-0,a,0.333333343267441,0.333333343267441,107767702000,-90,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,123163088000,-90,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,138558474000,-90,U,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 9
+                        Key: 0,0,U,s,70,0,a,0.333333343267441,0.333333343267441,15395386000,70,U,s,0,-70,a,0.333333343267441
+                                        ,0.333333343267441,30790772000,0,U,s,-70,0,a,0.333333343267441,0.333333343267441,46186158000
+                                        ,-70,U,s,0,35,a,0.333333343267441,0.333333343267441,61581544000,0,U,s,35,0,a,0.333333343267441
+                                        ,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,107767702000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                                        
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::Light" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "T" {
+                    Channel: "X" {
+                        Default: -200
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-200,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,-200,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-200,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-200,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,-200
+                                        ,U,s,0,0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 200
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,200,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,200,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,200,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,200,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,200,U
+                                        ,s,0,0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 200
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,200,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,200,U,s,-0,-0,a
+                                        ,0.333333343267441,0.333333343267441,107767702000,200,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,123163088000,200,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,138558474000,200,U,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 1
+                }
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -35
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-35,U,s,-8.78268338055932e-07,-6.27334543423785e-07,a,0.333333343267441,0.333333343267441
+                                        ,76976930000,-35,U,s,-2.50933823053856e-07,-0,a,0.333333343267441,0.333333343267441
+                                        ,107767702000,-35,U,s,-0,-0,a,0.333333343267441,0.333333343267441,123163088000,-35
+                                        ,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-35,U,s,-0,-0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -45
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-45,U,s,8.22280469492398e-07,5.87343208735547e-07,a,0.333333343267441,0.333333343267441
+                                        ,76976930000,-44.9999961853027,U,s,2.34937274967706e-07,-0,a,0.333333343267441,0.333333343267441
+                                        ,107767702000,-44.9999961853027,U,s,-0,-0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,-44.9999961853027,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-44.9999961853027
+                                        ,U,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        Model: "Model::Camera" {
+            Version: 1.1
+            Channel: "Transform" {
+                Channel: "T" {
+                    Channel: "X" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: 300
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,300,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,300,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,300,U,s,0,0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,300,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,300,U
+                                        ,s,0,0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 1591
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,1591,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,1591,U,s,-0,-0
+                                        ,a,0.333333343267441,0.333333343267441,107767702000,1591,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,123163088000,1591,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,138558474000,1591,U,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 1
+                }
+                Channel: "R" {
+                    Channel: "X" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Y" {
+                        Default: -0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,76976930000,-0,U,s,-0,-0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441
+                                        ,123163088000,-0,U,s,-0,-0,a,0.333333343267441,0.333333343267441,138558474000,-0,U
+                                        ,s,-0,-0,a,0.000100010001915507,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    Channel: "Z" {
+                        Default: 0
+                        KeyVer: 4005
+                        KeyCount: 5
+                        Key: 0,0,U,s,0,0,a,0.333333343267441,0.333333343267441,76976930000,0,U,s,0,0,a,0.333333343267441
+                                        ,0.333333343267441,107767702000,0,U,s,0,0,a,0.333333343267441,0.333333343267441,123163088000
+                                        ,0,U,s,0,0,a,0.333333343267441,0.333333343267441,138558474000,0,U,s,0,0,a,0.000100010001915507
+                                        ,0.000100010001915507
+                        Color: 1,1,1
+                    }
+                    LayerType: 2
+                }
+            }
+        }
+        
+        ;Generic nodes animation
+        ;----------------------------------------------------
+        
+        ;Textures animation
+        ;----------------------------------------------------
+        
+        ;Materials animation
+        ;----------------------------------------------------
+        
+        
+        ;Constraints animation
+        ;----------------------------------------------------
+    }
+}
+;Version 5 settings
+;------------------------------------------------------------------
+
+Version5:  {
+    AmbientRenderSettings:  {
+        Version: 101
+        AmbientLightColor: 0.4,0.4,0.4,0
+    }
+    FogOptions:  {
+        FlogEnable: 0
+        FogMode: 0
+        FogDensity: 0.002
+        FogStart: 0.3
+        FogEnd: 1000
+        FogColor: 1,1,1,1
+    }
+    Settings:  {
+        FrameRate: "30"
+        TimeFormat: 1
+        SnapOnFrames: 0
+        ReferenceTimeIndex: -1
+        TimeLineStartTime: 0
+        TimeLineStopTime: 46186158000
+    }
+    RendererSetting:  {
+        DefaultCamera: ""
+        DefaultViewingMode: 0
+    }
+}
