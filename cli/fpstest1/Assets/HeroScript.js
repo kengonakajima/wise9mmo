@@ -22,7 +22,10 @@ var lastInterval : float;
 
 var showName : String;
 
-var headObj : GameObject;
+var headObj : GameObject; 
+
+var walkAnimName : String;
+var idleAnimName : String;
 
 function Start () {
     pitch = 0;
@@ -216,15 +219,13 @@ function Update () {
     for( var t :Transform  in transform ) {
         var a : AnimationState;
         if( moveSpeed < 0.01 ){
-            //            t.animation.Stop("walk");
-            t.animation.CrossFade("idle",0.5);
-                               //            t.animation.Play("idle");
+            t.animation.CrossFade( idleAnimName ,0.5);
         } else {
-            a = t.animation["walk"];
+            a = t.animation[ walkAnimName];
             if(a != null ){
                 a.speed = moveSpeed;
             }
-            t.animation.Play("walk");
+            t.animation.Play(walkAnimName);
         }
     }
     

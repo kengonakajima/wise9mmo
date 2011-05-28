@@ -111,6 +111,16 @@ function ensurePC( id:int, typeName:String, pos:Vector3 ){
         hs.showName =  typeName + "_" + id;
         if( hs.clientID == myClientID ){
             pc.transform.localScale = Vector3(0.2,0.2,0.2);
+        } else {
+            pc.transform.localScale = Vector3(0.7,0.7,0.7);
+        }
+        
+        if( typeName == "zombie" ){
+            hs.walkAnimName = "zwalk";
+            hs.idleAnimName = "zidle";
+        } else {
+            hs.walkAnimName = "walk";
+            hs.idleAnimName = "idle";            
         }
     }
     return pc;
