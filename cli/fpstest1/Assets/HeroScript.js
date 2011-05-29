@@ -14,6 +14,7 @@ var nose : Vector3; // こういう風に関数の外に変数定義するとGUI
 var falling = false;
 var needSend = false;
 
+var cam : GameObject;
 
 var clientID = -1; // サーバ内のid
 
@@ -27,13 +28,15 @@ var headObj : GameObject;
 var walkAnimName : String;
 var idleAnimName : String;
 
-function Start () {
+function Start() {
     pitch = 0;
     dy = 0;
 
     if( headPrefab ){
         headObj = Instantiate(  headPrefab, transform.position + Vector3(-0.125,1.4,0), transform.rotation );
     }
+
+    cam = GameObject.Find( "Main Camera" );
     
 }
 
@@ -95,7 +98,7 @@ function setMaterial(tex) {
 }
 
 
-function Update () {
+function Update() {
 
 
     
@@ -254,6 +257,9 @@ function Update () {
             t.animation.Play(walkAnimName);
         }
     }
+
+      
+    
     
 }
 
@@ -262,8 +268,7 @@ function Update () {
 
 //
 function OnGUI () {
-    var c = GameObject.Find( "Main Camera");
-    var v: Vector3 = c.camera.WorldToScreenPoint(transform.position);
+    var v: Vector3 = cam.camera.WorldToScreenPoint(transform.position);
 
     if( clientID != -1 &&  v.x>0&&v.y>0&&v.z > 2.0 ){
 //        print("t:" + v.x + "," + v.y + "," + v.z );        

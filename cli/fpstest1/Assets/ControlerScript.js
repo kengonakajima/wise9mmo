@@ -66,13 +66,28 @@ function OnGUI () {
             prevTargetv = Vector3(ix,iy,iz);
         }
     }
-   
+    
+    // hit
+    //    var ray = cam.camera.ScreenPointToRay( Vector3( Screen.width/2, Screen.height/2,0));
+    var hitInfo : RaycastHit ;
+    var mobhit = false;
+    if( Physics.Raycast( cam.transform.position, ray.direction, hitInfo, 5 ) ){
+        //        print("something hit!:"+ray.direction + " hitTr:" + hitInfo.transform + " p:" + hitInfo.point  + " d:" + hitInfo.distance );
+        mobhit = true;
+    }
+
         
     if( Input.GetButtonUp( "Fire1" ) ) {
-        //        print("f1");
-        if( targetv.x != -1 && ( Time.realtimeSinceStartup > (prevFireAt + 0.2 )) ){
-            cs.digBlock(targetv.x,targetv.y,targetv.z);
+        if( Time.realtimeSinceStartup > (prevFireAt + 0.2 ) ){
             prevFireAt = Time.realtimeSinceStartup;
+            
+            if( mobhit ){
+                cs.attackMob( parseInt( hitInfo.transform.name ) );
+            } else {
+                if( targetv.x != -1 ){
+                    cs.digBlock(targetv.x,targetv.y,targetv.z);
+                }
+            }
         }
     }
     if( Input.GetButtonDown( "Fire2" ) ) {

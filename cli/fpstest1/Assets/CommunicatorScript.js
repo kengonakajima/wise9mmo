@@ -668,6 +668,11 @@ function sendGetFieldEdges(ix:int,iy:int,iz:int){
     if((iz%CHUNKSZ)==(CHUNKSZ-1)) sendGetField(chx, chy, chz+1 );
 }
 
+function attackMob( id:int ) {
+    print( "attackmob:" + id );
+    send("attack",id);
+}
+
 function digBlock( ix:int, iy:int, iz:int ) {
     //    print( "dig: "+ix+","+iy+","+iz);
     send( "dig", ix,iy,iz );
