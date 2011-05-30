@@ -2,7 +2,7 @@
 var sys = require('sys');
 var g = require('./global');
 var modActor = require('./actor');
-
+var main = require("./main.js");
 
 function Field( hsize, vsize ) {
     this.hSize = hsize;
@@ -12,6 +12,7 @@ function Field( hsize, vsize ) {
     this.sunlight = new Array( hsize * hsize * vsize );
 
     this.pcs = {};
+    this.actors = {};    
 }
 
 function toIndex( x,y,z, hs ){
@@ -332,10 +333,13 @@ Field.prototype.updatePC = function( id, x,y,z ) {
     this.pcs[id] = { "id":id, "pos": new g.Pos(x,y,z), "at":d.getTime() };
     
 };
-Field.prototype.deletePC = function( id ){
-    sys.puts( "delete pc. id:" + id );
+Field.prototype.deleteActor = function( id ){
+    sys.puts( "delete actor. id:" + id );
+    var a = this.actors[id];
+    
+    main.nearcast( a.pos, "disappear", id );
     this.pcs[id]=null;
-    actors[id]=null;
+    this.actors[id]=null;
 };
 
 // PCを探して配列を返す
@@ -357,29 +361,38 @@ Field.prototype.searchLatestNearPC = function ( pos, dia, thresTime ) {
 ///////////////////////////////
 // Actor
 /////////////////////////////
-var actors = {};
+
+
+Field.prototype.addActor = function(act) {
+    this.actors[act.id] = act;
+    act.toSend = true;
+};
 
 // 敵を1体出す
 Field.prototype.addMob = function(name, pos) {
-    var act = new modActor.Actor(name, this, pos );
-    actors[act.id] = act;
+    var act = new modActor.Mob(name, this, pos );
+    this.addActor(act);
     return act;
 };
 
 Field.prototype.addPC = function(name,pos,sock) {
-    var pc = new modActor.PlayerCharacter(this,pos,name);
+    var pc = new modActor.PlayerCharacter(name,this,pos);
     
     //    var act = new modActor.Actor("pc",this,pos);
     //    act.playerName = name;
     //    act.hp = 10;
     //    act.hitGroundFunc = pcHitGround;
-    actors[pc.id]=pc;
+    this.addActor(pc);
     return pc;
 };
 
+Field.prototype.findActor = function(id) {
+    return this.actors[id];
+}
+    
 Field.prototype.poll = function(curTime){
-    for( var k in actors ){
-        var a = actors[k];
+    for( var k in this.actors ){
+        var a = this.actors[k];
         if(a==null)continue;
         a.poll(curTime);
         

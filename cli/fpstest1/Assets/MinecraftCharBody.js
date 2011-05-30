@@ -19,7 +19,6 @@ function Start() {
             print("hh null.name:" + nm );
             continue;
         }
-        print("hh:"+ hh);
         
         var skmr :SkinnedMeshRenderer = hh.GetComponent(SkinnedMeshRenderer);
         var sm = skmr.sharedMesh;

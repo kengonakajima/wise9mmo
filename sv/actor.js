@@ -12,6 +12,7 @@ var main = require("./main");
 // 穴があったら素直に落ちる
 // 経路探索しない
 function zombieMove( curTime ) {
+
     if( this.hate == undefined ) this.hate = null;
     if( ( this.counter % 10 ) == 0 ){
         var pcs = this.field.searchLatestNearPC( this.pos, 10, curTime - 1000 );
@@ -36,16 +37,17 @@ function zombieMove( curTime ) {
 
     if( this.pos.hDistance( targetPos ) < 1.0 ){
         this.vVel = 0;
-        //        sys.puts( "zombie: enough near target!") ;
     } else {
-        this.vVel = 1.0;
+        if( this.falling == false ){
+            this.vVel = 1.0;
+        }
     }
 
     /////////////
 
     // 障害物あったらジャンプ
     if( ( this.counter % 50 ) == 0 ){
-        sys.puts("z: lastxyz:" + this.lastXOK + "," + this.lastZOK + " dy:" + this.dy );
+        //        sys.puts("z: lastxyz:" + this.lastXOK + "," + this.lastZOK + " dy:" + this.dy );
         if( ( this.lastXOK == false || this.lastZOK == false ) && this.dy == 0 ){
             this.dy = 4.0;
             this.falling = true;
@@ -76,13 +78,8 @@ function Actor( name, fld, pos ) {
     this.pos = new g.Vector3( pos.x, pos.y, pos.z );
 
     this.speedPerSec = 0; // 1秒あたり何m進むか
-    
-    if(name=="zombie"){
-        this.func = zombieMove;
-        this.speedPerSec = 2.0;
-    } else {
-        this.func = null;
-    }
+    this.func = null;
+
     this.id = actorID + 1000; 
     actorID++;
 
@@ -95,7 +92,6 @@ function Actor( name, fld, pos ) {
     this.falling = false;
     this.pitch = 0.0;
     this.yaw = 0.0;
-    this.hVel = 0.0;
     this.vVel = 0.0;
 };
     
@@ -126,11 +122,11 @@ Actor.prototype.poll = function(curTime) {
     dside.y = 0;
     dside.z = 1.0 * Math.sin(this.pitch - Math.PI/2);
 
-    var dv = new g.Vector3( dnose.x * this.vVel  + dside.x * this.hVel,
+    var dv = new g.Vector3( dnose.x * this.vVel,
                             0,
-                            dnose.z * this.vVel  + dside.z * this.hVel );
+                            dnose.z * this.vVel );
                             
-    this.vVel = this.hVel = 0;
+    this.vVel = 0;
 
 
     
@@ -180,9 +176,6 @@ Actor.prototype.poll = function(curTime) {
     // ポイントは、座標をセットするのではなく通常の物理挙動処理を使うこと。
     // そのためには、hVel, vVelを求める必要がある。
     // クライアントからのmoveのときにそれを受信し、ふつうに使う。
-
-
-    
     
     var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
     if( blkcur != null && blkcur != g.BlockType.AIR ){
@@ -262,6 +255,9 @@ Actor.prototype.poll = function(curTime) {
     
     // 送信. 落ちてる最中ではない場合は、あまり多く送らない
     var toSend = false;
+    if( this.toSend ){
+        toSend = true;
+    }
     if( this.lastSentAt < (curTime-500) ) toSend = true;
     if( this.falling && this.dy != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
     if( toSend ){
@@ -283,7 +279,7 @@ Actor.prototype.poll = function(curTime) {
 };
 
 // args: すべて float 
-Actor.prototype.setMove = function( x, y, z, pitch, yaw, dy, dt ) {
+Actor.prototype.setMove = function( x, y, z, pitch, yaw ) {
     this.yaw = yaw;
     this.pitch = pitch;
     var v = new g.Vector3(x,y,z);
@@ -294,9 +290,43 @@ Actor.prototype.setMove = function( x, y, z, pitch, yaw, dy, dt ) {
 // dy: float
 Actor.prototype.jump = function( dy ) {
     this.dy = dy;
+    main.nearcast( this.pos, "jumpNotify", this.id, dy);    
 };
-  
 
+// dmg:整数
+// attacker:actor
+Actor.prototype.attacked = function( dmg, attacker ) {
+
+    var dv = attacker.pos.diff( this.pos );
+    sys.puts( "dv:" + dv.to_s());
+    this.knockBack(dv.mul(4));
+};
+
+Actor.prototype.knockBack = function( v ) {
+    this.setMove( this.pos.x + v.x,
+                  this.pos.y,
+                  this.pos.z + v.z,
+                  this.pitch,
+                  this.yaw );
+    this.jump(4);
+    main.nearcast( this.pos, "jumpNotify", this.id, this.dy );
+    
+};
+
+// 球の衝突判定.当たったactorすべての配列を返す
+Actor.prototype.collide = function( dia ) {
+    var ret = new Array();
+    for(var k in this.field.actors ) {
+        var a = this.field.actors[k];
+        if(!a)continue;
+        var d = a.pos.diff( this.pos).length();
+        sys.puts("d:"+d + " " + a.typeName );
+        if( a != null && d < dia && a != this ){
+            ret.push(a);
+        }
+    }
+    return ret;
+};
 
 // PC
 
@@ -311,7 +341,7 @@ function pcHitGround(dy) {
     }
 };
 
-function PlayerCharacter( fld, pos, name ) {
+function PlayerCharacter( name, fld, pos ) {
     var pc = new Actor( "pc", fld, pos);
     pc.playerName = name;
     pc.hp = 10;
@@ -319,8 +349,67 @@ function PlayerCharacter( fld, pos, name ) {
     pc.speedPerSec = g.PlayerSpeed;    
     return pc;
 };
-    
+function Mob( name, fld, pos ) {
+    var m = new Actor(name,fld,pos);
+    if(name=="zombie"){
+        m.func = zombieMove;
+        m.speedPerSec = 2.0;
+    } 
+    return m;
+};
 
+
+function bulletMove( curTime ) {
+    sys.puts("bmove. pos:" + this.pos.to_s() );
+    this.vVel = 1;
+    var hit = false;
+
+    var col = this.collide( 1 );　
+    for( var i in col ){
+        var a = col[i];
+        if( a == this.shooter ) continue;
+        sys.puts( "collide:" + a.typeName + " d:" + this.pos.diff( a.pos ).length() );
+        a.attacked( this.damage, this );
+        
+    }
+    
+    if( this.pos.diff( this.origPos ).length() > this.distanceToLive || hit ){
+        sys.puts( "bullet: delete");
+        this.field.deleteActor( this.id );
+    }
+};
+
+// speed: (m/sec)
+// dtl: distance to live. (m)
+function Bullet( fld, pos, shooter, pitch, yaw, speed, dtl, damage ) {
+
+    var v = new g.Vector3( Math.cos(pitch), yaw, Math.sin(pitch) );
+
+    var b = new Actor( "bullet", fld, pos.add( v.normalized()) );
+
+    b.falling = true;
+    b.pitch = pitch;
+    b.yaw = yaw;
+
+    
+    b.dy = v.y * speed;
+    b.speedPerSec = speed;
+    b.origPos = pos;
+    b.distanceToLive = dtl;
+    b.damage = damage;
+    b.shooter = shooter;
+    b.direction = v.normalized();
+    b.func = bulletMove;
+    return b;    
+};
+
+Actor.prototype.shoot = function( speed, dtl, damage ) {
+    var b = new Bullet( this.field, this.pos, this, this.pitch, this.yaw, speed, dtl, damage );
+    this.field.addActor(b);
+    return b;
+};
 
 exports.Actor = Actor;
+exports.Mob = Mob;
+exports.Bullet = Bullet;
 exports.PlayerCharacter = PlayerCharacter;

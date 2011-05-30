@@ -15,9 +15,8 @@ function Start() {
 
     for( var nm in layernames ){
         var hh = transform.Find(nm);
-        print("hh:"+ hh);
-
         var skmr :SkinnedMeshRenderer = hh.GetComponent(SkinnedMeshRenderer);
+
         var sm = skmr.sharedMesh;
         sm.RecalculateNormals();
     

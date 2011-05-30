@@ -173,6 +173,20 @@ function rpcStatusChange( cliID, hp ) {
         currentHP = hp;
     }
 }
+// mob等が消える
+function rpcDisappear( cliID ) {
+
+    print("recv disappear:"+cliID);    
+    var pc = GameObject.Find( ""+cliID);
+    if(pc!=null){
+        Destroy(pc);
+        var hs = pc.GetComponent("HeroScript");
+        if(hs && hs.headObj ){
+            Destroy(hs.headObj);
+        }
+        print("disappear: destroyed:"+cliID);
+    }
+}
 
 //変化のお知らせがあったので地形要求
 function rpcChangeFieldNotify( x,y,z ) {
@@ -202,6 +216,7 @@ function Start () {
     addRPC( "jumpNotify", rpcJumpNotify );
     addRPC( "echo",rpcEcho);
     addRPC( "statusChange", rpcStatusChange );
+    addRPC( "disappear", rpcDisappear );
 }
 
 
@@ -668,9 +683,8 @@ function sendGetFieldEdges(ix:int,iy:int,iz:int){
     if((iz%CHUNKSZ)==(CHUNKSZ-1)) sendGetField(chx, chy, chz+1 );
 }
 
-function attackMob( id:int ) {
-    print( "attackmob:" + id );
-    send("attack",id);
+function attack(){
+    send("attack");
 }
 
 function digBlock( ix:int, iy:int, iz:int ) {

@@ -47,13 +47,14 @@ function globalNearcast(pos,except,args) {
                 delete sockets[ sk.clientID ];
             }
         } else {
-            sys.puts( "too far:"+ sk.addrString + " id:"+ sk.clientID );            
+            sys.puts( "too far:"+ sk.addrString + " id:"+ sk.clientID + " pos:" + pos.to_s() );            
         }
     }    
 };
 
+// pos, fname, arg0, arg1, ..
 exports.nearcast = function () {
-    if( arguments.length < 2 ) throw "inval"; // x,y,z, fn
+    if( arguments.length < 2 ) throw "inval"; // 
     var args = [];
     for(var i= 1; i< arguments.length;i++){
         args[i-1] = arguments[i];
@@ -81,16 +82,14 @@ function move(x,y,z,sp,pitch,yaw,dy,dt){
 
     //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt + "  cur:" + this.pc.pos.to_s() );
 
-    this.pc.setMove( x, y, z, pitch, yaw, dy, dt );
+    this.pc.setMove( x, y, z, pitch, yaw );
     fld.updatePC( this.pc.id, x, y, z );
 
     //    g.sleep(Math.random() * 100 );
 
 }
 function jump(dy){
-    exports.nearcast( this.pc.pos, "jumpNotify", this.pc.id, dy);
-    this.pc.jump( dy );
-    
+    this.pc.jump( dy );    
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
@@ -115,6 +114,8 @@ function dig(x,y,z){
         sys.puts("digged.");
     }    
 }
+
+
 // あいてる場所になにかおく
 function put(x,y,z,tname){
     sys.puts("put:"+x+","+y+","+z+","+tname);
@@ -135,6 +136,24 @@ function put(x,y,z,tname){
     } else {
         sys.puts("invalid put");
     }
+}
+
+function attack() {
+    sys.puts("attack: pitch"+this.pc.pitch + " yaw:" + this.pc.yaw );
+
+    var b = this.pc.shoot( 10, 5, 5 );
+    
+    /*    
+    if(this.pc==undefined)return;
+
+    var mob = fld.findActor(id);
+    sys.puts( "tof:" + mob.typeName );
+    if( mob.typeName == "zombie" ){
+        mob.attacked(5,this.pc);
+    }
+    */
+    // idを使わない
+
 }
 
 
@@ -184,7 +203,7 @@ net.Socket.prototype.nearcast = function() {
     if( arguments.length < 1 )return;
 
     if( this.pc ){
-        globalNearcast( this.pc.pos.x, this.pc.pos.y, this.pc.pos.z, this, arguments );
+        globalNearcast( this.pc.pos, this, arguments );
     } else {
         sys.puts("no pc");
     }
@@ -250,7 +269,7 @@ var server = net.createServer(function (socket) {
     // ソケットが切断したときのコールバック
     socket.addListener("end", function () {
             if( socket.pc ){
-                fld.deletePC( socket.pc.id );
+                fld.deleteActor( socket.pc.id );
                 delete sockets[ socket.pc.id ];
             }
             sys.puts( "end. socknum:" + sockets.length);
@@ -273,6 +292,7 @@ addRPC( "getField", getField );
 addRPC( "dig", dig );
 addRPC( "jump", jump );
 addRPC( "put", put );
+addRPC( "attack", attack );
 
 server.listen(7000, "127.0.0.1");
 
@@ -291,5 +311,5 @@ setInterval( function() {
 
 setInterval( function() {
         sys.puts( "loop:" + loopCounter );
-    }, 1000 );
+    }, 10000 );
 
