@@ -9,6 +9,8 @@ var comsc;
 var hero : GameObject;
 var herosc;
 
+var cursorCube : GameObject;
+
 function Start () {
     Screen.lockCursor = true;
     //何故か機能しない    Screen.SetResolution( 1680,1050, true ); 
@@ -17,6 +19,8 @@ function Start () {
     herosc = hero.GetComponent("HeroScript" );
     com = GameObject.Find("CommunicatorCube");
     comsc = com.GetComponent("CommunicatorScript");
+    cursorCube = GameObject.Find("CursorCube");
+    
     selectedInventoryIndex = 1;
 }
 
@@ -53,6 +57,7 @@ var prevFireAt:float=0.0;
 var multicubePrefab:GameObject;
 var simpleObjPrefab:GameObject;
 var charPrefab : GameObject;
+
 
 
 
@@ -104,6 +109,14 @@ function OnGUI () {
         }
     }
 
+
+    
+    if( targetv.x != -1 ){
+        print(" targetv:" + targetv );
+        cursorCube.transform.position = targetv + Vector3(0.5,0.5,0.5);
+    } else {
+        cursorCube.transform.position = Vector3(-1,-1,-1);
+    }
     
     // hit
     //    var ray = cam.camera.ScreenPointToRay( Vector3( Screen.width/2, Screen.height/2,0));
@@ -172,3 +185,83 @@ function OnGUI () {
     //    var chat = GUI.TextField( Rect(10,Screen.height-20,400,20), "chat text", 25 );
 }
 
+
+function drawCursorCube( vec ) {
+	
+    var d = 0.02;
+    var v1 = vec - Vector3(d,d,d);
+    var v2 = vec + Vector3(1+d,1+d,1+d);
+    var v : Vector3[] = new Vector3[8];
+
+    
+    
+    v[0] = Vector3( v1.x, v1.y, v1.z ); // 底面左回り
+    v[1] = Vector3( v2.x, v1.y, v1.z );
+    v[2] = Vector3( v2.x, v1.y, v2.z );
+    v[3] = Vector3( v1.x, v1.y, v2.z );
+    
+    v[4] = Vector3( v1.x, v2.y, v1.z ); // 上面左回り
+    v[5] = Vector3( v2.x, v2.y, v1.z );
+    v[6] = Vector3( v2.x, v2.y, v2.z );
+    v[7] = Vector3( v1.x, v2.y, v2.z );    
+
+        /*        
+    //	GL.PushMatrix();
+	GL.Begin(GL.LINES);	
+
+    //	GL.modelview = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+
+    var v1 = Vector3(0,0,0);
+    var v2 = Vector3(10,10,10);
+    var v3 = Vector3(0,10,0);
+
+    GL.Vertex(v1);
+    GL.Color(Color.white);
+    GL.Vertex(v2);
+    GL.Color(Color.white);
+
+	GL.End();
+        */
+
+    //    GL.PushMatrix();
+    
+    GL.Begin(GL.LINES);
+    GL.Color( Color.white );
+    GL.Vertex(v[0]); GL.Vertex(v[1]); // 底面
+    GL.Vertex(v[1]); GL.Vertex(v[2]);
+    GL.Vertex(v[2]); GL.Vertex(v[3]);
+    GL.Vertex(v[3]); GL.Vertex(v[0]);
+    
+    GL.Vertex(v[0]); GL.Vertex(v[4]); // 側面
+    GL.Vertex(v[1]); GL.Vertex(v[5]);
+    GL.Vertex(v[2]); GL.Vertex(v[6]);
+    GL.Vertex(v[3]); GL.Vertex(v[7]);
+
+    GL.Vertex(v[4]); GL.Vertex(v[0]); // 側面
+    GL.Vertex(v[5]); GL.Vertex(v[1]);
+    GL.Vertex(v[6]); GL.Vertex(v[2]);
+    GL.Vertex(v[7]); GL.Vertex(v[3]);
+    
+
+    GL.Vertex(v[4]); GL.Vertex(v[5]); // 上面
+    GL.Vertex(v[5]); GL.Vertex(v[6]);
+    GL.Vertex(v[6]); GL.Vertex(v[7]);
+    GL.Vertex(v[7]); GL.Vertex(v[4]);        
+
+
+    GL.Vertex(v[5]); GL.Vertex(v[4]); // 上面
+    GL.Vertex(v[6]); GL.Vertex(v[5]);
+    GL.Vertex(v[7]); GL.Vertex(v[6]);
+    GL.Vertex(v[4]); GL.Vertex(v[7]);        
+
+    
+	GL.End();
+    //    	GL.PopMatrix();    
+}
+
+function OnRenderObject () {
+
+    //    print("dddddddddd");
+    //    drawCursorCube( cursorCubePos );
+
+}
