@@ -187,6 +187,9 @@ function rpcDisappear( cliID ) {
         print("disappear: destroyed:"+cliID);
     }
 }
+function rpcChatNotify(cliID, txt){
+    AppendLog( ""+cliID+": "+ txt);
+}
 
 //変化のお知らせがあったので地形要求
 function rpcChangeFieldNotify( x,y,z ) {
@@ -217,6 +220,7 @@ function Start () {
     addRPC( "echo",rpcEcho);
     addRPC( "statusChange", rpcStatusChange );
     addRPC( "disappear", rpcDisappear );
+    addRPC( "chatNotify", rpcChatNotify );
 }
 
 

@@ -141,19 +141,12 @@ function put(x,y,z,tname){
 function attack() {
     sys.puts("attack: pitch"+this.pc.pitch + " yaw:" + this.pc.yaw );
 
-    var b = this.pc.shoot( 10, 5, 5 );
-    
-    /*    
-    if(this.pc==undefined)return;
+    this.pc.shoot( 10, 5, 5 );
+}
+function chat(txt) {
+    sys.puts("chat:"+txt);
 
-    var mob = fld.findActor(id);
-    sys.puts( "tof:" + mob.typeName );
-    if( mob.typeName == "zombie" ){
-        mob.attacked(5,this.pc);
-    }
-    */
-    // idを使わない
-
+    this.nearcastIncludeSelf( "chatNotify", this.clientID, txt );
 }
 
 
@@ -198,16 +191,18 @@ net.Socket.prototype.send = function() {
     } catch(e){
         sys.puts( "send: exception: "+e );
     }
-}
+};
+
 net.Socket.prototype.nearcast = function() {
     if( arguments.length < 1 )return;
+    if( this.pc ) globalNearcast( this.pc.pos, this, arguments );
+};
 
-    if( this.pc ){
-        globalNearcast( this.pc.pos, this, arguments );
-    } else {
-        sys.puts("no pc");
-    }
-}
+net.Socket.prototype.nearcastIncludeSelf = function() {
+    if( arguments.length < 1 )return;
+    if( this.pc ) globalNearcast( this.pc.pos, null, arguments );
+};
+
 
 var g_cliIDcounter=0;
 
@@ -293,6 +288,7 @@ addRPC( "dig", dig );
 addRPC( "jump", jump );
 addRPC( "put", put );
 addRPC( "attack", attack );
+addRPC( "chat", chat );
 
 server.listen(7000, "127.0.0.1");
 

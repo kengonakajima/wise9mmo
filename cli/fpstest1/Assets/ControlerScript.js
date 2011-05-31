@@ -11,6 +11,9 @@ var herosc;
 
 var cursorCube : GameObject;
 
+var chatString : String;
+var chatShow : System.Boolean;
+
 function Start () {
     Screen.lockCursor = true;
     //何故か機能しない    Screen.SetResolution( 1680,1050, true ); 
@@ -22,6 +25,10 @@ function Start () {
     cursorCube = GameObject.Find("CursorCube");
     
     selectedInventoryIndex = 1;
+
+    chatShow = false;
+    chatString = "";
+    
 }
 
 
@@ -54,17 +61,13 @@ var heartTexture : Texture2D;
 
 var prevFireAt:float=0.0;
 
-var multicubePrefab:GameObject;
-var simpleObjPrefab:GameObject;
-var charPrefab : GameObject;
-
-
 
 
 // クリックしたところのブロックを壊す
 function OnGUI () {
 
     var attackKeyHit = false;
+    var enterKeyHit = false;
     if( Event.current.type == EventType.KeyDown ) {
         var kn = -1;
         if( Event.current.keyCode == KeyCode.Alpha0) kn=0;
@@ -82,6 +85,7 @@ function OnGUI () {
             selectedInventoryIndex = kn;
         }
         if( Event.current.keyCode == KeyCode.X ) attackKeyHit = true;
+        if( Event.current.keyCode == KeyCode.Return ) enterKeyHit = true;
     }
 
 
@@ -112,7 +116,6 @@ function OnGUI () {
 
     
     if( targetv.x != -1 ){
-        print(" targetv:" + targetv );
         cursorCube.transform.position = targetv + Vector3(0.5,0.5,0.5);
     } else {
         cursorCube.transform.position = Vector3(-1,-1,-1);
@@ -126,6 +129,7 @@ function OnGUI () {
         //        print("something hit!:"+ray.direction + " hitTr:" + hitInfo.transform + " p:" + hitInfo.point  + " d:" + hitInfo.distance );
         mobhit = true;
     }
+
 
         
     if( Input.GetButtonUp( "Fire1" ) || attackKeyHit ) {
@@ -141,16 +145,24 @@ function OnGUI () {
     if( Input.GetButtonDown( "Fire2" ) ) {
         print( "f2");                
     }
+    if( chatShow ){
+        chatString = GUI.TextField( Rect(10,Screen.height-80,400,20), chatString );
+        if( enterKeyHit ){
+            chatShow = false;
+            comsc.send( "chat", chatString );
+        }
+    }
+    
+    
+    
     if( Input.GetButtonDown( "Fire3" ) ) {
-
-        
         if( Time.realtimeSinceStartup > ( prevFireAt + 0.2 ) ){
-            var q = Instantiate( charPrefab, Vector3( 5,3,2 ), Quaternion.identity );
-            q.name = "pc_1000";
-
             prevFireAt = Time.realtimeSinceStartup;
             print( "f3");
-
+            if(!chatShow){
+                chatShow = true;
+                chatString = "";
+            }
         }
     }
 
@@ -171,9 +183,6 @@ function OnGUI () {
 
         GUI.Label( Rect(64+i*unit+ofs+16, Screen.height-16-2,20,20), ""+99); // 残り個数表示
     }
-    
-
-        
 
     // heart
     for(i=0;i<comsc.currentHP;i++){
@@ -182,86 +191,6 @@ function OnGUI () {
     }
 
     
-    //    var chat = GUI.TextField( Rect(10,Screen.height-20,400,20), "chat text", 25 );
 }
 
 
-function drawCursorCube( vec ) {
-	
-    var d = 0.02;
-    var v1 = vec - Vector3(d,d,d);
-    var v2 = vec + Vector3(1+d,1+d,1+d);
-    var v : Vector3[] = new Vector3[8];
-
-    
-    
-    v[0] = Vector3( v1.x, v1.y, v1.z ); // 底面左回り
-    v[1] = Vector3( v2.x, v1.y, v1.z );
-    v[2] = Vector3( v2.x, v1.y, v2.z );
-    v[3] = Vector3( v1.x, v1.y, v2.z );
-    
-    v[4] = Vector3( v1.x, v2.y, v1.z ); // 上面左回り
-    v[5] = Vector3( v2.x, v2.y, v1.z );
-    v[6] = Vector3( v2.x, v2.y, v2.z );
-    v[7] = Vector3( v1.x, v2.y, v2.z );    
-
-        /*        
-    //	GL.PushMatrix();
-	GL.Begin(GL.LINES);	
-
-    //	GL.modelview = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-
-    var v1 = Vector3(0,0,0);
-    var v2 = Vector3(10,10,10);
-    var v3 = Vector3(0,10,0);
-
-    GL.Vertex(v1);
-    GL.Color(Color.white);
-    GL.Vertex(v2);
-    GL.Color(Color.white);
-
-	GL.End();
-        */
-
-    //    GL.PushMatrix();
-    
-    GL.Begin(GL.LINES);
-    GL.Color( Color.white );
-    GL.Vertex(v[0]); GL.Vertex(v[1]); // 底面
-    GL.Vertex(v[1]); GL.Vertex(v[2]);
-    GL.Vertex(v[2]); GL.Vertex(v[3]);
-    GL.Vertex(v[3]); GL.Vertex(v[0]);
-    
-    GL.Vertex(v[0]); GL.Vertex(v[4]); // 側面
-    GL.Vertex(v[1]); GL.Vertex(v[5]);
-    GL.Vertex(v[2]); GL.Vertex(v[6]);
-    GL.Vertex(v[3]); GL.Vertex(v[7]);
-
-    GL.Vertex(v[4]); GL.Vertex(v[0]); // 側面
-    GL.Vertex(v[5]); GL.Vertex(v[1]);
-    GL.Vertex(v[6]); GL.Vertex(v[2]);
-    GL.Vertex(v[7]); GL.Vertex(v[3]);
-    
-
-    GL.Vertex(v[4]); GL.Vertex(v[5]); // 上面
-    GL.Vertex(v[5]); GL.Vertex(v[6]);
-    GL.Vertex(v[6]); GL.Vertex(v[7]);
-    GL.Vertex(v[7]); GL.Vertex(v[4]);        
-
-
-    GL.Vertex(v[5]); GL.Vertex(v[4]); // 上面
-    GL.Vertex(v[6]); GL.Vertex(v[5]);
-    GL.Vertex(v[7]); GL.Vertex(v[6]);
-    GL.Vertex(v[4]); GL.Vertex(v[7]);        
-
-    
-	GL.End();
-    //    	GL.PopMatrix();    
-}
-
-function OnRenderObject () {
-
-    //    print("dddddddddd");
-    //    drawCursorCube( cursorCubePos );
-
-}
