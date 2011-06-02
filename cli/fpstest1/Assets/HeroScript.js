@@ -28,15 +28,21 @@ var headObj : GameObject;
 var walkAnimName : String;
 var idleAnimName : String;
 
+var omitBody: System.Boolean; // trueにすると、身体を省略して手だけにする（自キャラ用）
+
 function Start() {
     pitch = 0;
     dy = 0;
 
-    if( headPrefab ){
-        headObj = Instantiate(  headPrefab, transform.position + Vector3(-0.125,1.4,0), transform.rotation );
-    }
-
     cam = GameObject.Find( "Main Camera" );
+
+    if( omitBody ){
+
+    } else {
+        if( headPrefab ){
+            headObj = Instantiate(  headPrefab, transform.position + Vector3(-0.125,1.4,0), transform.rotation );
+        }
+    }
     
 }
 
@@ -243,24 +249,59 @@ function Update() {
         headObj.renderer.material.mainTexture = texture; // TODO: 重い. サボってる
     }
 
-    // アニメーションの設定
-    var moveSpeed:float = Vector3.Distance( prevPos, transform.position ) / dTime;
-    for( var t :Transform  in transform ) {
-        var a : AnimationState;
-        if( moveSpeed < 0.01 ){
-            t.animation.CrossFade( idleAnimName ,0.5);
-        } else {
-            a = t.animation[ walkAnimName];
-            if(a != null ){
-                a.speed = moveSpeed;
+    if( omitBody == false ){
+        // アニメーションの設定
+        var moveSpeed:float = Vector3.Distance( prevPos, transform.position ) / dTime;
+        for( var t :Transform  in transform ) {
+            var a : AnimationState;
+            if( moveSpeed < 0.01 ){
+                t.animation.CrossFade( idleAnimName ,0.5);
+            } else {
+                a = t.animation[ walkAnimName];
+                if(a != null ){
+                    a.speed = moveSpeed;
+                }
+                t.animation.Play(walkAnimName);
             }
-            t.animation.Play(walkAnimName);
         }
+    } else {
+        cam = GameObject.Find( "Main Camera" );
+
+        dv = nose - transform.position;
+        cam.transform.position = transform.position + Vector3(0,1.5,0) - dv.normalized*0.5;
+        cam.transform.LookAt( nose );
+
+
+        var charT = transform.Find( "minecraftchar_hand_1_animated" );
+        var handT = charT.Find( "minecraftchar_hand_1:Layer4" );
+        //        print("camrot:"+ cam.transform.rotation + " hrot:" + handT.rotation + " no:" + nose );
+        //        print("campos:"+ cam.transform.position + " hpos:" + handT.position );
+
+        charT.LookAt(nose);
+        //        handT.localPosition = handpos;//Vector3(0,0,0);//handpos; //cam.transform.position + Vector3(0,-0.8,0);
+        //        handT.localRotation = cam.transform.rotation;// = Quaternion.identity; //LookAt(nose);// = cam.transform.rotation; 
+
+        
+    }
+    
+    
+}
+function PlayUseAnimation() {
+
+    
+    var charT = transform.Find( "minecraftchar_hand_1_animated" );
+    var handT = charT.Find( "minecraftchar_hand_1:Layer4" );
+
+    for(var a:AnimationState in charT.animation){
+        print( "a:"+a.name );
+        a.enabled = true;
+        print("len:"+a.length + " en:" + a.enabled + " tm:" + a.time + " sp:" + a.speed + " w:" + a.weight  + " cl:" + a.clip + " fr:" + a.clip.frameRate );
     }
 
-      
     
     
+    charT.animation.Play("use");
+    print("Use");
 }
 
 

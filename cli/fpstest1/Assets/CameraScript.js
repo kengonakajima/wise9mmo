@@ -1,23 +1,22 @@
 var hero : GameObject;
-
+var hs;
 
 
 
 function Start () {
     hero = GameObject.Find( "HeroCube" );
+    hs = hero.GetComponent("HeroScript");
+    
 }
 
 
 
 function Update () {
     
-    var hs = hero.GetComponent("HeroScript");
 
-        
-    var dv = hs.nose - hero.transform.position;
-
-    transform.position = hero.transform.position + Vector3(0,1,0) - dv.normalized*0.5;
-    transform.LookAt( hs.nose );
+    // 以下の位置調整はheroscriptのほうでやらないと1フレームずれた
+    //    transform.position = hero.transform.position + Vector3(0,1,0);// - dv.normalized*0.5;
+    //     transform.LookAt( hs.nose );
 
 
 /*

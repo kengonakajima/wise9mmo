@@ -135,6 +135,7 @@ function OnGUI () {
     if( Input.GetButtonUp( "Fire1" ) || attackKeyHit ) {
         if( Time.realtimeSinceStartup > (prevFireAt + 0.2 ) ){
             prevFireAt = Time.realtimeSinceStartup;
+            herosc.PlayUseAnimation();
             if( targetv.x != -1 ){
                 comsc.digBlock(targetv.x,targetv.y,targetv.z);
             } else {
