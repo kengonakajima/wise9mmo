@@ -271,16 +271,9 @@ function Update() {
         cam.transform.position = transform.position + Vector3(0,1.5,0) - dv.normalized*0.5;
         cam.transform.LookAt( nose );
 
+        var toolT = transform.Find( "toolhand_1_animated" );
 
-        var charT = transform.Find( "minecraftchar_hand_1_animated" );
-        var handT = charT.Find( "minecraftchar_hand_1:Layer4" );
-        //        print("camrot:"+ cam.transform.rotation + " hrot:" + handT.rotation + " no:" + nose );
-        //        print("campos:"+ cam.transform.position + " hpos:" + handT.position );
-
-        charT.LookAt(nose);
-        //        handT.localPosition = handpos;//Vector3(0,0,0);//handpos; //cam.transform.position + Vector3(0,-0.8,0);
-        //        handT.localRotation = cam.transform.rotation;// = Quaternion.identity; //LookAt(nose);// = cam.transform.rotation; 
-
+        toolT.LookAt(nose + Vector3(0,0.5,0));
         
     }
     
@@ -288,22 +281,34 @@ function Update() {
 }
 function PlayUseAnimation() {
 
-    
-    var charT = transform.Find( "minecraftchar_hand_1_animated" );
-    var handT = charT.Find( "minecraftchar_hand_1:Layer4" );
+    var toolT = transform.Find( "toolhand_1_animated");
 
-    for(var a:AnimationState in charT.animation){
-        print( "a:"+a.name );
-        a.enabled = true;
-        print("len:"+a.length + " en:" + a.enabled + " tm:" + a.time + " sp:" + a.speed + " w:" + a.weight  + " cl:" + a.clip + " fr:" + a.clip.frameRate );
-    }
-
+    toolT.animation.Play("use");
     
-    
-    charT.animation.Play("use");
     print("Use");
 }
 
+var savedHandMesh;
+
+var ttt : Texture;
+
+function SetToolTex( tex ) {
+
+        var toolT = transform.Find( "toolhand_1_animated/toolhand_board/Bone01" );
+        print("o:"+toolT);
+        print("m:" + toolT.renderer.material );
+        toolT.renderer.material.mainTexture = tex;
+        
+        //        var handT = charT.Find( "minecraftchar_hand_1:Layer4" );
+        //        var rhT = handT.Find("righthand");
+        //        print("ht:"+rhT);
+
+    
+        //        var hhns  = sm.normals;
+        //        var norms : Vector3[] = new Vector3[ hhns.length ];
+
+
+}
 
 
 

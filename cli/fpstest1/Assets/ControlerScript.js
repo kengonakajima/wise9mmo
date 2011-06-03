@@ -24,8 +24,9 @@ function Start () {
     comsc = com.GetComponent("CommunicatorScript");
     cursorCube = GameObject.Find("CursorCube");
     
-    selectedInventoryIndex = 1;
-
+    selectedInventoryIndex = 0;
+    herosc.SetToolTex( shortcutTextures[ selectedInventoryIndex ] );
+    
     chatShow = false;
     chatString = "";
     
@@ -69,20 +70,19 @@ function OnGUI () {
     var attackKeyHit = false;
     var enterKeyHit = false;
     if( Event.current.type == EventType.KeyDown ) {
-        var kn = -1;
-        if( Event.current.keyCode == KeyCode.Alpha0) kn=0;
-        if( Event.current.keyCode == KeyCode.Alpha1) kn=1;
-        if( Event.current.keyCode == KeyCode.Alpha2) kn=2;
-        if( Event.current.keyCode == KeyCode.Alpha3) kn=3;
-        if( Event.current.keyCode == KeyCode.Alpha4) kn=4;
-        if( Event.current.keyCode == KeyCode.Alpha5) kn=5;
-        if( Event.current.keyCode == KeyCode.Alpha6) kn=6;
-        if( Event.current.keyCode == KeyCode.Alpha7) kn=7;
-        if( Event.current.keyCode == KeyCode.Alpha8) kn=8;
-        if( Event.current.keyCode == KeyCode.Alpha9) kn=9;        
-        if( kn != -1 ){
-            // 選択する
-            selectedInventoryIndex = kn;
+        var prevSel = selectedInventoryIndex;
+        if( Event.current.keyCode == KeyCode.Alpha0) selectedInventoryIndex = 9;
+        if( Event.current.keyCode == KeyCode.Alpha1) selectedInventoryIndex = 0;
+        if( Event.current.keyCode == KeyCode.Alpha2) selectedInventoryIndex = 1;
+        if( Event.current.keyCode == KeyCode.Alpha3) selectedInventoryIndex = 2;
+        if( Event.current.keyCode == KeyCode.Alpha4) selectedInventoryIndex = 3;
+        if( Event.current.keyCode == KeyCode.Alpha5) selectedInventoryIndex = 4;
+        if( Event.current.keyCode == KeyCode.Alpha6) selectedInventoryIndex = 5;
+        if( Event.current.keyCode == KeyCode.Alpha7) selectedInventoryIndex = 6;
+        if( Event.current.keyCode == KeyCode.Alpha8) selectedInventoryIndex = 7;
+        if( Event.current.keyCode == KeyCode.Alpha9) selectedInventoryIndex = 8;
+        if( prevSel != selectedInventoryIndex ){
+            herosc.SetToolTex( shortcutTextures[ selectedInventoryIndex ] );
         }
         if( Event.current.keyCode == KeyCode.X ) attackKeyHit = true;
         if( Event.current.keyCode == KeyCode.Return ) enterKeyHit = true;
@@ -167,13 +167,13 @@ function OnGUI () {
         }
     }
 
-    // buttons
+    // tool selection
     for(i=0;i<shortcutTextures.length;i++){
         var ofs=0;
         if( i >=5)ofs=4;
 
         var btex;
-        if( selectedInventoryIndex == ((i+1)%10) ){
+        if( selectedInventoryIndex == i ){
             btex = activeBoxTex;
         } else {
             btex = inactiveBoxTex;
@@ -183,6 +183,8 @@ function OnGUI () {
         GUI.DrawTexture( Rect(64+i*unit+ofs+2,Screen.height-32-2, 32,32 ), shortcutTextures[i], ScaleMode.StretchToFill, true, 1.0f );
 
         GUI.Label( Rect(64+i*unit+ofs+16, Screen.height-16-2,20,20), ""+99); // 残り個数表示
+
+
     }
 
     // heart
