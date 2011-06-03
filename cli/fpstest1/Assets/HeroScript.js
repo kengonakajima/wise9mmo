@@ -273,7 +273,11 @@ function Update() {
 
         var toolT = transform.Find( "toolhand_1_animated" );
 
-        toolT.LookAt(nose + Vector3(0,0.5,0));
+
+        toolT.position = cam.transform.position + cam.transform.forward*0.6 + (cam.transform.right*0.2) + cam.transform.up*-0.2;
+        print("p:" + toolT.position);
+        toolT.rotation = cam.transform.rotation;
+        //        toolT.LookAt(nose + Vector3(0,0.5,0));
         
     }
     
@@ -294,33 +298,18 @@ var ttt : Texture;
 
 function SetToolTex( tex ) {
 
-        var toolT = transform.Find( "toolhand_1_animated/toolhand_board/Bone01" );
-        print("o:"+toolT);
-        print("m:" + toolT.renderer.material );
-        toolT.renderer.material.mainTexture = tex;
-        
-        //        var handT = charT.Find( "minecraftchar_hand_1:Layer4" );
-        //        var rhT = handT.Find("righthand");
-        //        print("ht:"+rhT);
-
-    
-        //        var hhns  = sm.normals;
-        //        var norms : Vector3[] = new Vector3[ hhns.length ];
-
+    var toolT = transform.Find( "toolhand_1_animated/toolhand_board/Bone01" );
+    //    print("m:" + toolT.renderer.material );
+    toolT.renderer.material.mainTexture = tex;
 
 }
 
-
-
-//
 function OnGUI () {
     var v: Vector3 = cam.camera.WorldToScreenPoint(transform.position);
 
     if( clientID != -1 &&  v.x>0&&v.y>0&&v.z > 2.0 ){
-//        print("t:" + v.x + "," + v.y + "," + v.z );        
         GUI.Label( Rect( v.x, Screen.height-v.y  - 50, 100,50 ), showName  );
-    }
-    
+    }    
     
 }
 
