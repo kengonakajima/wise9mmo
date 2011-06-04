@@ -5,7 +5,17 @@ var sys = require("sys");
 exports.BlockType = { AIR:0, STONE:1, SOIL:2, GRASS:3, WATER:4, LEAF:5, STEM:6, LADDER:7 };
 exports.ItemType = { REDFLOWER:100, BLUEFLOWER:101 };
 
+exports.BlockTypeToString = function(v) {
+    for(var k in exports.BlockType ){
+        if(exports.BlockType[k]==v)return k
+    }
+    return null;
+};
+
+
 exports.PlayerSpeed = 5.0;
+
+
 
 
 // 整数で位置を示す
@@ -64,8 +74,10 @@ Vector3.prototype.hDistance = function(pos){
                       (pos.z-this.z)*(pos.z-this.z) );
 };    
 Vector3.prototype.toPos = function() {
-    return new Vector3( this.ix(), this.iy(), this.iz() );                    
+    return new Pos( this.ix(), this.iy(), this.iz() );                    
 };
+
+    
 Vector3.prototype.diff = function(v){return new Vector3( v.x - this.x, v.y - this.y, v.z - this.z );};
 Vector3.prototype.diffSign = function(v){
     var ret = new Vector3(0,0,0);
@@ -110,4 +122,7 @@ exports.sleep = function( ms ) {
         }
     }    
 };
-    
+
+
+
+

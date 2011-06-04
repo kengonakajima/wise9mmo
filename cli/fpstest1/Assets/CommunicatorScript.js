@@ -193,11 +193,15 @@ function rpcChatNotify(cliID, txt){
 
 //変化のお知らせがあったので地形要求
 function rpcChangeFieldNotify( x,y,z ) {
-    var chx=x/CHUNKSZ;
-    var chy=y/CHUNKSZ;
-    var chz=z/CHUNKSZ;
+    print("rpcChangeFieldNotify:"+x+","+y+","+z + "sz:" + CHUNKSZ );
+    var chx:int=Mathf.Floor(x/CHUNKSZ);
+    var chy:int=Mathf.Floor(y/CHUNKSZ);
+    var chz:int=Mathf.Floor(z/CHUNKSZ);
+
+    print("main:"+chx+","+chy+","+chz);
     
     sendGetField(chx,chy,chz);
+    print("edge");
     sendGetFieldEdges(chx,chy,chz);
 }
 
@@ -670,6 +674,7 @@ function Update () {
 // 掘る
 function sendGetField(chx:int,chy:int,chz:int){
     if( chx>=0 && chy>=0 && chz>=0 && chx<CHUNKMAX && chy<CHUNKMAX&& chz<CHUNKMAX){
+        print("send getfield. chx:"+chx + ","+chy+","+chz);
         send( "getField",chx*CHUNKSZ, chy*CHUNKSZ, chz*CHUNKSZ,(chx+1)*CHUNKSZ, (chy+1)*CHUNKSZ, (chz+1)*CHUNKSZ );
     }
 }

@@ -3,6 +3,15 @@ var g = require("./global");
 var main = require("./main");
 
 
+// デブリ
+function debriMove( curTime ) {
+    if( curTime > ( this.createdAt + 5000 ) ){
+        var p = this.pos.toPos();
+        this.field.runtimeSet( p, this.debriType );
+        sys.puts( "debri fixed!");
+        this.field.deleteActor( this.id );        
+    }
+};
 
 // 目的地はいつも近くのpc
 // pcと距離が2以内だったら攻撃
@@ -71,7 +80,8 @@ function Actor( name, fld, pos ) {
     var d = new Date();
 
     this.typeName = name;
-    this.lastMoveAt = d.getTime();
+    this.createdAt = d.getTime();
+    this.lastMoveAt = this.createdAt;
     this.lastSentAt = this.nextMoveAt = this.lastMoveAt + defaultTick;
     
     this.field = fld;
@@ -144,8 +154,6 @@ Actor.prototype.poll = function(curTime) {
     var hoge = dv.mul( dTime * this.speedPerSec );
     var nextpos = this.pos.add( hoge );
 
-    //        sys.puts("pos:" + this.id + ":"+ this.pos.x+","+this.pos.y+","+this.pos.z+" np:"+nextpos.x+","+nextpos.y+","+nextpos.z + " dt:"+dTime + " sp:" + this.speedPerSec + " pt:"+ this.pitch );
-
     
     if( this.toPos != undefined && this.toPos != null ) {
         // 目的地が設定されてる場合は
@@ -164,6 +172,8 @@ Actor.prototype.poll = function(curTime) {
             // 到達したらtoposを初期化
             var cursign = this.toPos.diffSign( this.pos );
             var nextsign = this.toPos.diffSign( nextpos );
+            //            sys.puts( "cursign:" + cursign.to_s() + " nsign:"+ nextsign.to_s() );
+
             if( cursign.diff( nextsign ).equal( new g.Vector3(0,0,0)) == false ){
                 nextpos = this.toPos;
                 this.toPos = null;
@@ -215,33 +225,48 @@ Actor.prototype.poll = function(curTime) {
         }
     }
 
-    var blkn = this.field.get( nextpos.ix(), nextpos.iy(), nextpos.iz() );
-    
-    var x_ok = false;
-    var y_ok = false;
-    var z_ok = false;
+    var diffVec = this.pos.diff( nextpos );
+    var bloopn = Math.floor(  diffVec.length() ) + 1;
 
-    if( blkn == null || blkn == g.BlockType.AIR ){
-        x_ok = y_ok = z_ok = true;
-    } else {
-        var np2 = new g.Vector3( this.pos.x, nextpos.y, this.pos.z );
-        var blkcur2 = this.field.get( np2.ix(), np2.iy(), np2.iz() );
-        if( blkcur2 != null && blkcur2 == g.BlockType.AIR ) y_ok = true;
 
-        var np3 = new g.Vector3( this.pos.x, this.pos.y, nextpos.z );
-        var blkcur3 = this.field.get( np3.ix(), np3.iy(), np3.iz() );
-        if( blkcur3 != null && blkcur3 == g.BlockType.AIR ) z_ok = true;
+    for( var bi = 0; bi < bloopn; bi++ ){
+        var u = (bi + 1) / bloopn;
+
+        var np = this.pos.mul(1-u).add( nextpos.mul(u));
+
+        var blkn = this.field.get( np.ix(), np.iy(), np.iz() );
+
+        var x_ok = false;
+        var y_ok = false;
+        var z_ok = false;
+
+        if( blkn == null || blkn == g.BlockType.AIR ){
+            // 通れる場合はループ継続
+            x_ok = y_ok = z_ok = true;
+            this.pos = nextpos;
+        } else {
+            // 通れない場合はループ終わりで抜ける
+            var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
+            var blkcur2 = this.field.get( np2.ix(), np2.iy(), np2.iz() );
+            if( blkcur2 != null && blkcur2 == g.BlockType.AIR ) y_ok = true;
+
+            var np3 = new g.Vector3( this.pos.x, this.pos.y, np.z );
+            var blkcur3 = this.field.get( np3.ix(), np3.iy(), np3.iz() );
+            if( blkcur3 != null && blkcur3 == g.BlockType.AIR ) z_ok = true;
     
-        var np4 = new g.Vector3( nextpos.x, this.pos.y, this.pos.z );
-        var blkcur4 = this.field.get( np4.ix(), np4.iy(), np4.iz() );
-        if( blkcur4 != null && blkcur4 == g.BlockType.AIR ) x_ok = true;
+            var np4 = new g.Vector3( np.x, this.pos.y, this.pos.z );
+            var blkcur4 = this.field.get( np4.ix(), np4.iy(), np4.iz() );
+            if( blkcur4 != null && blkcur4 == g.BlockType.AIR ) x_ok = true;
+
+            var finalnextpos = this.pos;
+            if( x_ok ) finalnextpos.x = nextpos.x;
+            if( y_ok ) finalnextpos.y = nextpos.y;
+            if( z_ok ) finalnextpos.z = nextpos.z;
+
+            this.pos = finalnextpos;
+            break;
+        }
     }
-    var finalnextpos = this.pos;
-    if( x_ok ) finalnextpos.x = nextpos.x;
-    if( y_ok ) finalnextpos.y = nextpos.y;
-    if( z_ok ) finalnextpos.z = nextpos.z;
-
-    this.pos = finalnextpos;
 
     if(this.pos.x<0){ this.pos.x=0; x_ok=false; }
     if(this.pos.z<0){ this.pos.z=0; z_ok=false; }
@@ -357,7 +382,15 @@ function Mob( name, fld, pos ) {
     } 
     return m;
 };
-
+function Debri( t, fld, pos ) {
+    var n = g.BlockTypeToString(t);
+    if( n==null )throw "invalid block type:"+t;    
+    var d = new Actor( n + "_debri",fld,pos);
+    d.func = debriMove;
+    d.speedPerSec = 0;
+    d.debriType = t;
+    return d;
+};
 
 function bulletMove( curTime ) {
     sys.puts("bmove. pos:" + this.pos.to_s() );
@@ -411,5 +444,6 @@ Actor.prototype.shoot = function( speed, dtl, damage ) {
 
 exports.Actor = Actor;
 exports.Mob = Mob;
+exports.Debri = Debri;
 exports.Bullet = Bullet;
 exports.PlayerCharacter = PlayerCharacter;

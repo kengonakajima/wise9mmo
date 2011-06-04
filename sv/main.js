@@ -94,7 +94,7 @@ function jump(dy){
 
 function getField(x0,y0,z0,x1,y1,z1){
     if(this.gfcnt==undefined)this.gfcnt=0;else this.gfcnt++;
-    //    sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
+    //        sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
     var blkary = fld.getBlockBox(x0,y0,z0,x1,y1,z1);
     var lgtary = fld.getLightBox(x0,y0,z0,x1,y1,z1);
     if(blkary==null||lgtary==null){
@@ -104,8 +104,11 @@ function getField(x0,y0,z0,x1,y1,z1){
     }
 }
 function dig(x,y,z){
-    sys.puts("dig:"+x+","+y+","+z);
-    // todo: 無条件に受けいれてる
+    var v = new g.Vector3(x,y,z);
+    var d = v.distance( this.pc.pos );
+    sys.puts("dig:"+x+","+y+","+z + " d:" + d );
+    if( d > 4 ) return;
+    
     var b = fld.get(x,y,z);
     if( b != null && modField.diggable(b) ){
         fld.set( x,y,z, g.BlockType.AIR);
@@ -145,6 +148,15 @@ function attack() {
 }
 function chat(txt) {
     sys.puts("chat:"+txt);
+    if( txt == "debri" ){
+        fld.addDebri( g.BlockType.STONE, this.pc.pos );
+        return;
+    }  else if( txt == "set" ) {
+        //        fld.runtimeSet( this.pc.pos.toPos(), g.BlockType.STONE);
+        var v = this.pc.pos.toPos();
+        fld.set( v.x, v.y, v.z, g.BlockType.STONE);
+        return;
+    }
 
     this.nearcastIncludeSelf( "chatNotify", this.clientID, txt );
 }
@@ -308,4 +320,10 @@ setInterval( function() {
 setInterval( function() {
         sys.puts( "loop:" + loopCounter );
     }, 10000 );
+
+
+
+
+
+//sys.puts( "hoge:" + g.BlockType.include(1));
 

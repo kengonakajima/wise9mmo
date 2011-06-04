@@ -275,7 +275,7 @@ function Update() {
 
 
         toolT.position = cam.transform.position + cam.transform.forward*0.6 + (cam.transform.right*0.2) + cam.transform.up*-0.2;
-        print("p:" + toolT.position);
+
         toolT.rotation = cam.transform.rotation;
         //        toolT.LookAt(nose + Vector3(0,0.5,0));
         

@@ -154,6 +154,13 @@ Field.prototype.set = function(x,y,z,t){
     if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize)return;
     this.blocks[ toIndex( x,y,z,this.hSize) ] = t;
 };
+
+Field.prototype.runtimeSet = function(p,t){
+    this.set( p.x, p.y, p.z, t );
+    this.recalcSunlight( p.x-1,p.z-1,p.xx+1,p.z+1);
+    main.nearcast( p, "changeFieldNotify", p.x,p.y,p.z);
+};
+
 Field.prototype.setSunlight = function(x,y,z,t){
     if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize)return;
     this.sunlight[ toIndex( x,y,z,this.hSize) ] = t;
@@ -374,6 +381,13 @@ Field.prototype.addMob = function(name, pos) {
     this.addActor(act);
     return act;
 };
+// 壊れたブロック
+Field.prototype.addDebri = function(t, pos ) {
+    var act = new modActor.Debri(t,this,pos);
+    this.addActor(act);
+    return act;
+};
+    
 
 Field.prototype.addPC = function(name,pos,sock) {
     var pc = new modActor.PlayerCharacter(name,this,pos);
@@ -394,8 +408,7 @@ Field.prototype.poll = function(curTime){
     for( var k in this.actors ){
         var a = this.actors[k];
         if(a==null)continue;
-        a.poll(curTime);
-        
+        a.poll(curTime);        
     }
 };
 
