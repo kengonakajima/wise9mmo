@@ -28,6 +28,7 @@ var headObj : GameObject;
 var walkAnimName : String;
 var idleAnimName : String;
 
+
 var omitBody: System.Boolean; // trueにすると、身体を省略して手だけにする（自キャラ用）
 
 function Start() {
@@ -43,6 +44,7 @@ function Start() {
             headObj = Instantiate(  headPrefab, transform.position + Vector3(-0.125,1.4,0), transform.rotation );
         }
     }
+
     
 }
 
@@ -105,14 +107,12 @@ function setMaterial(tex) {
 
 
 function Update() {
-
-
     
     prevPos = this.transform.position;
     
     var dTime = Time.realtimeSinceStartup - lastInterval;
     lastInterval = Time.realtimeSinceStartup;
-
+    
     var dnose : Vector3;
     var dside : Vector3;
     
@@ -244,7 +244,7 @@ function Update() {
         var sv = Vector3( 0, 1.4 * transform.localScale.y, 0 );//-0.125 * transform.localScale.z ) ;
         headObj.transform.position = transform.position + sv;
         headObj.transform.localScale = transform.localScale;
-        headObj.transform.LookAt( nose + sv ); //rotation = transform.rotation;
+        headObj.transform.LookAt( nose + sv ); 
 
         headObj.renderer.material.mainTexture = texture; // TODO: 重い. サボってる
     }
@@ -277,11 +277,9 @@ function Update() {
         toolT.position = cam.transform.position + cam.transform.forward*0.6 + (cam.transform.right*0.2) + cam.transform.up*-0.2;
 
         toolT.rotation = cam.transform.rotation;
-        //        toolT.LookAt(nose + Vector3(0,0.5,0));
         
     }
-    
-    
+
 }
 function PlayUseAnimation() {
 

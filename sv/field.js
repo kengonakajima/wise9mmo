@@ -152,7 +152,9 @@ Field.prototype.getSunlight = function(x,y,z){
 
 Field.prototype.set = function(x,y,z,t){
     if( x<0||y<0||z<0||x>this.hSize||y>this.vSize||z>this.hSize)return;
+    var prev = this.get(x,y,z);
     this.blocks[ toIndex( x,y,z,this.hSize) ] = t;
+    return prev;        
 };
 
 Field.prototype.runtimeSet = function(p,t){

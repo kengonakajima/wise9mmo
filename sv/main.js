@@ -111,9 +111,11 @@ function dig(x,y,z){
     
     var b = fld.get(x,y,z);
     if( b != null && modField.diggable(b) ){
-        fld.set( x,y,z, g.BlockType.AIR);
+        var prev = fld.set( x,y,z, g.BlockType.AIR);
         fld.recalcSunlight( x-1,z-1,x+1,z+1);
         this.nearcast( "changeFieldNotify", x,y,z);
+
+        fld.addDebri( prev, new g.Vector3(x+0.5,y+0.5,z+0.5));
         sys.puts("digged.");
     }    
 }

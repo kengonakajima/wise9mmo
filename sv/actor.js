@@ -3,8 +3,18 @@ var g = require("./global");
 var main = require("./main");
 
 
+// PC
+
+function pcMove( curTime ) {
+    //    sys.puts( "p:"+this.pos.to_s());
+};
+
 // デブリ
 function debriMove( curTime ) {
+    this.pitch += 1 * this.dTime;
+    if( this.pitch > Math.PI*2 ){
+        this.pitch = 0;
+    }
     if( curTime > ( this.createdAt + 5000 ) ){
         var p = this.pos.toPos();
         this.field.runtimeSet( p, this.debriType );
@@ -108,6 +118,7 @@ Actor.prototype.poll = function(curTime) {
     if( ( this.nextMoveAt >= curTime )  ) return;
 
     var dTime = ( curTime - this.lastMoveAt ) / 1000.0;
+    this.dTime = dTime;
     this.lastMoveAt = curTime;
     this.nextMoveAt = curTime + defaultTick;
     
@@ -188,7 +199,7 @@ Actor.prototype.poll = function(curTime) {
     var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
     if( blkcur != null && blkcur != g.BlockType.AIR ){
         // 壁の中にいま、まさにうまってる
-        nextpos.y += 1;
+        this.pos.y += 1;
         this.falling = false;
         this.dy = 0;
      }
@@ -280,13 +291,11 @@ Actor.prototype.poll = function(curTime) {
     
     // 送信. 落ちてる最中ではない場合は、あまり多く送らない
     var toSend = false;
-    if( this.toSend ){
-        toSend = true;
-    }
+
     if( this.lastSentAt < (curTime-500) ) toSend = true;
     if( this.falling && this.dy != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
 
-    if( toSend ){
+    if( toSend && this.toSend == true ){
 
         main.nearcast( this.pos,
                        "moveNotify",
@@ -374,6 +383,7 @@ function PlayerCharacter( name, fld, pos ) {
     pc.hp = 10;
     pc.hitGroundFunc = pcHitGround;
     pc.speedPerSec = g.PlayerSpeed;
+    pc.func = pcMove;
     return pc;
 };
 function Mob( name, fld, pos ) {

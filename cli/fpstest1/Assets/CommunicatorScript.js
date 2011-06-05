@@ -96,39 +96,92 @@ function sendWithParams(meth, params ){
     protocol.writeSocket( hashToJson(h));
 }
 
-function searchPC( id:int ){
+function searchActor( id:int ){
     return GameObject.Find(""+id);
 }
 
 var zombieTexture : Texture;
 var pcTexture : Texture;
 
-function ensurePC( id:int, typeName:String, pos:Vector3 ){
+var prefabDebri : GameObject;
 
-    var pc = searchPC(id);
-    if(pc==null){
-        pc = Instantiate( prefabGuest, pos,  Quaternion.identity );
-        pc.name = "" + id;
-        var hs = pc.GetComponent( "HeroScript" );
+function makeDebriCube(a) {
+    var mesh = a.GetComponent(MeshFilter).mesh;
+
+    var cmaker = a.GetComponent("ChunkMaker");
+    
+    print("mesh:"+mesh);
+
+    mesh.Clear();
+        
+    var vertices : Vector3[] = new Vector3[ 4*6 ]; // 立方体でuvを別々にするために各面４点必要
+    var uv : Vector2[] = new Vector2[ 4*6 ];
+    var triangles : int[] = new int[ 3 * 2 * 6 ];
+    var normals : Vector3[] = new Vector3[4*6]; // 頂点数と同じだけ必要
+
+    var lts:int[] = new int[6*4]; // Z=0 Z=1 X=0 X=1 Y=0 Y=1 の順
+    var drawflags:int[] = new int[6]; // 各面を描画するかどうかのフラグ
+    var i;
+    for(i=0;i<6*4;i++){ lts[i]=5; }
+    for(i=0;i<6;i++){ drawflags[i]=1; }
+    
+    cmaker.makeCube( Vector3(-0.5,0,-0.5),
+                     vertices,
+                     uv,
+                     normals,
+                     0,
+                     triangles,
+                     0,
+                     STONE,
+                     lts,
+                     drawflags );
+                     
+    mesh.vertices = vertices;
+    mesh.uv = uv;
+    mesh.triangles = triangles;
+    mesh.normals = normals;
+
+
+    a.transform.localScale = Vector3(0.5,0.5,0.5);
+}
+
+
+function ensureActor( id:int, typeName:String, pos:Vector3 ){
+
+    var a = searchActor(id);
+    if(a!=null) return a;
+    
+    if( typeName == "pc" || typeName == "zombie" ){
+        a = Instantiate( prefabGuest, pos,  Quaternion.identity );
+        var hs = a.GetComponent( "HeroScript" );
         hs.clientID = id;
         hs.showName =  typeName + "_" + id;
         if( hs.clientID == myClientID ){
-            pc.transform.localScale = Vector3(0.2,0.2,0.2);
+            a.transform.localScale = Vector3(0.2,0.2,0.2);
         } else {
-            pc.transform.localScale = Vector3(0.7,0.7,0.7);
+            a.transform.localScale = Vector3(0.7,0.7,0.7);
         }
-        
-        if( typeName == "zombie" ){
+        if(typeName=="zombie"){
             hs.walkAnimName = "zwalk";
             hs.idleAnimName = "zidle";
-            hs.setMaterial( zombieTexture );
+            hs.setMaterial( zombieTexture );            
         } else {
             hs.walkAnimName = "walk";
             hs.idleAnimName = "idle";
-            hs.setMaterial( pcTexture );
-        }
+            hs.setMaterial( pcTexture );            
+        }        
+    } else if( typeName == "STONE_debri" ){
+        a = Instantiate( prefabDebri, pos, Quaternion.identity );
+        hs = a.GetComponent( "HeroScript");
+        hs.clientID = id;
+        hs.showName =  typeName + "_" + id;
+        
+        makeDebriCube(a);
+
     }
-    return pc;
+
+    a.name = "" + id;
+    return a;
 }
 
 function rpcEcho( any ) {
@@ -150,11 +203,11 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
 }
 
 function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt ){
-    if(cliID==1001) print( "id:"+cliID+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+    //    print( "id:"+cliID+" tn:"+typeName+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
     
     // idからpcを検索
     var pos:Vector3 = Vector3( x, y, z );
-    var pc = ensurePC( cliID, typeName, pos );
+    var pc = ensureActor( cliID, typeName, pos );
 
     var hs = pc.GetComponent( "HeroScript");
     hs.SetMove( speed, pitch, yaw, pos, dy, dt );
@@ -206,7 +259,7 @@ function rpcChangeFieldNotify( x,y,z ) {
 }
 
 function rpcJumpNotify( cliID, dy ) {
-    var pc = searchPC(cliID);
+    var pc = searchActor(cliID);
     if(pc==null)return;
     var hs = pc.GetComponent( "HeroScript");
     hs.JumpByRemote(dy);
