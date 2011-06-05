@@ -372,7 +372,6 @@ Field.prototype.searchLatestNearPC = function ( pos, dia, thresTime ) {
 
 Field.prototype.addActor = function(act) {
     this.actors[act.id] = act;
-    act.toSend = true;
 };
 
 // 敵を1体出す

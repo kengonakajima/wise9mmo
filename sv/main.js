@@ -144,7 +144,7 @@ function put(x,y,z,tname){
 function attack() {
     sys.puts("attack: pitch"+this.pc.pitch + " yaw:" + this.pc.yaw );
 
-    this.pc.shoot( 10, 5, 5 );
+    this.pc.shoot( "hidden", 10, 5, 5 );
 }
 function chat(txt) {
     sys.puts("chat:"+txt);

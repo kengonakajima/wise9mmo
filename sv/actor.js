@@ -47,9 +47,7 @@ function zombieMove( curTime ) {
     if( this.pos.hDistance( targetPos ) < 1.0 ){
         this.vVel = 0;
     } else {
-        if( this.falling == false ){
-            this.vVel = 1.0;
-        }
+        this.vVel = 1.0;
     }
 
     /////////////
@@ -94,7 +92,7 @@ function Actor( name, fld, pos ) {
     actorID++;
 
     this.counter = 0;
-
+    this.toSend = true;
 
     // 以下、移動関連
     this.dy = 0;
@@ -207,17 +205,18 @@ Actor.prototype.poll = function(curTime) {
     }
     if( blkfound ){
         var pcy = nextpos.iy();
-        //        if(this.typeName=="pc") sys.puts( "pcy:" + pcy + " blkhity:" + blkhity  + " falling:" + this.falling );
+        //                if(this.typeName=="zombie") sys.puts( "pcy:" + pcy + " blkhity:" + blkhity  + " falling:" + this.falling );
         if( blkhity < pcy ){
-            //                sys.puts( "start falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
-
-            this.falling = true;
+            if( blkhity == (pcy-1) && (nextpos.y - nextpos.iy()) < 0.1 ){
+                //      sys.puts( "nostart falling!");
+            } else {
+                //                sys.puts( "start falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
+                this.falling = true;
+            }
         } else {
             // 落ち終わった。高速で落ちた場合はダメージ等の計算
             if( this.hitGroundFunc ) this.hitGroundFunc.apply( this, [this.dy] );
-            
-            //                sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
-
+            //                            sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
             nextpos.y = blkhity + 1;
             this.falling = false;
             this.dy =0 ;
@@ -228,7 +227,10 @@ Actor.prototype.poll = function(curTime) {
     var diffVec = this.pos.diff( nextpos );
     var bloopn = Math.floor(  diffVec.length() ) + 1;
 
-
+    var x_ok = false;
+    var y_ok = false;
+    var z_ok = false;
+    
     for( var bi = 0; bi < bloopn; bi++ ){
         var u = (bi + 1) / bloopn;
 
@@ -236,14 +238,12 @@ Actor.prototype.poll = function(curTime) {
 
         var blkn = this.field.get( np.ix(), np.iy(), np.iz() );
 
-        var x_ok = false;
-        var y_ok = false;
-        var z_ok = false;
+        
 
         if( blkn == null || blkn == g.BlockType.AIR ){
             // 通れる場合はループ継続
             x_ok = y_ok = z_ok = true;
-            this.pos = nextpos;
+            this.pos = np;
         } else {
             // 通れない場合はループ終わりで抜ける
             var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
@@ -259,9 +259,9 @@ Actor.prototype.poll = function(curTime) {
             if( blkcur4 != null && blkcur4 == g.BlockType.AIR ) x_ok = true;
 
             var finalnextpos = this.pos;
-            if( x_ok ) finalnextpos.x = nextpos.x;
-            if( y_ok ) finalnextpos.y = nextpos.y;
-            if( z_ok ) finalnextpos.z = nextpos.z;
+            if( x_ok ) finalnextpos.x = np.x;
+            if( y_ok ) finalnextpos.y = np.y;
+            if( z_ok ) finalnextpos.z = np.z;
 
             this.pos = finalnextpos;
             break;
@@ -285,7 +285,9 @@ Actor.prototype.poll = function(curTime) {
     }
     if( this.lastSentAt < (curTime-500) ) toSend = true;
     if( this.falling && this.dy != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
+
     if( toSend ){
+
         main.nearcast( this.pos,
                        "moveNotify",
                        this.id,
@@ -371,7 +373,7 @@ function PlayerCharacter( name, fld, pos ) {
     pc.playerName = name;
     pc.hp = 10;
     pc.hitGroundFunc = pcHitGround;
-    pc.speedPerSec = g.PlayerSpeed;    
+    pc.speedPerSec = g.PlayerSpeed;
     return pc;
 };
 function Mob( name, fld, pos ) {
@@ -414,7 +416,7 @@ function bulletMove( curTime ) {
 
 // speed: (m/sec)
 // dtl: distance to live. (m)
-function Bullet( fld, pos, shooter, pitch, yaw, speed, dtl, damage ) {
+function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, dtl, damage ) {
 
     var v = new g.Vector3( Math.cos(pitch), yaw, Math.sin(pitch) );
 
@@ -424,7 +426,6 @@ function Bullet( fld, pos, shooter, pitch, yaw, speed, dtl, damage ) {
     b.pitch = pitch;
     b.yaw = yaw;
 
-    
     b.dy = v.y * speed;
     b.speedPerSec = speed;
     b.origPos = pos;
@@ -433,11 +434,17 @@ function Bullet( fld, pos, shooter, pitch, yaw, speed, dtl, damage ) {
     b.shooter = shooter;
     b.direction = v.normalized();
     b.func = bulletMove;
+
+    if( tname=="hidden"){ // 透明で見えないフラグ
+        b.toSend = false;
+    }
+    
     return b;    
 };
 
-Actor.prototype.shoot = function( speed, dtl, damage ) {
-    var b = new Bullet( this.field, this.pos, this, this.pitch, this.yaw, speed, dtl, damage );
+// tname : "hidden"だとmove送らない
+Actor.prototype.shoot = function( tname, speed, dtl, damage ) {
+    var b = new Bullet( tname, this.field, this.pos, this, this.pitch, this.yaw, speed, dtl, damage );
     this.field.addActor(b);
     return b;
 };
