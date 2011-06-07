@@ -97,10 +97,13 @@ function Actor( name, fld, pos ) {
 
     this.speedPerSec = 0; // 1秒あたり何m進むか
     this.func = null;
-
+    this.antiGravity = 1; // 大きくすると落ちにくい
     this.id = actorID + 1000; 
     actorID++;
 
+    this.hitGroundFunc = null; // 地面に当たった
+    this.hitWallFunc = null; // 壁に触れた
+        
     this.counter = 0;
     this.toSend = true;
 
@@ -111,6 +114,8 @@ function Actor( name, fld, pos ) {
     this.pitch = 0.0;
     this.yaw = 0.0;
     this.vVel = 0.0;
+
+    this.lastXOK = this.lastYOK = this.lastZOK = true;
 };
     
 Actor.prototype.poll = function(curTime) {
@@ -150,7 +155,8 @@ Actor.prototype.poll = function(curTime) {
 
     
     if(this.falling){
-        this.dy -= 6.5 * dTime;
+        var gr = 6.5 / this.antiGravity;
+        this.dy -= gr * dTime;
     }    
 
     if( this.pos.y < 0 ){
@@ -226,7 +232,7 @@ Actor.prototype.poll = function(curTime) {
             }
         } else {
             // 落ち終わった。高速で落ちた場合はダメージ等の計算
-            if( this.hitGroundFunc ) this.hitGroundFunc.apply( this, [this.dy] );
+            if( this.hitGroundFunc ) this.hitGroundFunc.apply( this, [ new g.Pos( this.pos.ix(), blkhity, this.pos.iz() ) ] );
             //                            sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
             nextpos.y = blkhity + 1;
             this.falling = false;
@@ -256,6 +262,9 @@ Actor.prototype.poll = function(curTime) {
             x_ok = y_ok = z_ok = true;
             this.pos = np;
         } else {
+            if( this.hitWallFunc ) this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ) ] );
+            
+            
             // 通れない場合はループ終わりで抜ける
             var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
             var blkcur2 = this.field.get( np2.ix(), np2.iy(), np2.iz() );
@@ -308,10 +317,15 @@ Actor.prototype.poll = function(curTime) {
                        this.pitch,
                        this.yaw,
                        this.dy,
-                       (curTime - this.lastSentAt) / 1000.0 );
+                       (curTime - this.lastSentAt) / 1000.0,
+                       this.antiGravity
+                       );
         this.lastSentAt = curTime;
     }
 
+    if( this.sendMark ){
+        main.nearcast( this.pos, "markNotify", this.pos.x, this.pos.y, this.pos.z );
+    }
 };
 
 // args: すべて float 
@@ -356,7 +370,6 @@ Actor.prototype.collide = function( dia ) {
         var a = this.field.actors[k];
         if(!a)continue;
         var d = a.pos.diff( this.pos).length();
-        sys.puts("d:"+d + " " + a.typeName );
         if( a != null && d < dia && a != this ){
             ret.push(a);
         }
@@ -366,12 +379,13 @@ Actor.prototype.collide = function( dia ) {
 
 // PC
 
-function pcHitGround(dy) {
-    if( dy < -4 ){
-        var dmg = Math.round( ( dy + 4 ) / 2 ); // 負の値
+function pcHitGround(p) {
+    sys.puts( "pcHitGround: p:"  + p.to_s() );
+    if( this.dy < -4 ){
+        var dmg = Math.round( ( this.dy + 4 ) / 2 ); // 負の値
         if( dmg != 0 ){
             this.hp += dmg;
-            sys.puts( "fall damage! me: " + this.typeName + " dy:" + dmg );
+            sys.puts( "fall damage! me: " + this.typeName + " dmg:" + dmg );
             main.nearcast( this.pos, "statusChange", this.id, this.hp );
         }
     }
@@ -406,8 +420,8 @@ function Debri( t, fld, pos ) {
 
 function bulletMove( curTime ) {
     sys.puts("bmove. pos:" + this.pos.to_s() );
+    
     this.vVel = 1;
-    var hit = false;
 
     var col = this.collide( 1 );　
     for( var i in col ){
@@ -417,44 +431,57 @@ function bulletMove( curTime ) {
         a.attacked( this.damage, this );
         
     }
-    
-    if( this.pos.diff( this.origPos ).length() > this.distanceToLive || hit ){
-        sys.puts( "bullet: delete");
+
+    if( this.nextMoveAt > this.dieAt ){
+        sys.puts( "bullet: TTL. die");
         this.field.deleteActor( this.id );
     }
 };
 
 // speed: (m/sec)
 // dtl: distance to live. (m)
-function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, dtl, damage ) {
+function bulletTouchMap(p){
+    sys.puts( "bulletTouchMap: p:"+p.to_s());
+    this.field.deleteActor(this.id);
+    if( this.typeName == "arrow" ){
+        this.landingAt = this.nextMoveAt;
+    }
+};
+
+function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttl, damage ) {
 
     var v = new g.Vector3( Math.cos(pitch), yaw, Math.sin(pitch) );
 
-    var b = new Actor( "bullet", fld, pos.add( v.normalized()) );
+    var b = new Actor( tname, fld, pos.add( v.normalized()) );
 
     b.falling = true;
     b.pitch = pitch;
     b.yaw = yaw;
 
-    b.dy = v.y * speed;
+    b.dy = v.y ;
     b.speedPerSec = speed;
     b.origPos = pos;
-    b.distanceToLive = dtl;
+    b.dieAt = this.createdAt + ttl;
     b.damage = damage;
     b.shooter = shooter;
     b.direction = v.normalized();
     b.func = bulletMove;
-
+    b.sendMark = true;
     if( tname=="hidden"){ // 透明で見えないフラグ
         b.toSend = false;
     }
+
+    b.hitWallFunc = bulletTouchMap;
+    b.hitGroundFunc = bulletTouchMap;
+
+    this.landingAt = 0;
     
     return b;    
 };
 
 // tname : "hidden"だとmove送らない
-Actor.prototype.shoot = function( tname, speed, dtl, damage ) {
-    var b = new Bullet( tname, this.field, this.pos, this, this.pitch, this.yaw, speed, dtl, damage );
+Actor.prototype.shoot = function( tname, speed, ttl, damage ) {
+    var b = new Bullet( tname, this.field, this.pos, this, this.pitch, this.yaw, speed, ttl, damage );
     this.field.addActor(b);
     return b;
 };

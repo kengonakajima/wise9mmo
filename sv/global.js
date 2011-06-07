@@ -33,7 +33,10 @@ Pos.prototype.distance = function(pos){
 Pos.prototype.diff = function(pos){
     return new Pos( pos.x - this.x, pos.y - this.y, pos.z - this.z );
 };
-
+Pos.prototype.to_s = function(){
+    return "{"+this.x+","+this.y+","+this.z+"}";
+};
+    
 
 
 
@@ -103,7 +106,6 @@ Vector3.prototype.getPitch = function( dv ) {
     return rot;
 };
 Vector3.prototype.to_s = function(){
-    
     return "{"+(Math.round(this.x*1000)/1000)+","+(Math.round(this.y*1000)/1000)+","+(Math.round(this.z*1000)/1000)+"}";
 };
     

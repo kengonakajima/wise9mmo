@@ -104,6 +104,7 @@ var zombieTexture : Texture;
 var pcTexture : Texture;
 
 var prefabDebri : GameObject;
+var prefabArrow : GameObject;
 
 function makeDebriCube(a) {
     var mesh = a.GetComponent(MeshFilter).mesh;
@@ -156,7 +157,7 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         var hs = a.GetComponent( "HeroScript" );
         hs.clientID = id;
         hs.showName =  typeName + "_" + id;
-        if( hs.clientID == myClientID ){
+        if( id == myClientID ){
             a.transform.localScale = Vector3(0.2,0.2,0.2);
         } else {
             a.transform.localScale = Vector3(0.7,0.7,0.7);
@@ -177,9 +178,14 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         hs.showName =  typeName + "_" + id;
         
         makeDebriCube(a);
-
+    } else if( typeName == "arrow" ) {
+        a = Instantiate( prefabArrow, pos, Quaternion.identity );
+        hs = a.GetComponent( "HeroScript");
+        hs.clientID = id;
+        hs.showName =  typeName + "_" + id;
+        
     }
-
+    print("typeName:"+typeName);
     a.name = "" + id;
     return a;
 }
@@ -197,20 +203,20 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
     var hs = hero.GetComponent("HeroScript" );
     hs.clientID = myClientID;
 
-    hs.SetMove( speedps, 0, 0, Vector3( x,y,z ), 0, 1 );
+    hs.SetMove( speedps, 0, 0, Vector3( x,y,z ), 0, 1, 1 );
 
 
 }
 
-function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt ){
-    //    print( "id:"+cliID+" tn:"+typeName+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
+    //        print( "id:"+cliID+" tn:"+typeName+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
     
     // idからpcを検索
     var pos:Vector3 = Vector3( x, y, z );
     var pc = ensureActor( cliID, typeName, pos );
 
     var hs = pc.GetComponent( "HeroScript");
-    hs.SetMove( speed, pitch, yaw, pos, dy, dt );
+    hs.SetMove( speed, pitch, yaw, pos, dy, dt, ag );
 
     // 遠すぎたら強制ワープ
     var hero = GameObject.Find( "HeroCube" );
@@ -243,6 +249,13 @@ function rpcDisappear( cliID ) {
 function rpcChatNotify(cliID, txt){
     AppendLog( ""+cliID+": "+ txt);
 }
+
+var prefabMark : GameObject;
+
+function rpcMarkNotify(x,y,z) {
+    var m = Instantiate( prefabMark, Vector3( x,y,z ), Quaternion.identity );
+}
+
 
 //変化のお知らせがあったので地形要求
 function rpcChangeFieldNotify( x,y,z ) {
@@ -278,6 +291,7 @@ function Start () {
     addRPC( "statusChange", rpcStatusChange );
     addRPC( "disappear", rpcDisappear );
     addRPC( "chatNotify", rpcChatNotify );
+    addRPC( "markNotify", rpcMarkNotify );
 }
 
 
@@ -312,6 +326,7 @@ function doProtocol() {
     var thresSec = 0.2;
     if( hs.falling ) thresSec = 0.05;
     if(  t > ( protocolLastSent + thresSec ) || hs.needSend ){
+        print("yaw:"+hs.yaw);
         send( "move",
               hero.transform.position.x,
               hero.transform.position.y,
@@ -397,7 +412,9 @@ function doProtocolOne( h ){
     case 7: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6] ); break;
     case 8: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7] ); break;
     case 9: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8] ); break;
-    case 10: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9] ); break;        
+    case 10: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9] ); break;
+    case 11: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9], ra[10] ); break;
+    case 12: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9], ra[10], ra[11] ); break;                        
     default: throw "too many args from server"; 
     }
 

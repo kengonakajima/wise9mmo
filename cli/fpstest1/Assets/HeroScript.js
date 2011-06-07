@@ -66,11 +66,14 @@ var gotoYaw : float;
 var gotoOrigYaw : float;
 var gotoPitch : float;
 var gotoOrigPitch : float;
+var antiGravity : float;
 
 var prevPos : Vector3;
 
-function SetMove( speedps, pt, yw, pos, _dy, dt ) {
+// ag: antigravity
+function SetMove( speedps, pt, yw, pos, _dy, dt, ag ) {
     speedPerSec = speedps;
+    antiGravity = ag;
     gotoYaw = yw;
     gotoOrigYaw = yaw;
     gotoPitch = pt;
@@ -134,7 +137,8 @@ function Update() {
     vVel = hVel = 0;
 
     if(falling){
-        dy -= 6.5 * dTime;
+        var gravity : float = 6.5 / antiGravity;
+        dy -= gravity * dTime;
     }
     
     // 絶対的な世界の底
@@ -230,6 +234,7 @@ function Update() {
 		var rate = ( gotoTime - Time.realtimeSinceStartup ) / gotoDiffTime;
 		var nextv = gotoOrigPos + dv * (1.0-rate);
 		transform.position.x = nextv.x;
+		transform.position.y = nextv.y;        
 		transform.position.z = nextv.z;
         var dyaw = gotoYaw - gotoOrigYaw;
         var nextyaw = gotoOrigYaw + dyaw * (1.0-rate);

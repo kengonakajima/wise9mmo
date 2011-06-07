@@ -153,10 +153,14 @@ function chat(txt) {
     if( txt == "debri" ){
         fld.addDebri( g.BlockType.STONE, this.pc.pos );
         return;
-    }  else if( txt == "set" ) {
+    } else if( txt == "set" ) {
         //        fld.runtimeSet( this.pc.pos.toPos(), g.BlockType.STONE);
         var v = this.pc.pos.toPos();
         fld.set( v.x, v.y, v.z, g.BlockType.STONE);
+        return;
+    } else if( txt == "arrow" ) {
+        var b = this.pc.shoot( "arrow", 5, 30, 2 );
+        b.antiGravity = 4;
         return;
     }
 
