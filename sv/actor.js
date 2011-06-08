@@ -6,6 +6,7 @@ var main = require("./main");
 // PC
 
 function pcMove( curTime ) {
+    this.vForce = g.PlayerForce;
     //    sys.puts( "p:"+this.pos.to_s());
 };
 
@@ -55,28 +56,27 @@ function zombieMove( curTime ) {
     this.pitch = this.pos.getPitch( diff );
 
     if( this.pos.hDistance( targetPos ) < 1.0 ){
-        this.vVel = 0;
+        this.vForce = 0;
     } else {
-        this.vVel = 1.0;
+        this.vForce = 2.0;
     }
 
     /////////////
 
     // 障害物あったらジャンプ
     if( ( this.counter % 50 ) == 0 ){
-        //        sys.puts("z: lastxyz:" + this.lastXOK + "," + this.lastZOK + " dy:" + this.dy );
-        if( ( this.lastXOK == false || this.lastZOK == false ) && this.dy == 0 ){
-            this.dy = 4.0;
-            this.falling = true;
+        //        sys.puts("z: lastxyz:" + this.lastXOK + "," + this.lastZOK + " velY:" + this.velocity.y );
+        if( ( this.lastXOK == false || this.lastZOK == false ) && this.velocity.y == 0 ){
+            this.velocity.y = 4.0;
+
             sys.puts( "zombie jump!");
             main.nearcast( this.pos,
                            "jumpNotify",
                            this.id,
-                           this.dy ); 
+                           this.velocity.y ); 
         }
     }
 
-    //    if( this.dy != 0) sys.puts("z: falling: dy:"+this.dy + " vv:"+this.vVel + " y:" + this.pos.y );
 
 }
 
@@ -88,33 +88,34 @@ function Actor( name, fld, pos ) {
     var d = new Date();
 
     this.typeName = name;
-    this.createdAt = d.getTime();
+
+
+    // 共用
+    this.antiGravity = 1; // 大きくすると落ちにくい
+    this.pos = new g.Vector3( pos.x, pos.y, pos.z );
+
+    this.createdAt = d.getTime();    
     this.lastMoveAt = this.createdAt;
     this.lastSentAt = this.nextMoveAt = this.lastMoveAt + defaultTick;
     
     this.field = fld;
-    this.pos = new g.Vector3( pos.x, pos.y, pos.z );
-
-    this.speedPerSec = 0; // 1秒あたり何m進むか
     this.func = null;
-    this.antiGravity = 1; // 大きくすると落ちにくい
     this.id = actorID + 1000; 
     actorID++;
 
-    this.hitGroundFunc = null; // 地面に当たった
     this.hitWallFunc = null; // 壁に触れた
         
     this.counter = 0;
     this.toSend = true;
 
-    // 以下、移動関連
-    this.dy = 0;
 
-    this.falling = false;
+
+    // 以下、移動関連
+    this.velocity = new g.Vector3(0,0,0);
     this.pitch = 0.0;
     this.yaw = 0.0;
-    this.vVel = 0.0;
-
+    this.vForce = 0.0;
+    this.useForce = true;
     this.lastXOK = this.lastYOK = this.lastZOK = true;
 };
     
@@ -137,109 +138,62 @@ Actor.prototype.poll = function(curTime) {
     // 物理的に動かす
 
     var dnose = new g.Vector3(0,0,0);
-    var dside = new g.Vector3(0,0,0);
 
     dnose.x = 1.0 * Math.cos(this.pitch);
     dnose.y = 0; // サーバではyawは見ていない
     dnose.z = 1.0 * Math.sin(this.pitch);
-    dside.x = 1.0 * Math.cos(this.pitch - Math.PI/2);
-    dside.y = 0;
-    dside.z = 1.0 * Math.sin(this.pitch - Math.PI/2);
 
-    var dv = new g.Vector3( dnose.x * this.vVel,
-                            0,
-                            dnose.z * this.vVel );
-                            
-    this.vVel = 0;
-
-
-    
-    if(this.falling){
-        var gr = 6.5 / this.antiGravity;
-        this.dy -= gr * dTime;
-    }    
-
-    if( this.pos.y < 0 ){
-        this.pos.y = 0;
-        this.dy = 0;
-        falling = false;
+    if( this.useForce ){
+        this.velocity.x = dnose.x * this.vForce * dTime;
+        this.velocity.z = dnose.z * this.vForce * dTime;
     }
-    dv.y = this.dy;
 
-    var hoge = dv.mul( dTime * this.speedPerSec );
-    var nextpos = this.pos.add( hoge );
+
+    var gr = 6.5 / this.antiGravity;
+    this.velocity.y -= gr * dTime;
+
+    var nextpos = this.pos.add( this.velocity.mul(dTime) );
 
     
     if( this.toPos != undefined && this.toPos != null ) {
         // 目的地が設定されてる場合は
-        var toV = this.pos.diff(this.toPos);  // this.pos -> toPos
-        if( toV.length() < 0.01 ){
+        var dirV = this.pos.diff(this.toPos);  // this.pos -> toPos
+        if( dirV.length() < 0.01 ){
             this.toPos = null;
         } else {
-            //            sys.puts("to go: pos:" + this.pos.to_s() + " topos:" + this.toPos.to_s() + " tov:" + toV.to_s() + " toVd:" + toV.mul(dTime).to_s() + " ixyz:" + this.pos.ix() + ","+this.pos.iy() + "," + this.pos.iz()  + " dy:" + this.dy );
+            //            if( this.typeName=="pc") sys.puts("to go: pos:" + this.pos.to_s() + " topos:" + this.toPos.to_s() + " dirv:" + dirV.to_s() + " dirVd:" + dirV.mul(dTime).to_s() + " ixyz:" + this.pos.ix() + ","+this.pos.iy() + "," + this.pos.iz()  + " vf:" + this.vForce );
 
-            toV = toV.normalized().mul(this.speedPerSec);
+            dirV = dirV.normalized().mul(this.vForce);
 
-            nextpos = new g.Vector3( this.pos.x + toV.mul(dTime).x,
-                                     this.pos.y + this.dy * dTime,
-                                     this.pos.z + toV.mul(dTime).z );
+            nextpos = new g.Vector3( nextpos.x + dirV.mul(dTime).x,
+                                     nextpos.y,
+                                     nextpos.z + dirV.mul(dTime).z );
             
             // 到達したらtoposを初期化
             var cursign = this.toPos.diffSign( this.pos );
             var nextsign = this.toPos.diffSign( nextpos );
-            //            sys.puts( "cursign:" + cursign.to_s() + " nsign:"+ nextsign.to_s() );
+            //            if(this.typeName=="pc") sys.puts( "cursign:" + cursign.to_s() + " nsign:"+ nextsign.to_s() );
 
             if( cursign.diff( nextsign ).equal( new g.Vector3(0,0,0)) == false ){
                 nextpos = this.toPos;
                 this.toPos = null;
-                //                sys.puts( "goal! pos:" + this.pos.to_s() );
+                //                if(this.typeName=="pc")                sys.puts( "goal! pos:" + this.pos.to_s() );
             }            
         }
     }
 
+    this.vForce = 0;
 
-    // ポイントは、座標をセットするのではなく通常の物理挙動処理を使うこと。
-    // そのためには、hVel, vVelを求める必要がある。
-    // クライアントからのmoveのときにそれを受信し、ふつうに使う。
     
     var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
     if( blkcur != null && blkcur != g.BlockType.AIR ){
         // 壁の中にいま、まさにうまってる
         this.pos.y += 1;
-        this.falling = false;
-        this.dy = 0;
+        this.velocity.y = 0;
      }
 
-    var blkfound=false;
-    var blkhity=999;
-    for(var by=nextpos.iy();by>=0;by--){
-        var b = this.field.get( this.pos.ix(), by, this.pos.iz() );
-        if( b!=null && b != g.BlockType.AIR ){
-            blkfound = true;
-            blkhity =by;
-            break;
-        }
-    }
-    if( blkfound ){
-        var pcy = nextpos.iy();
-        //                if(this.typeName=="zombie") sys.puts( "pcy:" + pcy + " blkhity:" + blkhity  + " falling:" + this.falling );
-        if( blkhity < pcy ){
-            if( blkhity == (pcy-1) && (nextpos.y - nextpos.iy()) < 0.1 ){
-                //      sys.puts( "nostart falling!");
-            } else {
-                //                sys.puts( "start falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
-                this.falling = true;
-            }
-        } else {
-            // 落ち終わった。高速で落ちた場合はダメージ等の計算
-            if( this.hitGroundFunc ) this.hitGroundFunc.apply( this, [ new g.Pos( this.pos.ix(), blkhity, this.pos.iz() ) ] );
-            //                            sys.puts( "end   falling!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! blkhity:"+blkhity+ " pcy:"+pcy);
-            nextpos.y = blkhity + 1;
-            this.falling = false;
-            this.dy =0 ;
-            
-        }
-    }
+    
+    //    if( this.typeName == "pc")    sys.puts( "poll. tn:" + this.typeName + " pos:" + this.pos.to_s() + " v:" + this.velocity.to_s() );    
 
     var diffVec = this.pos.diff( nextpos );
     var bloopn = Math.floor(  diffVec.length() ) + 1;
@@ -247,7 +201,8 @@ Actor.prototype.poll = function(curTime) {
     var x_ok = false;
     var y_ok = false;
     var z_ok = false;
-    
+
+    //    if( this.typeName=="pc") sys.puts( "LOOPN: " + bloopn  + " len:" + diffVec.length() );
     for( var bi = 0; bi < bloopn; bi++ ){
         var u = (bi + 1) / bloopn;
 
@@ -257,13 +212,13 @@ Actor.prototype.poll = function(curTime) {
 
         
 
-        if( blkn == null || blkn == g.BlockType.AIR ){
+        if( blkn == g.BlockType.AIR ){
             // 通れる場合はループ継続
             x_ok = y_ok = z_ok = true;
             this.pos = np;
+            //            if( this.typeName=="pc") sys.puts("nohitw. np:"+np.to_s() + " nextp:"+nextpos.to_s() + " v:" + this.velocity.to_s() );            
         } else {
-            if( this.hitWallFunc ) this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ) ] );
-            
+            //            if( this.typeName=="pc") sys.puts("hitw");
             
             // 通れない場合はループ終わりで抜ける
             var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
@@ -278,10 +233,19 @@ Actor.prototype.poll = function(curTime) {
             var blkcur4 = this.field.get( np4.ix(), np4.iy(), np4.iz() );
             if( blkcur4 != null && blkcur4 == g.BlockType.AIR ) x_ok = true;
 
+            if( this.hitWallFunc ) this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ), x_ok, y_ok, z_ok ] );
+            
             var finalnextpos = this.pos;
             if( x_ok ) finalnextpos.x = np.x;
-            if( y_ok ) finalnextpos.y = np.y;
+            if( y_ok ) {
+                finalnextpos.y = np.y;
+            } else {
+                this.velocity.y =0;
+            }
             if( z_ok ) finalnextpos.z = np.z;
+
+            
+            
 
             this.pos = finalnextpos;
             break;
@@ -289,20 +253,21 @@ Actor.prototype.poll = function(curTime) {
     }
 
     if(this.pos.x<0){ this.pos.x=0; x_ok=false; }
+    if(this.pos.y<0){ this.pos.y=0; y_ok=false; }    
     if(this.pos.z<0){ this.pos.z=0; z_ok=false; }
 
     this.lastXOK = x_ok;
     this.lastYOK = y_ok;
     this.lastZOK = z_ok;
     
-    
+
 
     
     // 送信. 落ちてる最中ではない場合は、あまり多く送らない
     var toSend = false;
 
     if( this.lastSentAt < (curTime-500) ) toSend = true;
-    if( this.falling && this.dy != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
+    if( this.velocity.y != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
 
     if( toSend && this.toSend == true ){
 
@@ -313,15 +278,16 @@ Actor.prototype.poll = function(curTime) {
                        this.pos.x,
                        this.pos.y,
                        this.pos.z,
-                       this.speedPerSec,
+                       this.vForce,
                        this.pitch,
                        this.yaw,
-                       this.dy,
+                       this.velocity.y,
                        (curTime - this.lastSentAt) / 1000.0,
                        this.antiGravity
                        );
         this.lastSentAt = curTime;
-    }
+    } 
+
 
     if( this.sendMark ){
         main.nearcast( this.pos, "markNotify", this.pos.x, this.pos.y, this.pos.z );
@@ -337,10 +303,10 @@ Actor.prototype.setMove = function( x, y, z, pitch, yaw ) {
         this.toPos = v;
     }
 };
-// dy: float
-Actor.prototype.jump = function( dy ) {
-    this.dy = dy;
-    main.nearcast( this.pos, "jumpNotify", this.id, dy);    
+// velY: float
+Actor.prototype.jump = function( velY ) {
+    this.velocity.y = velY;
+    main.nearcast( this.pos, "jumpNotify", this.id, velY );    
 };
 
 // dmg:整数
@@ -359,7 +325,7 @@ Actor.prototype.knockBack = function( v ) {
                   this.pitch,
                   this.yaw );
     this.jump(4);
-    main.nearcast( this.pos, "jumpNotify", this.id, this.dy );
+    main.nearcast( this.pos, "jumpNotify", this.id, this.velocity.y );
     
 };
 
@@ -379,10 +345,10 @@ Actor.prototype.collide = function( dia ) {
 
 // PC
 
-function pcHitGround(p) {
-    sys.puts( "pcHitGround: p:"  + p.to_s() );
-    if( this.dy < -4 ){
-        var dmg = Math.round( ( this.dy + 4 ) / 2 ); // 負の値
+function pcHitWall(p,xok,yok,zok) {
+    //    sys.puts( "pcHitGround: p:"  + p.to_s()+ "ok:" + xok + ","+ yok + "," + zok  + " vel:" + this.velocity.to_s() );
+    if( this.velocity.y < -4 && yok == false ){
+        var dmg = Math.round( ( this.velocity.y + 4 ) / 2 ); // 負の値
         if( dmg != 0 ){
             this.hp += dmg;
             sys.puts( "fall damage! me: " + this.typeName + " dmg:" + dmg );
@@ -395,8 +361,7 @@ function PlayerCharacter( name, fld, pos ) {
     var pc = new Actor( "pc", fld, pos);
     pc.playerName = name;
     pc.hp = 10;
-    pc.hitGroundFunc = pcHitGround;
-    pc.speedPerSec = g.PlayerSpeed;
+    pc.hitWallFunc = pcHitWall;
     pc.func = pcMove;
     return pc;
 };
@@ -404,7 +369,6 @@ function Mob( name, fld, pos ) {
     var m = new Actor(name,fld,pos);
     if(name=="zombie"){
         m.func = zombieMove;
-        m.speedPerSec = 2.0;
     } 
     return m;
 };
@@ -413,15 +377,12 @@ function Debri( t, fld, pos ) {
     if( n==null )throw "invalid block type:"+t;    
     var d = new Actor( n + "_debri",fld,pos);
     d.func = debriMove;
-    d.speedPerSec = 0;
     d.debriType = t;
     return d;
 };
 
 function bulletMove( curTime ) {
-    sys.puts("bmove. pos:" + this.pos.to_s() );
-    
-    this.vVel = 1;
+    sys.puts("bmove. pos:" + this.pos.to_s()  + " vel:" + this.velocity.to_s() + " nxmat:" + this.nextMoveAt + " dieat:" + this.dieAt );
 
     var col = this.collide( 1 );　
     for( var i in col ){
@@ -440,28 +401,30 @@ function bulletMove( curTime ) {
 
 // speed: (m/sec)
 // dtl: distance to live. (m)
-function bulletTouchMap(p){
-    sys.puts( "bulletTouchMap: p:"+p.to_s());
+function bulletHitWall(p,xok,yok,zok){
+    sys.puts( "bulletHitWall: p:"+p.to_s());
     this.field.deleteActor(this.id);
     if( this.typeName == "arrow" ){
         this.landingAt = this.nextMoveAt;
     }
 };
 
-function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttl, damage ) {
+function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttlsec, damage ) {
 
     var v = new g.Vector3( Math.cos(pitch), yaw, Math.sin(pitch) );
 
-    var b = new Actor( tname, fld, pos.add( v.normalized()) );
+    var vel = v.normalized().mul(speed);
 
-    b.falling = true;
+    var b = new Actor( tname, fld, pos );
+
     b.pitch = pitch;
     b.yaw = yaw;
+    b.useForce = false; // 放物線
 
-    b.dy = v.y ;
-    b.speedPerSec = speed;
+    b.velocity = vel;
+    
     b.origPos = pos;
-    b.dieAt = this.createdAt + ttl;
+    b.dieAt = b.createdAt + ttlsec * 1000;
     b.damage = damage;
     b.shooter = shooter;
     b.direction = v.normalized();
@@ -471,8 +434,7 @@ function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttl, damage ) {
         b.toSend = false;
     }
 
-    b.hitWallFunc = bulletTouchMap;
-    b.hitGroundFunc = bulletTouchMap;
+    b.hitWallFunc = bulletHitWall;
 
     this.landingAt = 0;
     
@@ -480,8 +442,8 @@ function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttl, damage ) {
 };
 
 // tname : "hidden"だとmove送らない
-Actor.prototype.shoot = function( tname, speed, ttl, damage ) {
-    var b = new Bullet( tname, this.field, this.pos, this, this.pitch, this.yaw, speed, ttl, damage );
+Actor.prototype.shoot = function( tname, speed, ttlsec, damage ) {
+    var b = new Bullet( tname, this.field, this.pos, this, this.pitch, this.yaw, speed, ttlsec, damage );
     this.field.addActor(b);
     return b;
 };

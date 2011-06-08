@@ -337,7 +337,7 @@ Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
 
 // PCの位置を記録する
 Field.prototype.updatePC = function( id, x,y,z ) {
-    if( x>this.hSize || z >this.hSize || y > this.vSize ) throw "coord error";
+    if( x>this.hSize || z >this.hSize || y > this.vSize ) throw "coord error:"+x+","+y+","+z;
     var d = new Date();
     this.pcs[id] = { "id":id, "pos": new g.Pos(x,y,z), "at":d.getTime() };
     

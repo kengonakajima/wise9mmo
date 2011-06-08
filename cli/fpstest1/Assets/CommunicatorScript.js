@@ -171,7 +171,7 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
             hs.idleAnimName = "idle";
             hs.setMaterial( pcTexture );            
         }        
-    } else if( typeName == "STONE_debri" ){
+    } else if( typeName == "STONE_debri" || typeName == "GRASS_debri" || typeName == "SOIL_debri" ){
         a = Instantiate( prefabDebri, pos, Quaternion.identity );
         hs = a.GetComponent( "HeroScript");
         hs.clientID = id;
@@ -209,7 +209,9 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
 }
 
 function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
-    //        print( "id:"+cliID+" tn:"+typeName+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+    if( typeName == "hidden"){
+        print( "id:"+cliID+" tn:"+typeName+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+    }
     
     // idからpcを検索
     var pos:Vector3 = Vector3( x, y, z );
@@ -253,6 +255,7 @@ function rpcChatNotify(cliID, txt){
 var prefabMark : GameObject;
 
 function rpcMarkNotify(x,y,z) {
+    print("mark: xyz:"+x+","+y+","+z);
     var m = Instantiate( prefabMark, Vector3( x,y,z ), Quaternion.identity );
 }
 
@@ -326,7 +329,7 @@ function doProtocol() {
     var thresSec = 0.2;
     if( hs.falling ) thresSec = 0.05;
     if(  t > ( protocolLastSent + thresSec ) || hs.needSend ){
-        print("yaw:"+hs.yaw);
+        //        print("yaw:"+hs.yaw);
         send( "move",
               hero.transform.position.x,
               hero.transform.position.y,
@@ -334,7 +337,6 @@ function doProtocol() {
               hs.speedPerSec,
               hs.pitch,
               hs.yaw,
-              hs.dy,
               t - protocolLastSent
             );
         protocolLastSent = t;

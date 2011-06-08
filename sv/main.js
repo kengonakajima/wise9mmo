@@ -78,9 +78,9 @@ function delayed(a,b,c){
         sock.send( "delayed", a,b,c);    
     }, 1000, this  );    
 }
-function move(x,y,z,sp,pitch,yaw,dy,dt){
+function move(x,y,z,sp,pitch,yaw,dt){
 
-    //    sys.puts( "move: xyzpydy:"+x+","+y+","+z+","+pitch+","+yaw+","+dy+","+","+dt + "  cur:" + this.pc.pos.to_s() );
+    //    sys.puts( "move: xyzpyvy:"+x+","+y+","+z+","+pitch+","+yaw+","+velY+","+","+dt + "  cur:" + this.pc.pos.to_s() );
 
     this.pc.setMove( x, y, z, pitch, yaw );
     fld.updatePC( this.pc.id, x, y, z );
@@ -88,8 +88,8 @@ function move(x,y,z,sp,pitch,yaw,dy,dt){
     //    g.sleep(Math.random() * 100 );
 
 }
-function jump(dy){
-    this.pc.jump( dy );    
+function jump(velY){
+    this.pc.jump( velY * 1.1 );     // ghostが登れないことを防ぐため
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
@@ -146,7 +146,7 @@ function put(x,y,z,tname){
 function attack() {
     sys.puts("attack: pitch"+this.pc.pitch + " yaw:" + this.pc.yaw );
 
-    this.pc.shoot( "hidden", 10, 5, 5 );
+    this.pc.shoot( "hidden", 10, 0.5, 5 );
 }
 function chat(txt) {
     sys.puts("chat:"+txt);
@@ -174,7 +174,7 @@ function login() {
 
   this.pc = fld.addPC( "guest", p, this );
 
-  this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerSpeed );
+  this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerForce );
   this.send( "statusChange", this.pc.id, this.pc.hp );
 
 }

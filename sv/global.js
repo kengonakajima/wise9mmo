@@ -13,7 +13,7 @@ exports.BlockTypeToString = function(v) {
 };
 
 
-exports.PlayerSpeed = 5.0;
+exports.PlayerForce = 5.0;
 
 
 
