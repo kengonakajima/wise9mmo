@@ -537,9 +537,29 @@ class Chunk {
     function toLightIndex(x,y,z){
         return y * (size+2) * (size+2) + z * (size+2) + x;
     }
-    
 
-    function setArray( blks, lts ) {
+    function expandRunLength(rl,outsz) {
+        var out:int[]= new int[outsz];
+        var outi:int=0;
+        for(var i:int=0;i<rl.length;i+=2){
+            var v:int = rl[i];
+            var l:int = rl[i+1];
+            for(var ii:int=0;ii<l;ii++){
+                if(outi >= outsz){
+                    throw "out of range. outi:" + outi + " i:"+i + " l:" +l;
+                }
+                out[outi]=v;
+                outi++;
+            }
+        }
+        print("outi:"+outi);
+        return out;
+    }
+
+    function setRLArray( blksrl, ltsrl ) {
+        // RL展開
+        var blks:int[] = expandRunLength(blksrl,size*size*size);
+        var lts:int[] = expandRunLength(ltsrl,(size+2)*(size+2)*(size+2));
         if( blks.length != size*size*size ) throw "invalid blocks length:"+blks.length.ToString();
         if( lts.length != (size+2)*(size+2)*(size+2) ) throw "invalid lts length:"+lts.length.ToString();
         var i:int;
@@ -602,10 +622,12 @@ function getChunk(chx,chy,chz){
 
 function updateChunk( chx,chy,chz, blkary,lgtary ) {
     try{
-    var chk = getChunk(chx,chy,chz);
-    if(chk==null) throw"invalid chcoord:"+chx.ToString()+chy.ToString()+chz.ToString();
-    chk.setArray(blkary, lgtary);
-    } catch(e){}
+        var chk = getChunk(chx,chy,chz);
+        if(chk==null) throw"invalid chcoord:"+chx.ToString()+chy.ToString()+chz.ToString();
+        chk.setRLArray(blkary, lgtary);
+    } catch(e){
+        print("excep"+e);
+    }
     updatedSomeChunk=true;
 }
 function chunkStat(){
@@ -650,6 +672,7 @@ function findUpdatedChunk() {
 
 
 
+// blkary, lgtaryは RunLength
 function rpcGetFieldResult( x0,y0,z0,x1,y1,z1,blkary,lgtary) {
     if( x0<0||y0<0||z0<0||x0>=CHUNKMAX*CHUNKSZ||y0>=CHUNKMAX*CHUNKSZ||z0>=CHUNKMAX*CHUNKSZ||blkary== null || blkary[0] == null ||lgtary==null||lgtary[0]==null )return;
     //        print( "field data. xyz:"+x0+y0+z0+x1+y1+z1+":"+blkary);

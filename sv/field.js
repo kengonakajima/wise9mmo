@@ -328,7 +328,7 @@ Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
                     l=-1;
                 } else {
                     if( this.blocks[ toIndex(x,y,z,this.hSize) ] == g.BlockType.AIR
-                        || this.blocks[ toIndex(x,y,z,this.hSize) ] >= 100
+                        || this.blocks[ toIndex(x,y,z,this.hSize) ] >= 100  // item
                         ){
                         l = this.sunlight[ toIndex(x,y,z,this.hSize) ];
                     } else {

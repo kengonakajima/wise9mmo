@@ -125,6 +125,27 @@ exports.sleep = function( ms ) {
     }    
 };
 
-
-
-
+// 整数の配列を整数のRLにする
+exports.runLength = function( ary ) {
+    var out = new Array();
+    if(ary.length==0){return out; }
+    
+    var cur = ary[0];
+    var len = 0;
+    var outi=0;
+    for(var i=0;i<ary.length;i++){
+        if( ary[i] == cur ){
+            len++;
+        } else {
+            out[outi]=cur;
+            out[outi+1]=len;
+            outi+=2;
+            cur=ary[i];
+            len=1;
+        }
+    }
+    out[outi]=cur;
+    out[outi+1]=len;
+    return out;        
+};
+    

@@ -44,7 +44,7 @@ function Update () {
         }
     }
     var eee = Time.realtimeSinceStartup;
-    print("D###############DT:" + ( eee-ttt) );
+    //    print("D###############DT:" + ( eee-ttt) );
     
     var mx = Input.GetAxis( "Mouse X" );
     var my = Input.GetAxis( "Mouse Y" );

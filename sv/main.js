@@ -100,7 +100,10 @@ function getField(x0,y0,z0,x1,y1,z1){
     if(blkary==null||lgtary==null){
         this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,[], [] );
     } else {
-        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,blkary,lgtary );
+        var brl = g.runLength(blkary);
+        var lrl = g.runLength(lgtary);
+        sys.puts( "lrl:" + lrl );
+        this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,brl,lrl);
     }
 }
 function dig(x,y,z){
@@ -326,6 +329,9 @@ setInterval( function() {
         sys.puts( "loop:" + loopCounter );
     }, 10000 );
 
+var ary = new Array( 0,0,0, 1,1,1,1,1,1, 2,2,2,2,2, 3,4,5,5,5,5,6,6 );
+var rl = g.runLength(ary);
+sys.puts( "RLtest:" + rl );
 
 
 
