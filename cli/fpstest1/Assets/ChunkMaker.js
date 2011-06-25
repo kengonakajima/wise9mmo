@@ -311,10 +311,30 @@ function Start() {
     
 }
 
+var uvBase:float=0;
+
 function Update() {
-    //    if( objmode==2){
-        //        print("water"+name);
-    //    }
+
+    // 水を流す
+    if( objmode==2){
+        // 5列目の左から2個目が水の中心
+        var mesh : Mesh = GetComponent(MeshFilter).mesh;
+        var uv:Vector2[] = new Vector2[ 8*8*8*4*6 ];
+        var waterUV:float[] = calcUVs( (512/16)*5 + 1 );
+        var unit:float = 1.0/ (512/16);
+        uvBase += unit / 100.0;
+        if( uvBase >= unit ) uvBase=0;
+        for(var i:int=0;i<maxvi/4;i++){
+            var du:float=uvBase;
+            var dv:float=0;
+            uv[i*4]=Vector2(waterUV[0]+du,waterUV[1]+dv);
+            uv[i*4+1]=Vector2(waterUV[2]+du,waterUV[1]+dv);
+            uv[i*4+2]=Vector2(waterUV[2]+du,waterUV[3]+dv);
+            uv[i*4+3]=Vector2(waterUV[0]+du,waterUV[3]+dv);
+        }
+        mesh.uv = uv;
+    }
+
 }
 
 // 0~(sz+2)まで
@@ -329,6 +349,8 @@ function isBlock(t:int){
     if(t<100)return true;
     return false;
 }
+
+var maxvi:int;
 
 // 地形データをセットする(xyzならび)
 // blocks: AIRとかSTONEとか
@@ -507,8 +529,20 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                               i,
                               lts,
                               drawflags );
-                    vi += 24;
-                    ti += 36;
+                    /*                    
+                    vi += 24; // ここが固定値でなくてもよい. drawflagsの個数の4倍
+                    ti += 36; // の6倍
+                    */
+
+                    var drawcnt:int=0;
+                    for(var ii:int=0;ii<6;ii++){
+                        if(drawflags[ii]){
+                            drawcnt++;
+                        }
+                    }
+                    vi += drawcnt*4;
+                    ti += drawcnt*6; // こっちのバージョンにしても軽くなるわけではないかも？
+
                 } else if( (i==REDFLOWER||i==BLUEFLOWER ) && objmode==1 ){
                     // 花とか
                     makeFlowerObj( Vector3(x,y,z),
@@ -532,7 +566,8 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
     mesh.triangles = triangles;
     mesh.normals = normals;
     //    mesh.RecalculateNormals();
-
+    if(vi==0)Destroy(gameObject); //計算の結果頂点がひとつもないなら死ぬよ
+    maxvi=vi;
 
     
 }

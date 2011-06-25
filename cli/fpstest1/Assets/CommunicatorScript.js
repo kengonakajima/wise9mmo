@@ -755,7 +755,6 @@ function Update () {
         
         if( blockCnt > 0 ){
             if(p==null){
-                print("bCnt:"+blockCnt);                                
                 p = Instantiate( prefabMultiCube,
                                  Vector3( upChk.chx*CHUNKSZ, upChk.chy*CHUNKSZ, upChk.chz*CHUNKSZ ),
                                  Quaternion.identity );
@@ -781,7 +780,6 @@ function Update () {
         }
         if( waterCnt > 0 ){
             if(pw==null){
-                print("wCnt:"+waterCnt);
                 pw = Instantiate( prefabMultiWaterCube,
                                   Vector3( upChk.chx*CHUNKSZ, upChk.chy*CHUNKSZ, upChk.chz*CHUNKSZ ),
                                   Quaternion.identity );
