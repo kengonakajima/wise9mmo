@@ -311,7 +311,8 @@ Field.prototype.getBlockBox = function(x0,y0,z0,x1,y1,z1) {
     }
 };
 
-// 明るさテーブルを取る0~7
+// 明るさテーブルを取る1~8
+// ブロックがあるところ=1
 Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
     if( x0<0||y0<0||z0<0||x0>this.hSize||y0>this.vSize||z0>this.hSize
         ||x1<0||y1<0||z1<0||x1>this.hSize||y1>this.vSize||z1>this.hSize){
@@ -325,14 +326,14 @@ Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
             for(var x=x0-1; x < x1+1; x ++ ){
                 var l=0;
                 if( x<0 ||y<0||z<0||x>=this.hSize||y>=this.vSize||z>=this.hSize){
-                    l=-1;
+                    l=0;
                 } else {
                     if( this.blocks[ toIndex(x,y,z,this.hSize) ] == g.BlockType.AIR
                         || this.blocks[ toIndex(x,y,z,this.hSize) ] >= 100  // item
                         ){
-                        l = this.sunlight[ toIndex(x,y,z,this.hSize) ];
+                        l = this.sunlight[ toIndex(x,y,z,this.hSize) ] + 1;
                     } else {
-                        l = -1;
+                        l = 0;
                     }
                 }
                 out[i]=l;

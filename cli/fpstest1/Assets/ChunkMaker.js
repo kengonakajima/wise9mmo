@@ -28,10 +28,10 @@ function calcUVs( i:int ) {
 }
 
 function lightIndexToNormal(i:int){
-    if( i<0){
+    if( i==0){
         return 0.05;
     } else {
-        return 0.05 + ( (i*1.0) / 8.0 );
+        return 0.05 + ( ((i-1)*1.0) / 8.0 );
     }
 }
 
@@ -359,12 +359,12 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                 if( i > 0 && i <100 && objmode==0){
 
                     // 周囲をみて完全に埋まってるのはキューブ作ること自体しない
-                    if( lights[ toLightIndex(lx-1,ly,lz,sz+2)]==-1
-                        && lights[ toLightIndex(lx,ly-1,lz,sz+2)]==-1
-                        && lights[ toLightIndex(lx,ly,lz-1,sz+2)]==-1
-                        && lights[ toLightIndex(lx+1,ly,lz,sz+2)]==-1
-                        && lights[ toLightIndex(lx,ly+1,lz,sz+2)]==-1
-                        && lights[ toLightIndex(lx,ly,lz+1,sz+2)]==-1 ){
+                    if( lights[ toLightIndex(lx-1,ly,lz,sz+2)]==0
+                        && lights[ toLightIndex(lx,ly-1,lz,sz+2)]==0
+                        && lights[ toLightIndex(lx,ly,lz-1,sz+2)]==0
+                        && lights[ toLightIndex(lx+1,ly,lz,sz+2)]==0
+                        && lights[ toLightIndex(lx,ly+1,lz,sz+2)]==0
+                        && lights[ toLightIndex(lx,ly,lz+1,sz+2)]==0 ){
                         skipNum++;
                         continue;
                     }
@@ -377,99 +377,99 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
 
                     // z=0の面
                     lts[0]=lts[1]=lts[2]=lts[3]=lights[ toLightIndex(lx,ly,lz-1,sz+2) ];
-                    if( lts[0]!=-1 )drawflags[0]=1; else drawflags[0]=0;
+                    if( lts[0]!=0 )drawflags[0]=1; else drawflags[0]=0;
                     // 0:z=0,0の角 
-                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==-1) lts[0]-=2;
-                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==-1) lts[0]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[0]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[0]-=2;
                     // z=0,1の角
-                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==-1) lts[1]-=2;
-                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==-1) lts[1]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==0) lts[1]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==0) lts[1]-=2;
                     // z=0,2の角
-                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==-1) lts[2]-=2;
-                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==-1) lts[2]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==0) lts[2]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==0) lts[2]-=2;
                     // z=0,3の角
-                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==-1) lts[3]-=2;
-                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==-1) lts[3]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[3]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[3]-=2;
                     
                     // z=1の面
                     lts[4]=lts[5]=lts[6]=lts[7]=lights[ toLightIndex(lx,ly,lz+1,sz+2) ];
                     if( lts[4]!=-1 )drawflags[1]=1; else drawflags[1]=0;                    
                     // z=1,4の角
-                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==-1) lts[4]-=2;
-                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==-1) lts[4]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==0) lts[4]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==0) lts[4]-=2;
                     // z=1,5の角
-                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==-1) lts[5]-=2;
-                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==-1) lts[5]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==0) lts[5]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==0) lts[5]-=2;
                     // z=1,6の角
-                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==-1) lts[6]-=2;
-                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==-1) lts[6]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==0) lts[6]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==0) lts[6]-=2;
                     // z=1,7の角
-                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==-1) lts[7]-=2;
-                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==-1) lts[7]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==0) lts[7]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==0) lts[7]-=2;
 
                     // x=0の面
                     lts[8]=lts[9]=lts[10]=lts[11]=lights[toLightIndex(lx-1,ly,lz,sz+2)];
                     if( lts[8]!=-1 )drawflags[2]=1; else drawflags[2]=0;
                     // x=0,0の角
-                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==-1) lts[8]-=2;
-                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==-1) lts[8]-=2;
+                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[8]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[8]-=2;
                     // x=0,4の角
-                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==-1) lts[9]-=2;
-                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==-1) lts[9]-=2;
+                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==0) lts[9]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==0) lts[9]-=2;
                     // x=0,7の角
-                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==-1) lts[10]-=2;
-                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==-1) lts[10]-=2;
+                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==0) lts[10]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==0) lts[10]-=2;
                     // x=0,3の角
-                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==-1) lts[11]-=2;
-                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==-1) lts[11]-=2;
+                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[11]-=2;
+                    if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[11]-=2;
 
                     // x=1の面
                     lts[12]=lts[13]=lts[14]=lts[15]=lights[toLightIndex(lx+1,ly,lz,sz+2)];
                     if( lts[12]!=-1 )drawflags[3]=1; else drawflags[3]=0;
                     // x=1,1の角
-                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==-1) lts[12]-=2;
-                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==-1) lts[12]-=2;
+                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==0) lts[12]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==0) lts[12]-=2;
                     // x=1,5の角
-                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==-1) lts[13]-=2;
-                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==-1) lts[13]-=2;
+                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==0) lts[13]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz+1,sz+2)]==0) lts[13]-=2;
                     // x=1,6の角
-                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==-1) lts[14]-=2;
-                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==-1) lts[14]-=2;
+                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==0) lts[14]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==0) lts[14]-=2;
                     // x=1,2の角
-                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==-1) lts[15]-=2;
-                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==-1) lts[15]-=2;
+                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==0) lts[15]-=2;
+                    if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==0) lts[15]-=2;
 
                     // y=0の面
                     lts[16]=lts[17]=lts[18]=lts[19]=lights[toLightIndex(lx,ly-1,lz,sz+2)];
                     if( lts[16]!=-1 )drawflags[4]=1; else drawflags[4]=0;                    
                     // y=0,0の角
-                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==-1) lts[16]-=2;
-                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==-1) lts[16]-=2;
+                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==0) lts[16]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==0) lts[16]-=2;
                     // y=0,1の角
-                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==-1) lts[17]-=2;
-                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==-1) lts[17]-=2;
+                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==0) lts[17]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==0) lts[17]-=2;
                     // y=0,5の角
-                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==-1) lts[18]-=2;
-                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==-1) lts[18]-=2;
+                    if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==0) lts[18]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==0) lts[18]-=2;
                     // y=0,4の角
-                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==-1) lts[19]-=2;
-                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==-1) lts[19]-=2;
+                    if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==0) lts[19]-=2;
+                    if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==0) lts[19]-=2;
 
                     // y=1の面
                     lts[20]=lts[21]=lts[22]=lts[23]=lights[toLightIndex(lx,ly+1,lz,sz+2)];
                     if( lts[20]!=-1 )drawflags[5]=1; else drawflags[5]=0;
                     // y=1,3の角
-                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==-1) lts[20]-=2;
-                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==-1) lts[20]-=2;
+                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[20]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[20]-=2;
                     // y=1,2の角
-                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==-1) lts[21]-=2;
-                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==-1) lts[21]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==0) lts[21]-=2;
+                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz-1,sz+2)]==0) lts[21]-=2;
                     // y=1,6の角
-                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==-1) lts[22]-=2;
-                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==-1 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==-1) lts[22]-=2;
+                    if( lights[toLightIndex(lx+1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==0) lts[22]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==0 && lights[toLightIndex(lx+1,ly+1,lz+1,sz+2)]==0) lts[22]-=2;
                     // y=1,7の角
-                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==-1) lts[23]-=2;
-                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==-1 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==-1) lts[23]-=2;
+                    if( lights[toLightIndex(lx,ly+1,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==0) lts[23]-=2;
+                    if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz+1,sz+2)]==0) lts[23]-=2;
                     
                     makeCube( Vector3(x,y,z),
                               vertices,
