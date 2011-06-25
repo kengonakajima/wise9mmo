@@ -102,6 +102,8 @@ function getField(x0,y0,z0,x1,y1,z1){
     } else {
         var brl = g.runLength(blkary);
         var lrl = g.runLength(lgtary);
+        sys.puts( "f:" + brl );
+        sys.puts( "l:" + lrl );        
         this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,brl,lrl);
     }
 }

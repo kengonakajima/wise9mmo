@@ -26,8 +26,9 @@ exports.generate = function( hsize, vsize ) {
 
     fld.fill( 0,0,0, hsize,vsize,hsize, g.BlockType.AIR ); // 世界を空気で満たす
     fld.fill( 0,0,0, hsize,1,hsize, g.BlockType.STONE ); // 地盤を置く
-    fld.fill( 4,0,4, hsize,1,hsize, g.BlockType.WATER );   //水面
-
+    fld.fill( 8,1,8, hsize,5,hsize, g.BlockType.WATER );   //水面
+    
+    
     var d = 20;
     fld.fill( 4,1,4, 8+d,2,8+d, g.BlockType.STONE );   // 高台を置く
     fld.fill( 5,2,5, 7+d,3,7+d, g.BlockType.SOIL );   // その上に水を置く
@@ -237,12 +238,20 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
     sys.puts("set7");
     for(var x=x0;x<x1;x++){
         for(var z=z0;z<z1;z++){
+            var cur=7;
             for(var y=this.vSize-1;y>=0;y--){
-                if( this.get(x,y,z) == g.BlockType.AIR ){
-                    this.setSunlight(x,y,z,7);
-                } else {
-                    break;
+                var t = this.get(x,y,z);
+                if( t == g.BlockType.AIR ){
+                    this.setSunlight(x,y,z,cur);
+                    continue;
                 }
+                if( t == g.BlockType.WATER ){
+                    cur--;
+                    if(cur<0)cur=0;
+                    this.setSunlight(x,y,z,cur);                    
+                    continue;
+                }
+                break;
             }
         }
     }
@@ -256,6 +265,7 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
                     if( cb != g.BlockType.AIR
                         && cb != g.ItemType.REDFLOWER
                         && cb != g.ItemType.BLUEFLOWER
+                        && cb != g.BlockType.WATER
                         ){
                         this.setSunlight(x,y,z,0);
                         continue;
@@ -290,13 +300,15 @@ Field.prototype.getBlockBox = function(x0,y0,z0,x1,y1,z1) {
         ||x1<0||y1<0||z1<0||x1>this.hSize||y1>this.vSize||z1>this.hSize){
         return null;
     }
-    var out = new Array( (x1-x0) * (y1-y0) * (z1-z0) );
+    // 水の描画のためにはみでた分も必要
+    var out = new Array( (x1-x0+2) * (y1-y0+2) * (z1-z0+2) );
     var i=0;
     var nonair=0;
-    for(var y=y0; y < y1; y++ ){
-        for(var z=z0; z < z1; z++ ) {
-            for(var x=x0; x < x1; x ++ ){
+    for(var y=y0-1; y < y1+1; y++ ){
+        for(var z=z0-1; z < z1+1; z++ ) {
+            for(var x=x0-1; x < x1+1; x ++ ){
                 var t = this.blocks[ toIndex(x,y,z,this.hSize) ];
+                if(t==null)t=g.BlockType.AIR;
                 out[i] = t;
                 if( t != g.BlockType.AIR ){ nonair ++; }
                 i++;
@@ -328,8 +340,10 @@ Field.prototype.getLightBox = function(x0,y0,z0,x1,y1,z1) {
                 if( x<0 ||y<0||z<0||x>=this.hSize||y>=this.vSize||z>=this.hSize){
                     l=0;
                 } else {
-                    if( this.blocks[ toIndex(x,y,z,this.hSize) ] == g.BlockType.AIR
-                        || this.blocks[ toIndex(x,y,z,this.hSize) ] >= 100  // item
+                    var t = this.blocks[ toIndex(x,y,z,this.hSize) ];
+                    if( t == g.BlockType.AIR
+                        || t >= 100  // item
+                        || t == g.BlockType.WATER 
                         ){
                         l = this.sunlight[ toIndex(x,y,z,this.hSize) ] + 1;
                     } else {

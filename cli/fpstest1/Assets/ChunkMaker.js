@@ -5,8 +5,9 @@ var material:Material;
 var objmode:int; // 
 
 
-var REDFLOWER=100;
-var BLUEFLOWER=101;
+
+var REDFLOWER:int=100;
+var BLUEFLOWER:int=101;
 
 // atlasIndexから [startU, startV, endU, endV]もとめる
 function calcUVs( i:int ) {
@@ -311,23 +312,30 @@ function Start() {
 }
 
 function Update() {
-    //    print("objmode:"+objmode);
+    //    if( objmode==2){
+        //        print("water"+name);
+    //    }
 }
 
 // 0~(sz+2)まで
 function toLightIndex(x,y,z,sz) {
     return y*sz*sz+z*sz+x;
 }
-
+function toBlockIndex(x,y,z,sz) {
+    return y*sz*sz+z*sz+x;
+}
+function isBlock(t:int){
+    if(t==0)return false;
+    if(t<100)return true;
+    return false;
+}
 
 // 地形データをセットする(xyzならび)
 // blocks: AIRとかSTONEとか
 // lights: あかるさ0~7 (sz+2)^3 のサイズが必要。
 function SetField( blocks: int[], lights:int[], sz:int ) {
-
-
     
-    if( blocks.length != sz*sz*sz ) throw "invalid block cnt:"+blocks.length.ToString() + " sz:"+sz;
+    if( blocks.length != (sz+2)*(sz+2)*(sz+2) ) throw "invalid block cnt:"+blocks.length.ToString() + " sz:"+sz;
     if( lights.length != (sz+2)*(sz+2)*(sz+2) ) throw "invalid light cnt:"+lights.length.ToString() + " sz:"+sz;
 	var mesh : Mesh = GetComponent(MeshFilter).mesh;
 
@@ -352,12 +360,25 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
         for( var z:int = 0; z < sz; z++ ){
             for( var x:int = 0; x < sz; x++ ){
 
-                var i : int = blocks[x+z*sz+y*sz*sz] ;
+                var i : int = blocks[(x+1)+(z+1)*(sz+2)+(y+1)*(sz+2)*(sz+2)] ;
                 var lx=x+1; // light配列の中は１づつずれている
                 var ly=y+1;
                 var lz=z+1;                
-                if( i > 0 && i <100 && objmode==0){
+                if( i > 0 && i <100 && (objmode==0||objmode==2) ){
 
+                    if( objmode==0 ){
+                        if( i == 4 ){
+                            skipNum++;
+                            continue;
+                        }
+                    } else if( objmode==2){
+                        if( i != 4 ){
+                            skipNum++;
+                            continue;
+                        } 
+                    }
+
+                    
                     // 周囲をみて完全に埋まってるのはキューブ作ること自体しない
                     if( lights[ toLightIndex(lx-1,ly,lz,sz+2)]==0
                         && lights[ toLightIndex(lx,ly-1,lz,sz+2)]==0
@@ -369,7 +390,6 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                         continue;
                     }
 
-                    
                     makeNum++;  
                     // normalは２４個で、面あたり角で３個。
                     // 下にあればあるほど暗い
@@ -378,6 +398,7 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                     // z=0の面
                     lts[0]=lts[1]=lts[2]=lts[3]=lights[ toLightIndex(lx,ly,lz-1,sz+2) ];
                     if( lts[0]!=0 )drawflags[0]=1; else drawflags[0]=0;
+                    if( objmode==2 && isBlock(blocks[toBlockIndex(lx,ly,lz-1,sz+2)]) ) drawflags[0]=0;                                         
                     // 0:z=0,0の角 
                     if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[0]-=2;
                     if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[0]-=2;
@@ -393,7 +414,8 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                     
                     // z=1の面
                     lts[4]=lts[5]=lts[6]=lts[7]=lights[ toLightIndex(lx,ly,lz+1,sz+2) ];
-                    if( lts[4]!=-1 )drawflags[1]=1; else drawflags[1]=0;                    
+                    if( lts[4]!=0 )drawflags[1]=1; else drawflags[1]=0;
+                    if( objmode==2 && isBlock(blocks[toBlockIndex(lx,ly,lz+1,sz+2)]) ) drawflags[1]=0;                    
                     // z=1,4の角
                     if( lights[toLightIndex(lx-1,ly,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==0) lts[4]-=2;
                     if( lights[toLightIndex(lx,ly-1,lz+1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz+1,sz+2)]==0) lts[4]-=2;
@@ -409,7 +431,8 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
 
                     // x=0の面
                     lts[8]=lts[9]=lts[10]=lts[11]=lights[toLightIndex(lx-1,ly,lz,sz+2)];
-                    if( lts[8]!=-1 )drawflags[2]=1; else drawflags[2]=0;
+                    if( lts[8]!=0 )drawflags[2]=1; else drawflags[2]=0;
+                    if( objmode==2 && isBlock(blocks[toBlockIndex(lx-1,ly,lz,sz+2)]) ) drawflags[2]=0; 
                     // x=0,0の角
                     if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[8]-=2;
                     if( lights[toLightIndex(lx-1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly-1,lz-1,sz+2)]==0) lts[8]-=2;
@@ -425,7 +448,8 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
 
                     // x=1の面
                     lts[12]=lts[13]=lts[14]=lts[15]=lights[toLightIndex(lx+1,ly,lz,sz+2)];
-                    if( lts[12]!=-1 )drawflags[3]=1; else drawflags[3]=0;
+                    if( lts[12]!=0 )drawflags[3]=1; else drawflags[3]=0;
+                    if( objmode==2 && isBlock(blocks[toBlockIndex(lx+1,ly,lz,sz+2)]) ) drawflags[3]=0;                    
                     // x=1,1の角
                     if( lights[toLightIndex(lx+1,ly-1,lz,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==0) lts[12]-=2;
                     if( lights[toLightIndex(lx+1,ly,lz-1,sz+2)]==0 && lights[toLightIndex(lx+1,ly-1,lz-1,sz+2)]==0) lts[12]-=2;
@@ -441,7 +465,8 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
 
                     // y=0の面
                     lts[16]=lts[17]=lts[18]=lts[19]=lights[toLightIndex(lx,ly-1,lz,sz+2)];
-                    if( lts[16]!=-1 )drawflags[4]=1; else drawflags[4]=0;                    
+                    if( lts[16]!=0 )drawflags[4]=1; else drawflags[4]=0;
+                    if( objmode==2 && isBlock(blocks[toBlockIndex(lx,ly-1,lz,sz+2)]) ) drawflags[4]=0;                     
                     // y=0,0の角
                     if( lights[toLightIndex(lx-1,ly-1,lz,sz+2)]==0) lts[16]-=2;
                     if( lights[toLightIndex(lx,ly-1,lz-1,sz+2)]==0) lts[16]-=2;
@@ -457,7 +482,8 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
 
                     // y=1の面
                     lts[20]=lts[21]=lts[22]=lts[23]=lights[toLightIndex(lx,ly+1,lz,sz+2)];
-                    if( lts[20]!=-1 )drawflags[5]=1; else drawflags[5]=0;
+                    if( lts[20]!=0 )drawflags[5]=1; else drawflags[5]=0;
+                    if( objmode==2 && isBlock(blocks[toBlockIndex(lx,ly+1,lz,sz+2)]) ) drawflags[5]=0;                     
                     // y=1,3の角
                     if( lights[toLightIndex(lx-1,ly+1,lz,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[20]-=2;
                     if( lights[toLightIndex(lx,ly+1,lz-1,sz+2)]==0 && lights[toLightIndex(lx-1,ly+1,lz-1,sz+2)]==0) lts[20]-=2;

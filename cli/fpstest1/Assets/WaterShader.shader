@@ -17,10 +17,10 @@ Shader "WaterShader" {
                 Specular [_SpecColor]
                 Emission [_Emission]                
             }
-            ZWrite On
+            ZWrite Off
 
             Lighting on
-            SeparateSpecular On
+//            SeparateSpecular On
 
             Blend SrcAlpha OneMinusSrcAlpha  // これにして、generate alpha from grayscale　でやったらなんとなくそれっぽくなった
 

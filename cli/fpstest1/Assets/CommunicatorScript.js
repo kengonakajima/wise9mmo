@@ -1,4 +1,16 @@
 
+var AIR:int=0;
+var STONE:int=1;
+var SOIL:int=2;
+var GRASS:int=3;
+var WATER:int=4;
+var LEAF:int=5;
+var STEM:int=6;
+
+var REDFLOWER:int=100;
+var BLUEFLOWER:int=101;
+
+
 
 var protocol;
 var rpcfunctions={};
@@ -438,6 +450,7 @@ var prefabGuest : GameObject;
 
 var prefabMultiCube : GameObject;
 var prefabMultiObjCube : GameObject;
+var prefabMultiWaterCube : GameObject;
 
 var currentHP :int;
 
@@ -461,6 +474,19 @@ function OnGUI() {
             GUI.Label( Rect( 0, 80+i*20, 300, 20 ), logs[i] );
         }
     }
+}
+
+function expandRunLength(rl,out) {
+    var outi:int=0;
+    for(var i:int=0;i<rl.length;i+=2){
+        var v:int = rl[i];
+        var l:int = rl[i+1];
+        for(var ii:int=0;ii<l;ii++){
+            out[outi]=v;
+            outi++;
+        }
+    }
+    return out;
 }
 
 
@@ -504,21 +530,21 @@ class Chunk {
         size=sz;
         state="init";
         needUpdate=false;
-        blocks = new int[size*size*size];
+        blocks = new int[(size+2)*(size+2)*(size+2)];
         lights = new int[(size+2)*(size+2)*(size+2)];
         for(var i=0;i<blocks.length;i++)blocks[i]=-1;
         for(i=0;i<lights.length;i++) lights[i]=0;
         
     }
     function toBlockIndex(x,y,z){
-        return y * size * size + z * size + x;
+        return y * (size+2) * (size+2) + z * (size+2) + x;
     }
-    // chunk内座標でもどちでもよい
+    // chunk内座標限定
     function getBlock(x,y,z) {
-        return blocks[ toBlockIndex(x%size,y%size,z%size) ];
+        return blocks[ toBlockIndex(x%(size+2),y%(size+2),z%(size+2)) ];
     }
     // lights:3x3x3の光源情報
-    function setBlock(x,y,z, t, lights) {
+    /*    function setBlock(x,y,z, t, lights) {
         x = x % size;
         y = y % size;
         z = z % size;
@@ -534,61 +560,44 @@ class Chunk {
         }
         needUpdate=true;
     }
+    */
     // 0 ~ (size+2) 
     function toLightIndex(x,y,z){
         return y * (size+2) * (size+2) + z * (size+2) + x;
     }
 
-    function expandRunLength(rl,outsz) {
-        var out:int[]= new int[outsz];
-        var outi:int=0;
-        for(var i:int=0;i<rl.length;i+=2){
-            var v:int = rl[i];
-            var l:int = rl[i+1];
-            for(var ii:int=0;ii<l;ii++){
-                if(outi >= outsz){
-                    throw "out of range. outi:" + outi + " i:"+i + " l:" +l;
-                }
-                out[outi]=v;
-                outi++;
-            }
-        }
-        print("outi:"+outi);
-        return out;
-    }
-
-    function setRLArray( blksrl, ltsrl ) {
-        // RL展開
-        var blks:int[] = expandRunLength(blksrl,size*size*size);
-        var lts:int[] = expandRunLength(ltsrl,(size+2)*(size+2)*(size+2));
-        if( blks.length != size*size*size ) throw "invalid blocks length:"+blks.length.ToString();
-        if( lts.length != (size+2)*(size+2)*(size+2) ) throw "invalid lts length:"+lts.length.ToString();
-        var i:int;
-
-        // x,z平面でy高さ方向が最後のループで統一
-        for(i=0;i<blks.length;i++) this.blocks[i] = blks[i];
-        for(i=0;i<lts.length;i++) this.lights[i] = lts[i];
-                    
-        state="loaded";
-        needUpdate=true;
-        print("loaded");
-    }
-    function countBlocks() {
-        var cnt:int=0;
-        for(var i=0;i<this.blocks.length;i++){
-            if( this.blocks[i] != 0 )cnt++;
-        }
-        return cnt;
-    }
-    function countItems() {
-        var cnt:int=0;
-        for(var i=0;i<this.blocks.length;i++){
-            if( this.blocks[i] >= 100 )cnt++;
-        }
-        return cnt;
-    }
-    
 };
+
+function dumpArray( a:int[] ){
+    var s="";
+    for(var i:int=0;i<a.length;i++){
+        s+= a[i]+",";
+    }
+    return s;
+}
+function countBlocks(blocks) {
+
+    var blockCnt:int=0;
+    var itemCnt:int=0;
+    var waterCnt:int=0;
+
+    for(var i=0;i<blocks.length;i++){
+        var t:int = blocks[i];
+        if( t >= 100 ){
+            itemCnt++;
+        } else if( t == WATER ){
+            waterCnt++;
+        } else if( t >= AIR ){
+            blockCnt++;
+        }
+    }
+    var out: int[] = new int[3]; // block, item, water
+    out[0]=blockCnt;
+    out[1]=itemCnt;
+    out[2]=waterCnt;
+    return out;
+}    
+
 
 
 function isInViewFrustum( bx:int, by:int, bz:int ) {
@@ -638,7 +647,11 @@ function updateChunk( chx,chy,chz, blkary,lgtary ) {
     try{
         var chk = getChunk(chx,chy,chz);
         if(chk==null) throw"invalid chcoord:"+chx.ToString()+chy.ToString()+chz.ToString();
-        chk.setRLArray(blkary, lgtary);
+        expandRunLength(blkary, chk.blocks);
+        expandRunLength(lgtary, chk.lights);
+        chk.state="loaded";
+        chk.needUpdate=true;
+
     } catch(e){
         print("excep"+e);
     }
@@ -664,7 +677,7 @@ function getBlock( ix:int,iy:int,iz:int ) {
     
     var chk = getChunk( ix/CHUNKSZ, iy/CHUNKSZ, iz/CHUNKSZ);
     if(chk==null)return null;
-    return chk.getBlock( ix%CHUNKSZ,iy%CHUNKSZ,iz%CHUNKSZ);
+    return chk.getBlock( (ix%CHUNKSZ)+1,(iy%CHUNKSZ)+1,(iz%CHUNKSZ)+1);
         
 }
 
@@ -688,8 +701,9 @@ function findUpdatedChunk() {
 
 // blkary, lgtaryは RunLength
 function rpcGetFieldResult( x0,y0,z0,x1,y1,z1,blkary,lgtary) {
+    // print( "field data. xyz:"+x0+y0+z0+x1+y1+z1+":"+blkary+" lgt:"+lgtary);
     if( x0<0||y0<0||z0<0||x0>=CHUNKMAX*CHUNKSZ||y0>=CHUNKMAX*CHUNKSZ||z0>=CHUNKMAX*CHUNKSZ||blkary== null || blkary[0] == null ||lgtary==null||lgtary[0]==null )return;
-    //        print( "field data. xyz:"+x0+y0+z0+x1+y1+z1+":"+blkary);
+           
     updateChunk( x0/CHUNKSZ, y0/CHUNKSZ, z0/CHUNKSZ, blkary, lgtary );
 }
 
@@ -699,16 +713,6 @@ var waterPrefab : GameObject;
 var chs="";
 var counter=0;
 
-var AIR=0;
-var STONE=1;
-var SOIL=2;
-var GRASS=3;
-var WATER=4;
-var LEAF=5;
-var STEM=6;
-
-var REDFLOWER=100;
-var BLUEFLOWER=101;
 
 function Update () {
     
@@ -735,17 +739,23 @@ function Update () {
 
     
     if( upChk != null){
-        var p;
-        var po;
+        var p:GameObject;
+        var po:GameObject;
+        var pw:GameObject;
+        
         p = GameObject.Find( "chunk_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );
-        //        if(p)Destroy(p);
         po = GameObject.Find( "obj_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );
-        //        if(po)Destroy(po);
+        pw = GameObject.Find( "water_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );
         
+        var counts:int[] = countBlocks(upChk.blocks);
 
+        var blockCnt:int=counts[0];
+        var itemCnt:int=counts[1];
+        var waterCnt:int=counts[2];
         
-        if( upChk.countBlocks() > 0 ){
+        if( blockCnt > 0 ){
             if(p==null){
+                print("bCnt:"+blockCnt);                                
                 p = Instantiate( prefabMultiCube,
                                  Vector3( upChk.chx*CHUNKSZ, upChk.chy*CHUNKSZ, upChk.chz*CHUNKSZ ),
                                  Quaternion.identity );
@@ -757,16 +767,29 @@ function Update () {
         }
 
         
-        if( upChk.countItems() > 0 ){
+        if( itemCnt > 0 ){
             if(po==null){
+                //                print("oCnt:"+itemCnt);                
                 po = Instantiate( prefabMultiObjCube,
                                   Vector3( upChk.chx*CHUNKSZ, upChk.chy*CHUNKSZ, upChk.chz*CHUNKSZ ),
                                   Quaternion.identity );
                 po.name = "obj_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz;
             }
-            var objmaker = po.GetComponent( "ChunkMaker" );
-            objmaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
-            objmaker.objmode=1;
+            var omaker = po.GetComponent( "ChunkMaker" );
+            omaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
+            omaker.objmode=1;
+        }
+        if( waterCnt > 0 ){
+            if(pw==null){
+                print("wCnt:"+waterCnt);
+                pw = Instantiate( prefabMultiWaterCube,
+                                  Vector3( upChk.chx*CHUNKSZ, upChk.chy*CHUNKSZ, upChk.chz*CHUNKSZ ),
+                                  Quaternion.identity );
+                pw.name = "water_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz;
+                var wmaker = pw.GetComponent( "ChunkMaker");
+                wmaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
+                wmaker.objmode=2;
+            }
         }
 
         
