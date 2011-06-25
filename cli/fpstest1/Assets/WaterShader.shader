@@ -1,6 +1,6 @@
 Shader "WaterShader" {
     Properties {
-		_Color ( "Main Color", Color ) = (1,1,1,0.5)
+		_Color ( "Main Color", Color ) = (1,1,1,1)
         _SpecColor ("Spec Color", Color) = (1,1,1,1)
         _Emission ("Emmisive Color", Color) = (0,0,0,0)
         _Shininess ("Shininess", Range (0.01, 1)) = 0.7        
@@ -23,11 +23,12 @@ Shader "WaterShader" {
             SeparateSpecular On
 
             Blend SrcAlpha OneMinusSrcAlpha  // これにして、generate alpha from grayscale　でやったらなんとなくそれっぽくなった
-            
+
+
             SetTexture [_MainTex] {
                 constantColor  [_Color] // primaryを掛けないと、ライティングが効かない。
-//                Combine texture * primary DOUBLE, texture * constant
-                Combine texture , texture * constant
+                Combine texture * primary DOUBLE , texture * constant
+//                Combine texture , texture * constant
             }
 
 
