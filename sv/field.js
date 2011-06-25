@@ -292,15 +292,23 @@ Field.prototype.getBlockBox = function(x0,y0,z0,x1,y1,z1) {
     }
     var out = new Array( (x1-x0) * (y1-y0) * (z1-z0) );
     var i=0;
+    var nonair=0;
     for(var y=y0; y < y1; y++ ){
         for(var z=z0; z < z1; z++ ) {
             for(var x=x0; x < x1; x ++ ){
-                out[i]= this.blocks[ toIndex(x,y,z,this.hSize) ];
+                var t = this.blocks[ toIndex(x,y,z,this.hSize) ];
+                out[i] = t;
+                if( t != g.BlockType.AIR ){ nonair ++; }
                 i++;
             }
         }
     }
-    return out;                
+
+    if(nonair==0){
+        return null;
+    } else {
+        return out;
+    }
 };
 
 // 明るさテーブルを取る0~7

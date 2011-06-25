@@ -122,7 +122,7 @@ function makeDebriCube(a) {
 
     var lts:int[] = new int[6*4]; // Z=0 Z=1 X=0 X=1 Y=0 Y=1 の順
     var drawflags:int[] = new int[6]; // 各面を描画するかどうかのフラグ
-    var i;
+    var i:int;
     for(i=0;i<6*4;i++){ lts[i]=5; }
     for(i=0;i<6;i++){ drawflags[i]=1; }
     
@@ -354,7 +354,7 @@ function doProtocolOne( h ){
     //                print( "from server:'"+h["method"].str+"' , len:" + h["params"].list.Count );
     var args = h["params"].list;
     var ra = new Array();
-    for( var i=0;i<args.Count;i++){
+    for( var i:int=0;i<args.Count;i++){
         if( args[i] == null ){continue;}
 
         switch( args[i].type ){

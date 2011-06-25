@@ -146,7 +146,7 @@ function put(x,y,z,tname){
 function attack() {
     sys.puts("attack: pitch"+this.pc.pitch + " yaw:" + this.pc.yaw );
 
-    this.pc.shoot( "hidden", 10, 0.5, 5 );
+    this.pc.shoot( "hidden", 30, 0.2, 5, 10 );
 }
 function chat(txt) {
     sys.puts("chat:"+txt);
@@ -159,8 +159,7 @@ function chat(txt) {
         fld.set( v.x, v.y, v.z, g.BlockType.STONE);
         return;
     } else if( txt == "arrow" ) {
-        var b = this.pc.shoot( "arrow", 5, 30, 2 );
-        b.antiGravity = 4;
+        this.pc.shoot( "arrow", 15, 5, 2, 4 );
         return;
     }
 

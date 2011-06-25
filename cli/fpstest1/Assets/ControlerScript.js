@@ -34,6 +34,17 @@ function Start () {
 
 
 function Update () {
+
+    var i:int;
+    var cnt:int=0;
+    var ttt = Time.realtimeSinceStartup;
+    for(i=0;i<100000;i++){
+        for(var q:int=0;q<2;q++){
+            cnt++;
+        }
+    }
+    var eee = Time.realtimeSinceStartup;
+    print("D###############DT:" + ( eee-ttt) );
     
     var mx = Input.GetAxis( "Mouse X" );
     var my = Input.GetAxis( "Mouse Y" );

@@ -8,6 +8,7 @@ var main = require("./main");
 function pcMove( curTime ) {
     this.vForce = g.PlayerForce;
     //    sys.puts( "p:"+this.pos.to_s());
+    return true;
 };
 
 // デブリ
@@ -20,8 +21,9 @@ function debriMove( curTime ) {
         var p = this.pos.toPos();
         this.field.runtimeSet( p, this.debriType );
         sys.puts( "debri fixed!");
-        this.field.deleteActor( this.id );        
+        return false;
     }
+    return true;
 };
 
 // 目的地はいつも近くのpc
@@ -76,8 +78,7 @@ function zombieMove( curTime ) {
                            this.velocity.y ); 
         }
     }
-
-
+    return true;
 }
 
 var defaultTick = 30; // ms
@@ -130,10 +131,14 @@ Actor.prototype.poll = function(curTime) {
     
     // 挙動関数呼び出し
     if( this.func != null ){
-        this.func.apply( this, [curTime]);
-        this.counter ++;
+        var ret= this.func.apply( this, [curTime]);
+        if( ret == false ){
+            this.field.deleteActor(this.id);
+            return;
+        }
     }
-        
+
+    this.counter ++;
 
     // 物理的に動かす
 
@@ -233,7 +238,13 @@ Actor.prototype.poll = function(curTime) {
             var blkcur4 = this.field.get( np4.ix(), np4.iy(), np4.iz() );
             if( blkcur4 != null && blkcur4 == g.BlockType.AIR ) x_ok = true;
 
-            if( this.hitWallFunc ) this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ), x_ok, y_ok, z_ok ] );
+            if( this.hitWallFunc ){
+                var ret = this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ), x_ok, y_ok, z_ok ] );
+                if( ret == false ){
+                    this.field.deleteActor(this.id);
+                    return;
+                }
+            }
             
             var finalnextpos = this.pos;
             if( x_ok ) finalnextpos.x = np.x;
@@ -355,6 +366,7 @@ function pcHitWall(p,xok,yok,zok) {
             main.nearcast( this.pos, "statusChange", this.id, this.hp );
         }
     }
+    return true;
 };
 
 function PlayerCharacter( name, fld, pos ) {
@@ -390,28 +402,29 @@ function bulletMove( curTime ) {
         if( a == this.shooter ) continue;
         sys.puts( "collide:" + a.typeName + " d:" + this.pos.diff( a.pos ).length() );
         a.attacked( this.damage, this );
-        
+        return false;
     }
 
     if( this.nextMoveAt > this.dieAt ){
         sys.puts( "bullet: TTL. die");
-        this.field.deleteActor( this.id );
+        return false;
     }
+    return true;
 };
 
 // speed: (m/sec)
 // dtl: distance to live. (m)
 function bulletHitWall(p,xok,yok,zok){
     sys.puts( "bulletHitWall: p:"+p.to_s());
-    this.field.deleteActor(this.id);
-    if( this.typeName == "arrow" ){
-        this.landingAt = this.nextMoveAt;
-    }
+    return false;
 };
 
 function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttlsec, damage ) {
 
-    var v = new g.Vector3( Math.cos(pitch), yaw, Math.sin(pitch) );
+    var cameraHeight = 1;
+
+    pos.y += cameraHeight;
+    var v = new g.Vector3( Math.cos(pitch), yaw - cameraHeight, Math.sin(pitch) );
 
     var vel = v.normalized().mul(speed);
 
@@ -442,8 +455,9 @@ function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttlsec, damage ) {
 };
 
 // tname : "hidden"だとmove送らない
-Actor.prototype.shoot = function( tname, speed, ttlsec, damage ) {
+Actor.prototype.shoot = function( tname, speed, ttlsec, damage, ag) {
     var b = new Bullet( tname, this.field, this.pos, this, this.pitch, this.yaw, speed, ttlsec, damage );
+    b.antiGravity = ag;
     this.field.addActor(b);
     return b;
 };
