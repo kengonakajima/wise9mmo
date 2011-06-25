@@ -312,17 +312,21 @@ function Start() {
 }
 
 var uvBase:float=0;
-
+var lastUpdate:float;
 function Update() {
 
     // 水を流す
-    if( objmode==2){
+    if( objmode==2 && maxvi>0){
+        var now:float = Time.realtimeSinceStartup;
+        var dt:float = now - lastUpdate;
+        lastUpdate = now;
+        
         // 5列目の左から2個目が水の中心
         var mesh : Mesh = GetComponent(MeshFilter).mesh;
-        var uv:Vector2[] = new Vector2[ 8*8*8*4*6 ];
+        var uv:Vector2[] = new Vector2[ maxvi ];
         var waterUV:float[] = calcUVs( (512/16)*5 + 1 );
         var unit:float = 1.0/ (512/16);
-        uvBase += unit / 100.0;
+        uvBase += unit * ( dt/ 5.0);
         if( uvBase >= unit ) uvBase=0;
         for(var i:int=0;i<maxvi/4;i++){
             var du:float=uvBase;
@@ -560,11 +564,27 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
             }
         }
     }
+
+
+    // 必要最低限の量だけコピって
+
+    var verticesCopy : Vector3[] = new Vector3[ vi ];
+    var uvCopy : Vector2[] = new Vector2[ vi];
+    var trianglesCopy : int[] = new int[ ti ];
+    var normalsCopy : Vector3[] = new Vector3[vi]; // 頂点数と同じだけ必要
+    for(i=0;i<vi;i++){
+        verticesCopy[i]=vertices[i];
+        uvCopy[i]=uv[i];
+        normalsCopy[i]=normals[i];
+    }
+    for(i=0;i<ti;i++){
+        trianglesCopy[i]=triangles[i];
+    }
     
-    mesh.vertices = vertices;
-    mesh.uv = uv;
-    mesh.triangles = triangles;
-    mesh.normals = normals;
+    mesh.vertices = verticesCopy;
+    mesh.uv = uvCopy;
+    mesh.triangles = trianglesCopy;
+    mesh.normals = normalsCopy;
     //    mesh.RecalculateNormals();
     if(vi==0)Destroy(gameObject); //計算の結果頂点がひとつもないなら死ぬよ
     maxvi=vi;
