@@ -142,7 +142,6 @@ function makeDebriCube(a) {
     mesh.triangles = triangles;
     mesh.normals = normals;
 
-
     a.transform.localScale = Vector3(0.5,0.5,0.5);
 }
 
@@ -199,7 +198,6 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
     AppendLog( "LoginResult: new cliID:" +cliID );
 	myClientID = cliID;
 
-    var hero = GameObject.Find( "HeroCube" );
     var hs = hero.GetComponent("HeroScript" );
     hs.clientID = myClientID;
 
@@ -221,7 +219,6 @@ function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
     hs.SetMove( speed, pitch, yaw, pos, dy, dt, ag );
 
     // 遠すぎたら強制ワープ
-    var hero = GameObject.Find( "HeroCube" );
     //    print( "distance:" + Vector3.Distance(  pos,  hero.transform.position ) );
     if( cliID == myClientID && Vector3.Distance(  pos,  hero.transform.position ) > 5 ){        
         hero.transform.position = pos;
@@ -281,8 +278,13 @@ function rpcJumpNotify( cliID, dy ) {
     hs.JumpByRemote(dy);
 }
 
+var cam : GameObject;
+var hero : GameObject;
+
 // 通信をするobj
 function Start () {
+    cam = GameObject.Find( "Main Camera" );
+    hero = GameObject.Find( "HeroCube" );
 
     protocol = GetComponent( "ProtocolScript");
     addRPC( "loginResult", rpcLoginResult );
@@ -323,7 +325,6 @@ function doProtocol() {
 
     
     // 現在の状態を送る
-    var hero = GameObject.Find( "HeroCube" );
     var hs = hero.GetComponent("HeroScript" );
     var t = Time.realtimeSinceStartup;
     var thresSec = 0.2;
@@ -590,20 +591,33 @@ class Chunk {
 };
 
 
+function isInViewFrustum( bx:int, by:int, bz:int ) {
+    var planes : Plane[];
+    var c : Camera = Camera.main;
+    planes = GeometryUtility.CalculateFrustumPlanes(c);
+    var bounds : Bounds = Bounds( Vector3(bx,by,bz), Vector3(CHUNKSZ,CHUNKSZ,CHUNKSZ));
+    if( GeometryUtility.TestPlanesAABB(planes,bounds)){
+        return true;
+    } else {
+        return false;
+    }
+}
+
 //bxyz: block座標
 function ensureChunks( bx:int,by:int,bz:int ){
-    var chx = bx / CHUNKSZ;
-    var chy = by / CHUNKSZ;
-    var chz = bz / CHUNKSZ;
-    var chrange = VIEWRANGE / CHUNKSZ;
+    var chx:int = bx / CHUNKSZ;
+    var chy:int = by / CHUNKSZ;
+    var chz:int = bz / CHUNKSZ;
+    var chrange:int = VIEWRANGE / CHUNKSZ;
 
-    for(var y= chy-chrange; y <= chy+chrange; y++){
+    for(var y:int= chy-chrange; y <= chy+chrange; y++){
         if(y<0||y>=CHUNKMAX)continue;
-        for(var x= chx-chrange; x <= chx+chrange; x++){
-        if(x<0||x>=CHUNKMAX)continue;            
-            for(var z= chz-chrange; z <= chz+chrange; z++){
+        for(var x:int= chx-chrange; x <= chx+chrange; x++){
+            if(x<0||x>=CHUNKMAX)continue;            
+            for(var z:int= chz-chrange; z <= chz+chrange; z++){
                 if(z<0||z>=CHUNKMAX)continue;
                 var ch = chunks[ toChunkIndex( x,y,z ) ];
+                if( !isInViewFrustum( x*CHUNKSZ+(CHUNKSZ/2),y*CHUNKSZ+(CHUNKSZ/2),z*CHUNKSZ+(CHUNKSZ/2)) ) continue;
                 if(ch==null){
                     chunks[ toChunkIndex(x,y,z) ] = new Chunk(CHUNKSZ,x,y,z);
                     send( "getField",
@@ -696,9 +710,7 @@ var STEM=6;
 var REDFLOWER=100;
 var BLUEFLOWER=101;
 
-
 function Update () {
-
     
     send("echo",123); // 何故か送らないと受信できない
     doProtocol();
@@ -709,10 +721,8 @@ function Update () {
     }
 
 
-    var cam = GameObject.Find( "Main Camera" );
     var ray = cam.camera.ScreenPointToRay( Vector3( Screen.width/2, Screen.height/2,0));
     
-    var hero = GameObject.Find( "HeroCube" );
     var hs = hero.GetComponent("HeroScript" );
     nt = statText.GetComponent( "GUIText" );
     nt.text = "v:"+hero.transform.position+" chunk:"+chs + " ray:"+ray.origin + ">"+ray.direction + " nose:"+hs.nose;
