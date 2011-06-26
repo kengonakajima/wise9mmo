@@ -3,6 +3,8 @@ var headTextPrefab : GameObject;
 
 var headPrefab : GameObject;
 
+var waterParticleEmitterPrefab : GameObject;
+
 var pitch : float;
 var yaw : float;
 
@@ -175,6 +177,10 @@ function Update() {
             inWater=true;
             if( prevInWater!=true){
                 dy=0;
+                // 着水の瞬間
+                if( waterParticleEmitterPrefab ){
+                    Instantiate( waterParticleEmitterPrefab, transform.position, transform.rotation );
+                }
             } else {
                 if( dy < -1 ){
                     dy=-1;
