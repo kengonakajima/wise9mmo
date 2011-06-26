@@ -14,6 +14,8 @@ var nose : Vector3; // こういう風に関数の外に変数定義するとGUI
 var falling = false;
 var needSend = false;
 
+var inWater; 
+
 var cam : GameObject;
 
 var clientID = -1; // サーバ内のid
@@ -130,6 +132,11 @@ function Update() {
     nose = transform.position + dnose ;
     var flatNose = Vector3( nose.x, transform.position.y, nose.z );
     transform.LookAt( flatNose );
+
+    if( inWater){
+        vVel /= 2;
+        hVel /= 2;
+    }
     
     var dtr : Vector3;
     dtr = dnose * vVel * speedPerSec + dside * hVel * speedPerSec;
@@ -138,6 +145,9 @@ function Update() {
 
     if(falling){
         var gravity : float = 6.5 / antiGravity;
+        if( inWater){
+            gravity /= 3;
+        }
         dy -= gravity * dTime;
     }
     
@@ -158,18 +168,26 @@ function Update() {
 
 
     var blkcur = cs.getBlock( transform.position.x, transform.position.y, transform.position.z);
-    if( blkcur != null && blkcur != cs.AIR ){//cs.STONE|| blkcur == cs.WATER ){
-        // 壁の中にいま埋まってる場合
-        nextpos.y += 1;
-        falling = false;
-        dy=0;
+    if( blkcur != null ){
+        if( blkcur == cs.WATER ){
+            // 水の中
+            inWater=true;
+        } else {
+            inWater=false;
+            if( cs.isSolidBlock(blkcur) ) {
+                // 壁の中にいま埋まってる場合
+                nextpos.y += 1;
+                falling = false;
+                dy=0;
+            }
+        }
     }
     
     var blkfound=false;
     var blkhity=-999;
     for(var by:int=nextpos.y;by>=0;by--){
         var b = cs.getBlock( transform.position.x, by, transform.position.z);
-        if( b!=null && b != cs.AIR ){
+        if( b!=null && cs.isSolidBlock(b)){
             blkfound=true;
             blkhity = by;
             break;
@@ -193,23 +211,23 @@ function Update() {
     var y_ok=false;
     var z_ok=false;
     
-    if( blkn == null || blkn == cs.AIR ){
-        // 進む先が空気の場合
+    if( blkn == null || ( cs.isSolidBlock(blkn) == false)  ){
+        // 進む先が空気や水の場合
         x_ok = y_ok = z_ok = true;
     } else {
         // 進む先が壁などの場合
         // y
         var nextpos2 = Vector3( transform.position.x, nextpos.y, transform.position.z );
         var blkcur2 = cs.getBlock( nextpos2.x, nextpos2.y, nextpos2.z );
-        if( blkcur2 != null && blkcur2 == cs.AIR ) y_ok = true;
+        if( blkcur2 != null && (!cs.isSolidBlock(blkcur2))  ) y_ok = true;
         // z
         var nextpos3 = Vector3( transform.position.x, transform.position.y, nextpos.z );
         var blkcur3 = cs.getBlock( nextpos3.x, nextpos3.y, nextpos3.z );
-        if( blkcur3 != null && blkcur3 == cs.AIR ) z_ok = true;
+        if( blkcur3 != null && (!cs.isSolidBlock(blkcur3)) ) z_ok = true;
         // x
         var nextpos4 = Vector3( nextpos.x, transform.position.y, transform.position.z );
         var blkcur4 = cs.getBlock( nextpos4.x, nextpos4.y, nextpos4.z );
-        if( blkcur4 != null && blkcur4 == cs.AIR ) x_ok = true;
+        if( blkcur4 != null && (!cs.isSolidBlock(blkcur4)) ) x_ok = true;
     }
 
     var finalnextpos = transform.position;

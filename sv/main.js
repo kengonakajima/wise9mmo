@@ -102,8 +102,8 @@ function getField(x0,y0,z0,x1,y1,z1){
     } else {
         var brl = g.runLength(blkary);
         var lrl = g.runLength(lgtary);
-        sys.puts( "f:" + brl );
-        sys.puts( "l:" + lrl );        
+        //        sys.puts( "f:" + brl );
+        //        sys.puts( "l:" + lrl );        
         this.send( "getFieldResult", x0,y0,z0,x1,y1,z1,brl,lrl);
     }
 }
@@ -173,7 +173,7 @@ function chat(txt) {
 
 function login() {
   sys.puts( "login" );
-  var p = new g.Pos( 2,2,2 ); // 初期位置
+  var p = new g.Pos( 2,14,2 ); // 初期位置
 
   this.pc = fld.addPC( "guest", p, this );
 

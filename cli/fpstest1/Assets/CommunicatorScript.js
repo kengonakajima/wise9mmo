@@ -10,6 +10,13 @@ var STEM:int=6;
 var REDFLOWER:int=100;
 var BLUEFLOWER:int=101;
 
+function isSolidBlock(t:int) {
+    if( t==AIR||t==WATER){
+        return false;
+    } else {
+        return true;
+    }
+}
 
 
 var protocol;
@@ -543,24 +550,7 @@ class Chunk {
     function getBlock(x,y,z) {
         return blocks[ toBlockIndex(x%(size+2),y%(size+2),z%(size+2)) ];
     }
-    // lights:3x3x3の光源情報
-    /*    function setBlock(x,y,z, t, lights) {
-        x = x % size;
-        y = y % size;
-        z = z % size;
-        blocks[ toBlockIndex(x,y,z) ] = t;
-        for(var iy=0;iy<3;iy++){
-            for(var iz=0;iz<3;iz++){
-                for(var ix=0;ix<3;ix++){
-                    if( (x-1+ix)<0||(y-1+iy)<0||(z-1+iz)<0) continue;
-                    var li = toLightIndex(x+1-1+ix,y+1-1+iy,z+1-1+iz);
-                    this.lights[li] = lights[ ix + iz*3+iy*3*3 ];
-                }
-            }
-        }
-        needUpdate=true;
-    }
-    */
+
     // 0 ~ (size+2) 
     function toLightIndex(x,y,z){
         return y * (size+2) * (size+2) + z * (size+2) + x;
@@ -613,30 +603,52 @@ function isInViewFrustum( bx:int, by:int, bz:int ) {
 }
 
 //bxyz: block座標
-function ensureChunks( bx:int,by:int,bz:int ){
+// sendしたらtrue
+function ensureChunks( v:Vector3, range:int ){
+    var bx:int = v.x;
+    var by:int = v.y;
+    var bz:int = v.z;
     var chx:int = bx / CHUNKSZ;
     var chy:int = by / CHUNKSZ;
     var chz:int = bz / CHUNKSZ;
-    var chrange:int = VIEWRANGE / CHUNKSZ;
 
-    for(var y:int= chy-chrange; y <= chy+chrange; y++){
+    var sendx:int=-1;
+    var sendy:int=-1;
+    var sendz:int=-1;
+    var minDistance:float=999999999999;
+    
+    for(var y:int= chy-range; y <= chy+range; y++){
         if(y<0||y>=CHUNKMAX)continue;
-        for(var x:int= chx-chrange; x <= chx+chrange; x++){
+        for(var x:int= chx-range; x <= chx+range; x++){
             if(x<0||x>=CHUNKMAX)continue;            
-            for(var z:int= chz-chrange; z <= chz+chrange; z++){
+            for(var z:int= chz-range; z <= chz+range; z++){
                 if(z<0||z>=CHUNKMAX)continue;
                 var ch = chunks[ toChunkIndex( x,y,z ) ];
                 if( !isInViewFrustum( x*CHUNKSZ+(CHUNKSZ/2),y*CHUNKSZ+(CHUNKSZ/2),z*CHUNKSZ+(CHUNKSZ/2)) ) continue;
                 if(ch==null){
-                    chunks[ toChunkIndex(x,y,z) ] = new Chunk(CHUNKSZ,x,y,z);
-                    send( "getField",
-                          x*CHUNKSZ,y*CHUNKSZ,z*CHUNKSZ,
-                          (x+1)*CHUNKSZ,(y+1)*CHUNKSZ,(z+1)*CHUNKSZ );
-                    return; // １ループに１かいまで
+                    var d:float = (x-chx)*(x-chx)+(y-chy)*(y-chy)+(z-chz)*(z-chz);
+                    if( d<minDistance){
+                        minDistance = d;
+                        sendx = x;
+                        sendy = y;
+                        sendz = z;
+                    }
                 }
             }
         }
     }
+    if( sendx==-1){
+        return false;
+    }
+
+    // 一番近いのを1個送る
+    chunks[ toChunkIndex(sendx,sendy,sendz) ] = new Chunk(CHUNKSZ,sendx,sendy,sendz);
+    
+    send( "getField",
+          sendx*CHUNKSZ,sendy*CHUNKSZ,sendz*CHUNKSZ,
+          (sendx+1)*CHUNKSZ,(sendy+1)*CHUNKSZ,(sendz+1)*CHUNKSZ );
+    return true; 
+
 }
 function getChunk(chx,chy,chz){
     if( chx<0||chy<0||chz<0||chx>=CHUNKMAX||chy>=CHUNKMAX||chz>=CHUNKMAX) return null;
@@ -731,12 +743,11 @@ function Update () {
     nt = statText.GetComponent( "GUIText" );
     nt.text = "v:"+hero.transform.position+" chunk:"+chs + " ray:"+ray.origin + ">"+ray.direction + " nose:"+hs.nose;
 
-    // ここまでで0.03 ~ 0.04
-    ensureChunks( hero.transform.position.x, hero.transform.position.y, hero.transform.position.z );
+    // 自分のまわり優先
+    ensureChunks( hero.transform.position, VIEWRANGE/CHUNKSZ );
 
-    // 0.04 ~ 0.055
+
     var upChk = findUpdatedChunk(); // 軽い
-
     
     if( upChk != null){
         var p:GameObject;

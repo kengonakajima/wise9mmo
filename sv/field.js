@@ -24,19 +24,22 @@ function toIndex( x,y,z, hs ){
 exports.generate = function( hsize, vsize ) {
     var fld = new Field( hsize, vsize );
 
+    var groundLevel = Math.floor( vsize * 0.2 );
     fld.fill( 0,0,0, hsize,vsize,hsize, g.BlockType.AIR ); // 世界を空気で満たす
     fld.fill( 0,0,0, hsize,1,hsize, g.BlockType.STONE ); // 地盤を置く
-    fld.fill( 8,1,8, hsize,5,hsize, g.BlockType.WATER );   //水面
+    fld.fill( 0,1,0, hsize,groundLevel,hsize, g.BlockType.WATER );   //海
+
+    fld.fill( 0,groundLevel,0, 7,groundLevel+1,7, g.BlockType.STONE ); // すたーとちてん
     
     
     var d = 20;
-    fld.fill( 4,1,4, 8+d,2,8+d, g.BlockType.STONE );   // 高台を置く
-    fld.fill( 5,2,5, 7+d,3,7+d, g.BlockType.SOIL );   // その上に水を置く
-    fld.fill( 6,3,6, 6+d,4,6+d, g.BlockType.GRASS );   // その上に水を置く    
-    fld.fill( 7,4,7, 5+d,5,5+d, g.BlockType.GRASS );   //
+    fld.fill( 4,1,4, 8+d,groundLevel+1,8+d, g.BlockType.STONE );   // 高台を置く
+    fld.fill( 5,2,5, 7+d,groundLevel+2,7+d, g.BlockType.SOIL );   
+    fld.fill( 6,3,6, 6+d,groundLevel+3,6+d, g.BlockType.GRASS );  
+    fld.fill( 7,4,7, 5+d,groundLevel+4,5+d, g.BlockType.GRASS );  
     
-    fld.set( 8,5,8, g.ItemType.REDFLOWER );   //
-    fld.set( 8,5,10, g.ItemType.BLUEFLOWER );   //
+    fld.set( 8,groundLevel+4,8, g.ItemType.REDFLOWER );   //
+    fld.set( 8,groundLevel+4,10, g.ItemType.BLUEFLOWER );   //
 
     // 木を4本
     fld.putTree(12,12);
@@ -44,13 +47,12 @@ exports.generate = function( hsize, vsize ) {
     fld.putTree(17,17);        
     fld.putTree(12,17);
     
-    
-    
-    fld.fill( 53,1,53, 54,20,54, g.BlockType.LADDER );   // 
+    fld.fill( 53,1,53, 54,groundLevel+20,54, g.BlockType.LADDER );   // 
 
     // 山をいっぱいおく
     for(var i=0;i<40;i++){
         var mx = Math.floor(20 + Math.random() * hsize);
+        var my = Math.floor(0 + Math.random() * groundLevel);
         var mz = Math.floor(20 + Math.random() * hsize);
         var msz = Math.floor(5 + Math.random() * 10);
         if(mx+msz>=hsize||mz+msz>=hsize)continue;
@@ -60,17 +62,17 @@ exports.generate = function( hsize, vsize ) {
         } else {
             t = g.BlockType.STONE;
         }
-        fld.putMountain( mx,0,mz, msz, t);
+        fld.putMountain( mx,my,mz, msz, t);
     }
 
-    fld.fill( 9,15,9, 28,17,28, g.BlockType.SOIL ); // 土の天井
+    fld.fill( 9,groundLevel+15,9, 28,groundLevel+17,28, g.BlockType.SOIL ); // 土の天井
 
     // 後処理
     fld.growGrass();
     fld.recalcSunlight(0,0,hsize,hsize);
     fld.stats(30);
 
-    fld.addMob( "zombie", new g.Pos(5,8,2) ); // 落ちてくる
+    fld.addMob( "zombie", new g.Pos(5,groundLevel+8,2) ); // 落ちてくる
     
     return fld;
 };
@@ -247,7 +249,7 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
                 }
                 if( t == g.BlockType.WATER ){
                     cur--;
-                    if(cur<0)cur=0;
+                    if(cur<1)cur=1;
                     this.setSunlight(x,y,z,cur);                    
                     continue;
                 }

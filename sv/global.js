@@ -5,6 +5,14 @@ var sys = require("sys");
 exports.BlockType = { AIR:0, STONE:1, SOIL:2, GRASS:3, WATER:4, LEAF:5, STEM:6, LADDER:7 };
 exports.ItemType = { REDFLOWER:100, BLUEFLOWER:101 };
 
+exports.isSolidBlock = function(t) {
+    if(t==exports.BlockType.AIR||t==exports.BlockType.WATER){
+        return false;
+    } else {
+        return true;
+    }        
+};
+    
 exports.BlockTypeToString = function(v) {
     for(var k in exports.BlockType ){
         if(exports.BlockType[k]==v)return k

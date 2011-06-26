@@ -155,6 +155,11 @@ Actor.prototype.poll = function(curTime) {
 
 
     var gr = 6.5 / this.antiGravity;
+    if( this.inWater==true){
+        gr /= 3;
+        this.velocity.x /= 2;
+        this.velocity.z /= 2;        
+    }
     this.velocity.y -= gr * dTime;
 
     var nextpos = this.pos.add( this.velocity.mul(dTime) );
@@ -191,10 +196,18 @@ Actor.prototype.poll = function(curTime) {
 
     
     var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
-    if( blkcur != null && blkcur != g.BlockType.AIR ){
-        // 壁の中にいま、まさにうまってる
-        this.pos.y += 1;
-        this.velocity.y = 0;
+    if( blkcur != null ){
+        if( blkcur == g.BlockType.WATER ){
+            // 水の中にいる
+            this.inWater = true;
+        } else {
+            this.inWater = false;
+            if( g.isSolidBlock(blkcur) ){
+                // 壁の中にいま、まさにうまってる
+                this.pos.y += 1;
+                this.velocity.y = 0;
+            }
+        } 
      }
 
     
@@ -217,7 +230,7 @@ Actor.prototype.poll = function(curTime) {
 
         
 
-        if( blkn == g.BlockType.AIR ){
+        if( !g.isSolidBlock(blkn) ){
             // 通れる場合はループ継続
             x_ok = y_ok = z_ok = true;
             this.pos = np;
@@ -228,15 +241,15 @@ Actor.prototype.poll = function(curTime) {
             // 通れない場合はループ終わりで抜ける
             var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
             var blkcur2 = this.field.get( np2.ix(), np2.iy(), np2.iz() );
-            if( blkcur2 != null && blkcur2 == g.BlockType.AIR ) y_ok = true;
+            if( blkcur2 != null && (!g.isSolidBlock(blkcur2)) ) y_ok = true;
 
             var np3 = new g.Vector3( this.pos.x, this.pos.y, np.z );
             var blkcur3 = this.field.get( np3.ix(), np3.iy(), np3.iz() );
-            if( blkcur3 != null && blkcur3 == g.BlockType.AIR ) z_ok = true;
+            if( blkcur3 != null && (!g.isSolidBlock(blkcur3)) ) z_ok = true;
     
             var np4 = new g.Vector3( np.x, this.pos.y, this.pos.z );
             var blkcur4 = this.field.get( np4.ix(), np4.iy(), np4.iz() );
-            if( blkcur4 != null && blkcur4 == g.BlockType.AIR ) x_ok = true;
+            if( blkcur4 != null && (!g.isSolidBlock(blkcur4)) ) x_ok = true;
 
             if( this.hitWallFunc ){
                 var ret = this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ), x_ok, y_ok, z_ok ] );
@@ -316,7 +329,14 @@ Actor.prototype.setMove = function( x, y, z, pitch, yaw ) {
 };
 // velY: float
 Actor.prototype.jump = function( velY ) {
-    this.velocity.y = velY;
+    sys.puts( "jump: velY:" + this.velocity.y );
+    if( this.inWater == true ){
+        this.velocity.y = velY;
+    } else {
+        if( this.velocity.y == 0 ){
+            this.velocity.y = velY;
+        }
+    }
     main.nearcast( this.pos, "jumpNotify", this.id, velY );    
 };
 

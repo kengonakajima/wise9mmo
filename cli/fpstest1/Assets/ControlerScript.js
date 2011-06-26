@@ -14,6 +14,8 @@ var cursorCube : GameObject;
 var chatString : String;
 var chatShow : System.Boolean;
 
+var waterFilter : GameObject;
+
 function Start () {
     Screen.lockCursor = true;
     //何故か機能しない    Screen.SetResolution( 1680,1050, true ); 
@@ -23,14 +25,16 @@ function Start () {
     com = GameObject.Find("CommunicatorCube");
     comsc = com.GetComponent("CommunicatorScript");
     cursorCube = GameObject.Find("CursorCube");
-    
+
     selectedInventoryIndex = 0;
     herosc.SetToolTex( shortcutTextures[ selectedInventoryIndex ] );
     
     chatShow = false;
     chatString = "";
-    
+
+    waterFilter=null;
 }
+
 
 
 function Update () {
@@ -56,8 +60,21 @@ function Update () {
 
     var j = Input.GetButton( "Jump" );
     if(j){
+        var canJump;
         if( herosc.dy == 0 ){
-            herosc.dy = 4.0;
+            canJump = true;
+        } else {
+            if( herosc.inWater ){
+                canJump = true;
+            }
+        }
+        
+        if( canJump ){
+            if( herosc.inWater){
+                herosc.dy = 2.0;
+            } else {
+                herosc.dy = 4.0;
+            }
             herosc.falling = true;
 			herosc.needSend = true;
             
@@ -65,6 +82,15 @@ function Update () {
         }
     }
 
+    // 水の中にいるときは、あかるさをみてカメラの前になにかおくか
+    if( waterFilter ==null){
+        waterFilter = GameObject.Find("WaterFilter");
+    }
+    if( herosc.inWater){
+        //        waterFilter.transform.position = herosc.nose;
+    } else {
+        //        waterFilter.transform.position = Vector3(0,0,0);
+    }
 }
 
 var activeBoxTex : Texture2D;
