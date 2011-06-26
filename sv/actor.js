@@ -123,7 +123,8 @@ function Actor( name, fld, pos ) {
 Actor.prototype.poll = function(curTime) {
         
     if( ( this.nextMoveAt >= curTime )  ) return;
-
+    
+    
     var dTime = ( curTime - this.lastMoveAt ) / 1000.0;
     this.dTime = dTime;
     this.lastMoveAt = curTime;
@@ -156,7 +157,7 @@ Actor.prototype.poll = function(curTime) {
 
     var gr = 6.5 / this.antiGravity;
     if( this.inWater==true){
-        gr /= 3;
+        gr /= 8;
         this.velocity.x /= 2;
         this.velocity.z /= 2;        
     }
@@ -200,6 +201,13 @@ Actor.prototype.poll = function(curTime) {
         if( blkcur == g.BlockType.WATER ){
             // 水の中にいる
             this.inWater = true;
+            if( this.prevInWater == false ){
+                this.velocity.y=0;
+            } else {
+                if( this.velocity.y < -1 ){
+                    this.velocity.y = -1;
+                }
+            }
         } else {
             this.inWater = false;
             if( g.isSolidBlock(blkcur) ){
@@ -316,6 +324,7 @@ Actor.prototype.poll = function(curTime) {
     if( this.sendMark ){
         main.nearcast( this.pos, "markNotify", this.pos.x, this.pos.y, this.pos.z );
     }
+    this.prevInWater = this.inWater;
 };
 
 // args: すべて float 

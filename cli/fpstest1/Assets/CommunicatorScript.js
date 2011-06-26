@@ -550,6 +550,9 @@ class Chunk {
     function getBlock(x,y,z) {
         return blocks[ toBlockIndex(x%(size+2),y%(size+2),z%(size+2)) ];
     }
+    function getLight(x,y,z) {
+        return lights[ toLightIndex(x%(size+2),y%(size+2),z%(size+2)) ];
+    }
 
     // 0 ~ (size+2) 
     function toLightIndex(x,y,z){
@@ -686,11 +689,15 @@ function chunkStat(){
 // ix,iy,iz:整数のブロック座標
 function getBlock( ix:int,iy:int,iz:int ) {
     if(ix<0||iy<0||iz<0)return null;
-    
     var chk = getChunk( ix/CHUNKSZ, iy/CHUNKSZ, iz/CHUNKSZ);
     if(chk==null)return null;
     return chk.getBlock( (ix%CHUNKSZ)+1,(iy%CHUNKSZ)+1,(iz%CHUNKSZ)+1);
-        
+}
+function getLight( ix:int,iy:int,iz:int ) {
+    if(ix<0||iy<0||iz<0)return null;
+    var chk = getChunk( ix/CHUNKSZ, iy/CHUNKSZ, iz/CHUNKSZ);
+    if(chk==null)return null;
+    return chk.getLight( (ix%CHUNKSZ)+1,(iy%CHUNKSZ)+1,(iz%CHUNKSZ)+1);
 }
 
 
@@ -741,7 +748,7 @@ function Update () {
     
     var hs = hero.GetComponent("HeroScript" );
     nt = statText.GetComponent( "GUIText" );
-    nt.text = "v:"+hero.transform.position+" chunk:"+chs + " ray:"+ray.origin + ">"+ray.direction + " nose:"+hs.nose;
+    nt.text = "v:"+hero.transform.position+" dy:" + hs.dy + " chunk:"+chs + " ray:"+ray.origin + ">"+ray.direction + " nose:"+hs.nose;
 
     // 自分のまわり優先
     ensureChunks( hero.transform.position, VIEWRANGE/CHUNKSZ );

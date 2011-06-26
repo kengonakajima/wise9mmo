@@ -14,6 +14,7 @@ var nose : Vector3; // こういう風に関数の外に変数定義するとGUI
 var falling = false;
 var needSend = false;
 
+var prevInWater;
 var inWater; 
 
 var cam : GameObject;
@@ -112,7 +113,7 @@ function setMaterial(tex) {
 
 
 function Update() {
-    
+
     prevPos = this.transform.position;
     
     var dTime = Time.realtimeSinceStartup - lastInterval;
@@ -146,7 +147,7 @@ function Update() {
     if(falling){
         var gravity : float = 6.5 / antiGravity;
         if( inWater){
-            gravity /= 3;
+            gravity /= 8;
         }
         dy -= gravity * dTime;
     }
@@ -172,6 +173,13 @@ function Update() {
         if( blkcur == cs.WATER ){
             // 水の中
             inWater=true;
+            if( prevInWater!=true){
+                dy=0;
+            } else {
+                if( dy < -1 ){
+                    dy=-1;
+                }
+            }
         } else {
             inWater=false;
             if( cs.isSolidBlock(blkcur) ) {
@@ -302,6 +310,8 @@ function Update() {
         toolT.rotation = cam.transform.rotation;
         
     }
+
+    prevInWater = inWater;
 
 }
 function PlayUseAnimation() {

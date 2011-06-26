@@ -14,7 +14,8 @@ var cursorCube : GameObject;
 var chatString : String;
 var chatShow : System.Boolean;
 
-var waterFilter : GameObject;
+
+var cam : GameObject;
 
 function Start () {
     Screen.lockCursor = true;
@@ -25,6 +26,7 @@ function Start () {
     com = GameObject.Find("CommunicatorCube");
     comsc = com.GetComponent("CommunicatorScript");
     cursorCube = GameObject.Find("CursorCube");
+    cam = GameObject.Find( "Main Camera" );
 
     selectedInventoryIndex = 0;
     herosc.SetToolTex( shortcutTextures[ selectedInventoryIndex ] );
@@ -32,7 +34,6 @@ function Start () {
     chatShow = false;
     chatString = "";
 
-    waterFilter=null;
 }
 
 
@@ -83,13 +84,44 @@ function Update () {
     }
 
     // 水の中にいるときは、あかるさをみてカメラの前になにかおくか
-    if( waterFilter ==null){
-        waterFilter = GameObject.Find("WaterFilter");
-    }
+
+
+    var wf = GameObject.Find( "WaterFilterGUITexture");
     if( herosc.inWater){
-        //        waterFilter.transform.position = herosc.nose;
+        var lgt:int = comsc.getLight( cam.transform.position.x,
+                                      cam.transform.position.y-0.1,
+                                      cam.transform.position.z);
+        
+        print("wf:"+wf);
+        
+        wf.transform.position.x = 0.5;
+        wf.transform.position.y = 0.5;
+        
+
+        switch(lgt){
+        case 0:	
+        case 1:
+            wf.guiTexture.color= Color(0,0,0.1,0.5); break;
+        case 2:
+            wf.guiTexture.color= Color(0,0,0.15,0.45);break;
+        case 3:
+            wf.guiTexture.color= Color(0,0,0.2,0.4);break;
+        case 4:
+            wf.guiTexture.color= Color(0,0,0.3,0.35);break;
+        case 5:
+            wf.guiTexture.color= Color(0,0,0.4,0.3);break;
+        case 6:
+            wf.guiTexture.color= Color(0,0,0.7,0.25);break;
+        case 7:
+            wf.guiTexture.color= Color(0,0,1,0.2);break;
+        case 8:
+            wf.transform.position.x=-100;
+            wf.transform.position.y=-100;
+        }
+
     } else {
-        //        waterFilter.transform.position = Vector3(0,0,0);
+            wf.transform.position.x=-100;
+            wf.transform.position.y=-100;
     }
 }
 
@@ -127,7 +159,6 @@ function OnGUI () {
 
 
     // 視線の先にあるものの操作
-    var cam = GameObject.Find( "Main Camera" );
     var ray = cam.camera.ScreenPointToRay( Vector3( Screen.width/2, Screen.height/2,0));
 
     var d = ray.direction / 30.0;
@@ -142,7 +173,7 @@ function OnGUI () {
         var ix:int = v.x;
         var iy:int = v.y;
         var iz:int = v.z;        
-        if( blk != comsc.AIR ){
+        if( blk != comsc.AIR && blk != comsc.WATER ){
             targetv = Vector3( ix,iy,iz);
             break;
         } else {
