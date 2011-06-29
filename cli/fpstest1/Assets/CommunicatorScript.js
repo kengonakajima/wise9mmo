@@ -175,6 +175,7 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         var hs = a.GetComponent( "HeroScript" );
         hs.clientID = id;
         hs.showName =  typeName + "_" + id;
+        hs.isPC = true;
         if( id == myClientID ){
             a.transform.localScale = Vector3(0.2,0.2,0.2);
         } else {
@@ -189,19 +190,21 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
             hs.idleAnimName = "idle";
             hs.setMaterial( pcTexture );            
         }        
-    } else if( typeName == "STONE_debri" || typeName == "GRASS_debri" || typeName == "SOIL_debri" ){
+    } else if( typeName == "STONE_debri" || typeName == "GRASS_debri" || typeName == "SOIL_debri" || typeName == "LEAF_debri" || typeName == "STEM_debri" ){
         a = Instantiate( prefabDebri, pos, Quaternion.identity );
         hs = a.GetComponent( "HeroScript");
         hs.clientID = id;
         hs.showName =  typeName + "_" + id;
-        
+        hs.isPC = false;
+
         makeDebriCube(a);
     } else if( typeName == "arrow" ) {
         a = Instantiate( prefabArrow, pos, Quaternion.identity );
         hs = a.GetComponent( "HeroScript");
         hs.clientID = id;
         hs.showName =  typeName + "_" + id;
-        
+        hs.isPC = false;
+
     }
     print("typeName:"+typeName);
     a.name = "" + id;

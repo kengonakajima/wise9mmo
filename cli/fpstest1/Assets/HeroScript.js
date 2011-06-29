@@ -27,6 +27,7 @@ var clientID = -1; // サーバ内のid
 var lastInterval : float;
 
 var showName : String;
+var isPC : System.Boolean;
 
 var headObj : GameObject; 
 
@@ -113,9 +114,38 @@ function setMaterial(tex) {
     }
 }
 
+// ある位置から次の位置にいくことが可能かのテスト. xyzのぬるぬる状況を別々に返す
+function testPointToPointOK( frompos, topos, outary ) {
+    outary[0]=outary[1]=outary[2]=false;
+    var blkn = cs.getBlock( topos.x, topos.y, topos.z);
+    if( blkn == null || ( cs.isSolidBlock(blkn) == false)  ){
+        // 進む先が空気や水の場合
+        outary[0] = outary[1] = outary[2] = true;
+    } else {
+        // 進む先が壁などの場合
+        // y
+        var topos2 = Vector3( frompos.x, topos.y, frompos.z );
+        var blkcur2 = cs.getBlock( topos2.x, topos2.y, topos2.z );
+        if( blkcur2 != null && (!cs.isSolidBlock(blkcur2))  ) outary[1] = true;
+        // z
+        var topos3 = Vector3( frompos.x, frompos.y, topos.z );
+        var blkcur3 = cs.getBlock( topos3.x, topos3.y, topos3.z );
+        if( blkcur3 != null && (!cs.isSolidBlock(blkcur3)) ) outary[2] = true;
+        // x
+        var topos4 = Vector3( topos.x, frompos.y, frompos.z );
+        var blkcur4 = cs.getBlock( topos4.x, topos4.y, topos4.z );
+        if( blkcur4 != null && (!cs.isSolidBlock(blkcur4)) ) outary[0] = true;
+    }
+    
+}
+
+var com = null;
+var cs = null;
+
 
 function Update() {
-
+    if( com==null) com = GameObject.Find("CommunicatorCube");
+    if( cs==null) cs = com.GetComponent("CommunicatorScript");
     prevPos = this.transform.position;
     
     var dTime = Time.realtimeSinceStartup - lastInterval;
@@ -166,8 +196,7 @@ function Update() {
     var nextpos = transform.position + dtr * dTime;
     
     //地形判定
-    var com = GameObject.Find("CommunicatorCube");
-    var cs = com.GetComponent("CommunicatorScript");
+
 
 
     var blkcur = cs.getBlock( transform.position.x, transform.position.y, transform.position.z);
@@ -218,31 +247,37 @@ function Update() {
             dy=0;
         }
     }
-    
-    var blkn = cs.getBlock( nextpos.x, nextpos.y, nextpos.z);
+    var hitHeight=1.7; // 何故かこれをグローバルにすると使われない値になってしまう。。
+    var hitSize=0.35;
 
-    var x_ok=false;
-    var y_ok=false;
-    var z_ok=false;
+    var okary:System.Boolean[] = new System.Boolean[3];
+
+    var dCoords:Vector3[] = new Vector3[ 4+4+4+4];
+    dCoords[0] = Vector3(-hitSize,0,hitSize);
+    dCoords[1] = Vector3(hitSize,0,hitSize);
+    dCoords[2] = Vector3(-hitSize,0,-hitSize);
+    dCoords[3] = Vector3(hitSize,0,-hitSize);
+    dCoords[4] = transform.forward*hitSize;
+    dCoords[5] = transform.forward*hitSize*-1;
+    dCoords[6] = transform.right*hitSize;
+    dCoords[7] = transform.right*hitSize*-1;
     
-    if( blkn == null || ( cs.isSolidBlock(blkn) == false)  ){
-        // 進む先が空気や水の場合
-        x_ok = y_ok = z_ok = true;
-    } else {
-        // 進む先が壁などの場合
-        // y
-        var nextpos2 = Vector3( transform.position.x, nextpos.y, transform.position.z );
-        var blkcur2 = cs.getBlock( nextpos2.x, nextpos2.y, nextpos2.z );
-        if( blkcur2 != null && (!cs.isSolidBlock(blkcur2))  ) y_ok = true;
-        // z
-        var nextpos3 = Vector3( transform.position.x, transform.position.y, nextpos.z );
-        var blkcur3 = cs.getBlock( nextpos3.x, nextpos3.y, nextpos3.z );
-        if( blkcur3 != null && (!cs.isSolidBlock(blkcur3)) ) z_ok = true;
-        // x
-        var nextpos4 = Vector3( nextpos.x, transform.position.y, transform.position.z );
-        var blkcur4 = cs.getBlock( nextpos4.x, nextpos4.y, nextpos4.z );
-        if( blkcur4 != null && (!cs.isSolidBlock(blkcur4)) ) x_ok = true;
+    dCoords[8] = dCoords[0] + Vector3(0,hitHeight,0);
+    dCoords[9] = dCoords[1] + Vector3(0,hitHeight,0);
+    dCoords[10] = dCoords[2] + Vector3(0,hitHeight,0);
+    dCoords[11] = dCoords[3] + Vector3(0,hitHeight,0);
+    dCoords[12] = dCoords[4] + Vector3(0,hitHeight,0);
+    dCoords[13] = dCoords[5] + Vector3(0,hitHeight,0);
+    dCoords[14] = dCoords[6] + Vector3(0,hitHeight,0);
+    dCoords[15] = dCoords[7] + Vector3(0,hitHeight,0);
+    var x_ok : System.Boolean = true;
+    var y_ok : System.Boolean = true;
+    var z_ok : System.Boolean = true;
+    for(var i:int=0;i<dCoords.length;i++){
+        testPointToPointOK( transform.position+dCoords[i], nextpos+dCoords[i], okary );
+        x_ok &= okary[0]; y_ok &= okary[1]; z_ok &= okary[2];
     }
+
 
     var finalnextpos = transform.position;
     if( x_ok ) finalnextpos.x = nextpos.x;
