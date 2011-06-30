@@ -1,4 +1,57 @@
 
+//
+// 簡易プロファイラ
+//
+
+class Prof {
+    var category:String;
+    var times:float[]; //かかった時間
+    var infos:int[]; //そのときの参考情報
+    var num:int;
+    function Prof(catname:String, n:int) {
+        num=n;
+        category=catname;
+        times = new float[num];
+        infos = new int[num];
+        for(var i:int=0;i<num;i++){
+            times[i]=0;
+            infos[i]=0;
+        }
+    };
+    function insert( t:float, inf:int ){
+        var i:int;
+        for(i=0;i<num;i++){
+            if( t > times[i] ){
+                for(var j:int=num-1;j>=i+1;j--){
+                    times[j]=times[j-1];
+                    infos[j]=infos[j-1];
+                }
+                times[i]=t;
+                infos[i]=inf;
+                return;
+            }
+        }
+    }
+
+    var st:float;
+    function start() {
+        st = Time.realtimeSinceStartup;
+    }
+    function end(inf:int) {
+        insert( Time.realtimeSinceStartup - st, inf);
+    }
+    
+    function to_s() {
+        var s:String= category + ":";
+        for(var i:int=0;i<num;i++){
+            if(times[i]==0)break;
+            s += "[" + times[i] + "," + infos[i] + "]";
+        }
+        return s;
+    }
+};
+
+
 var AIR:int=0;
 var STONE:int=1;
 var SOIL:int=2;
@@ -29,7 +82,7 @@ function addRPC(name,f){
     rpcfunctions[name]=f;
 }
 
-function escape(s){
+function escape(s:String){
     return s.Replace( '"', "\\\"" ).Replace( "'", "\\'" );
 }
 
@@ -303,6 +356,11 @@ function rpcJumpNotify( cliID, dy ) {
 var cam : GameObject;
 var hero : GameObject;
 
+var bprof:Prof;
+var wprof:Prof;
+var iprof:Prof;
+var eprof:Prof;
+
 // 通信をするobj
 function Start () {
     cam = GameObject.Find( "Main Camera" );
@@ -319,6 +377,11 @@ function Start () {
     addRPC( "disappear", rpcDisappear );
     addRPC( "chatNotify", rpcChatNotify );
     addRPC( "markNotify", rpcMarkNotify );
+
+    bprof = new Prof( "block", 20);
+    wprof = new Prof( "water", 20);
+    iprof = new Prof( "item", 20);
+    eprof = new Prof( "ensure", 20);
 }
 
 
@@ -377,6 +440,8 @@ function doProtocolOne( h ){
     //                print( "from server:'"+h["method"].str+"' , len:" + h["params"].list.Count );
     var args = h["params"].list;
     var ra = new Array();
+    var ii:int;
+    
     for( var i:int=0;i<args.Count;i++){
         if( args[i] == null ){continue;}
 
@@ -396,25 +461,26 @@ function doProtocolOne( h ){
             break;
         case 4: // array
                 //               print( "array! num:"+args[i].list.Count );
-            var aa = new Array(args[i].list.Count);
-            for(var ii=0;ii<args[i].list.Count;ii++){
-                switch(args[i].list[ii].type){
-                case 1: // str
-                    aa[ii] = args[i].list[ii].str;
-                    break;                    
-                case 2: // number
-                    aa[ii] = args[i].list[ii].n;
-                    break;
-                case 5: // bool
-                    aa[ii] = args[i].list[ii].b;
-                    break;
-                default:
-                    aa[ii] = null;
-                    break;
-                }
+            switch(args[i].list[0].type){
+            case 1: // str
+                var aas:String[] = new String[args[i].list.Count];
+                for(ii=0;ii<args[i].list.Count;ii++) aas[ii]= args[i].list[ii].str;
+                ra[i]=aas;
+                break;
+            case 2: // number(now int only)
+                var aai:int[] = new int[args[i].list.Count];
+                for(ii=0;ii<args[i].list.Count;ii++) aai[ii]= args[i].list[ii].n;
+                ra[i]=aai;
+                break;
+            case 5: // bool
+                var aab:System.Boolean[] = new System.Boolean[args[i].list.Count];
+                for(ii=0;ii<args[i].list.Count;ii++) aab[ii]= args[i].list[ii].b;
+                ra[i]=aab;
+                break;
+            default:
+                ra[i] = null;
+                break;
             }
-            ra[i]=aa;
-
             break;
         case 5: // bool
             ra[i] = args[i].b;
@@ -500,15 +566,19 @@ function expandRunLength(rl,out) {
 }
 
 
+
+
+
+//
+// Chunk
 // 地形の読み込み, chunkで持っておいてまだロードしてなかったら(nullだったら)
-
-
+//
 
 var CHUNKMAX = 32;  //32x32x32 chunkサイズは16x16x16
 var CHUNKSZ = 8;
 var chunks = new Array(CHUNKMAX*CHUNKMAX*CHUNKMAX);
 
-function toChunkIndex(x,y,z) : int {
+function toChunkIndex(x:int,y:int,z:int) : int {
     var i = y * CHUNKMAX *CHUNKMAX + z * CHUNKMAX + x;
     //    print("i:"+i+"x:"+x+"y:"+y+"z:"+z+"chm:"+CHUNKMAX);
     return i;
@@ -516,7 +586,7 @@ function toChunkIndex(x,y,z) : int {
  
 function Field() {
     chunks = new Array( CHUNKMAX *CHUNKMAX*CHUNKMAX );
-    for(var i=0;i<chunks.length;i++)chunks[i]=null;
+    for(var i:int=0;i<chunks.length;i++)chunks[i]=null;
 }
 
 
@@ -528,50 +598,55 @@ var updatedSomeChunk=false; // どれか１個でも更新されてたらtrue
 class Chunk {
     var blocks : int[];
     var lights : int[];
-    var size;
-    var state;
-    var needUpdate; // 再描画が必要.
-    var chx;
-    var chy;
-    var chz;
+    var size:int;
+    var loaded:System.Boolean;
+    var needBlockUpdate:System.Boolean; // ブロックの再描画が必要.
+    var needWaterUpdate:System.Boolean; // 水の再描画が必要.
+    var needItemUpdate:System.Boolean;
+    
+    var chx:int;
+    var chy:int;
+    var chz:int;
     function Chunk( sz:int, _chx:int, _chy:int, _chz:int ){
         //        Debug.Log( "xyz:"+_chx+_chy+_chz);
         chx=_chx; chy=_chy; chz=_chz;
         size=sz;
-        state="init";
-        needUpdate=false;
+        loaded=false;
+        needBlockUpdate=false;
+        needWaterUpdate=false;
+        needItemUpdate=false;
         blocks = new int[(size+2)*(size+2)*(size+2)];
         lights = new int[(size+2)*(size+2)*(size+2)];
-        for(var i=0;i<blocks.length;i++)blocks[i]=-1;
+        for(var i:int=0;i<blocks.length;i++)blocks[i]=-1;
         for(i=0;i<lights.length;i++) lights[i]=0;
         
     }
-    function toBlockIndex(x,y,z){
+    function toBlockIndex(x:int,y:int,z:int) : int{
         return y * (size+2) * (size+2) + z * (size+2) + x;
     }
     // chunk内座標限定
-    function getBlock(x,y,z) {
+    function getBlock(x:int,y:int,z:int) :int {
         return blocks[ toBlockIndex(x%(size+2),y%(size+2),z%(size+2)) ];
     }
-    function getLight(x,y,z) {
+    function getLight(x:int,y:int,z:int) :int{
         return lights[ toLightIndex(x%(size+2),y%(size+2),z%(size+2)) ];
     }
 
     // 0 ~ (size+2) 
-    function toLightIndex(x,y,z){
+    function toLightIndex(x:int,y:int,z:int):int{
         return y * (size+2) * (size+2) + z * (size+2) + x;
     }
 
 };
 
-function dumpArray( a:int[] ){
+function dumpArray( a:int[] ):String{
     var s="";
     for(var i:int=0;i<a.length;i++){
         s+= a[i]+",";
     }
     return s;
 }
-function countBlocks(blocks) {
+function countBlocks(blocks:int[]) :int[]{
 
     var blockCnt:int=0;
     var itemCnt:int=0;
@@ -596,7 +671,7 @@ function countBlocks(blocks) {
 
 
 
-function isInViewFrustum( bx:int, by:int, bz:int ) {
+function isInViewFrustum( bx:int, by:int, bz:int ) : System.Boolean {
     var planes : Plane[];
     var c : Camera = Camera.main;
     planes = GeometryUtility.CalculateFrustumPlanes(c);
@@ -610,7 +685,7 @@ function isInViewFrustum( bx:int, by:int, bz:int ) {
 
 //bxyz: block座標
 // sendしたらtrue
-function ensureChunks( v:Vector3, range:int ){
+function ensureChunks( v:Vector3, range:int ) : System.Boolean {
     var bx:int = v.x;
     var by:int = v.y;
     var bz:int = v.z;
@@ -656,61 +731,70 @@ function ensureChunks( v:Vector3, range:int ){
     return true; 
 
 }
-function getChunk(chx,chy,chz){
+function getChunk(chx:int,chy:int,chz:int):Chunk{
     if( chx<0||chy<0||chz<0||chx>=CHUNKMAX||chy>=CHUNKMAX||chz>=CHUNKMAX) return null;
     return chunks[ toChunkIndex( chx, chy, chz ) ];
 }
 
-function updateChunk( chx,chy,chz, blkary,lgtary ) {
+function updateChunk( chx:int,chy:int,chz:int, blkary:int[],lgtary:int[] ) {
     try{
         var chk = getChunk(chx,chy,chz);
         if(chk==null) throw"invalid chcoord:"+chx.ToString()+chy.ToString()+chz.ToString();
         expandRunLength(blkary, chk.blocks);
         expandRunLength(lgtary, chk.lights);
-        chk.state="loaded";
-        chk.needUpdate=true;
+        chk.loaded=true;
+
+        var counts:int[] = countBlocks(chk.blocks);
+        var blockCnt:int=counts[0];
+        var itemCnt:int=counts[1];
+        var waterCnt:int=counts[2];
+
+        if( blockCnt > 0 ) chk.needBlockUpdate=true;
+        if( waterCnt > 0 ) chk.needWaterUpdate=true;
+        if( itemCnt > 0 ) chk.needItemUpdate=true;
+            
 
     } catch(e){
         print("excep"+e);
     }
     updatedSomeChunk=true;
 }
-function chunkStat(){
-    var nl=0;
-    var init=0;
-    var loaded=0;
-    var needup=0;
-    for(var i=0;i<chunks.length;i++){
+function chunkStat():String{
+    var nl:int=0;
+    var init:int=0;
+    var loaded:int=0;
+    var needup:int=0;
+    for(var i:int=0;i<chunks.length;i++){
         if( chunks[i]==null){ nl++;  continue; }
-        if( chunks[i].state=="init") init++;
-        if( chunks[i].state=="loaded") loaded++;
+        if( chunks[i].loaded==false) init++;
+        if( chunks[i].loaded==true) loaded++;
         if( chunks[i].needUpdate==true) needup++;
     }
     return ""+nl+"/"+init+"/"+loaded+"/"+needup;
 }
 
 // ix,iy,iz:整数のブロック座標
-function getBlock( ix:int,iy:int,iz:int ) {
-    if(ix<0||iy<0||iz<0)return null;
-    var chk = getChunk( ix/CHUNKSZ, iy/CHUNKSZ, iz/CHUNKSZ);
-    if(chk==null)return null;
+function getBlock( ix:int,iy:int,iz:int ):int {
+    if(ix<0||iy<0||iz<0)return 0;
+    var chk:Chunk = getChunk( ix/CHUNKSZ, iy/CHUNKSZ, iz/CHUNKSZ);
+    if(chk==null)return 0;
     return chk.getBlock( (ix%CHUNKSZ)+1,(iy%CHUNKSZ)+1,(iz%CHUNKSZ)+1);
 }
-function getLight( ix:int,iy:int,iz:int ) {
-    if(ix<0||iy<0||iz<0)return null;
-    var chk = getChunk( ix/CHUNKSZ, iy/CHUNKSZ, iz/CHUNKSZ);
-    if(chk==null)return null;
+function getLight( ix:int,iy:int,iz:int ) :int {
+    if(ix<0||iy<0||iz<0)return 0;
+    var chk:Chunk = getChunk( ix/CHUNKSZ, iy/CHUNKSZ, iz/CHUNKSZ);
+    if(chk==null)return 0;
     return chk.getLight( (ix%CHUNKSZ)+1,(iy%CHUNKSZ)+1,(iz%CHUNKSZ)+1);
 }
 
 
 
-function findUpdatedChunk() {
+function findUpdatedChunk() :Chunk{
     if( updatedSomeChunk == false){
         return null;
     }
-    for(var i=0;i<chunks.length;i++){
-        if( chunks[i]!=null && chunks[i].state=="loaded" && chunks[i].needUpdate==true ){
+    for(var i:int=0;i<chunks.length;i++){
+        if( chunks[i]!=null && chunks[i].loaded==true && ( chunks[i].needBlockUpdate==true || chunks[i].needWaterUpdate==true||chunks[i].needItemUpdate==true) ){
             return chunks[i];
         }
     }
@@ -737,7 +821,6 @@ var counter=0;
 
 
 function Update() {
-
     
     send("echo",123); // 何故か送らないと受信できない
     doProtocol();
@@ -746,37 +829,32 @@ function Update() {
     counter++;
     if( (counter%10)==0){
         chs = chunkStat();
+        print( "w:"+wprof.to_s());
+        print( "b:"+bprof.to_s());
+        print( "i:"+iprof.to_s());
+        print( "e:"+iprof.to_s());        
     }
 
 
     var ray = cam.camera.ScreenPointToRay( Vector3( Screen.width/2, Screen.height/2,0));
     
     var hs = hero.GetComponent("HeroScript" );
+    
     nt = statText.GetComponent( "GUIText" );
     nt.text = "v:"+hero.transform.position+" dy:" + hs.dy + " chunk:"+chs + " ray:"+ray.origin + ">"+ray.direction + " nose:"+hs.nose;
 
     // 自分のまわり優先
+    eprof.start();
     ensureChunks( hero.transform.position, VIEWRANGE/CHUNKSZ );
-
+    eprof.end(0);
 
     var upChk = findUpdatedChunk(); // 軽い
     
     if( upChk != null){
-        var p:GameObject;
-        var po:GameObject;
-        var pw:GameObject;
+        var blockUpdated:System.Boolean = false;
         
-        p = GameObject.Find( "chunk_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );
-        po = GameObject.Find( "obj_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );
-        pw = GameObject.Find( "water_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );
-        
-        var counts:int[] = countBlocks(upChk.blocks);
-
-        var blockCnt:int=counts[0];
-        var itemCnt:int=counts[1];
-        var waterCnt:int=counts[2];
-        
-        if( blockCnt > 0 ){
+        if( upChk.needBlockUpdate ){
+            var p:GameObject = GameObject.Find( "chunk_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );   
             if(p==null){
                 p = Instantiate( prefabMultiCube,
                                  Vector3( upChk.chx*CHUNKSZ, upChk.chy*CHUNKSZ, upChk.chz*CHUNKSZ ),
@@ -787,11 +865,12 @@ function Update() {
             var st:float = Time.realtimeSinceStartup;
             maker.SetField( upChk.blocks, upChk.lights, CHUNKSZ );
             maker.objmode=0;
-            print("blkdt:"+ ( Time.realtimeSinceStartup-st));
+            upChk.needBlockUpdate=false;
+            blockUpdated = true;
         }
-
         
-        if( itemCnt > 0 ){
+        if( upChk.needItemUpdate ){
+            var po:GameObject = GameObject.Find( "obj_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );            
             if(po==null){
                 //                print("oCnt:"+itemCnt);                
                 po = Instantiate( prefabMultiObjCube,
@@ -802,26 +881,23 @@ function Update() {
             var omaker = po.GetComponent( "ChunkMaker" );
             omaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
             omaker.objmode=1;
+            upChk.needItemUpdate=false;                        
         }
-        if( waterCnt > 0 ){
+        if( upChk.needWaterUpdate && blockUpdated == false ){
+            var pw:GameObject = GameObject.Find( "water_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz );
             if(pw==null){
                 pw = Instantiate( prefabMultiWaterCube,
                                   Vector3( upChk.chx*CHUNKSZ, upChk.chy*CHUNKSZ, upChk.chz*CHUNKSZ ),
                                   Quaternion.identity );
                 pw.name = "water_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz;
-                var wmaker = pw.GetComponent( "ChunkMaker");
-                st = Time.realtimeSinceStartup;
-                wmaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
-                wmaker.objmode=2;
-                print("watdt:"+ (Time.realtimeSinceStartup-st));
             }
+            var wmaker = pw.GetComponent( "ChunkMaker");
+            st = Time.realtimeSinceStartup;
+            wmaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
+            wmaker.objmode=2;
+            upChk.needWaterUpdate=false;                        
         }
-
-        
-        upChk.needUpdate=false;
-
     } 
-
 }
 
 // 掘る

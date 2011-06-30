@@ -1,3 +1,4 @@
+
 // chunkのポリゴン生成するprefabにつける
 
 var material:Material;
@@ -10,7 +11,7 @@ var REDFLOWER:int=100;
 var BLUEFLOWER:int=101;
 
 // atlasIndexから [startU, startV, endU, endV]もとめる
-function calcUVs( i:int ) {
+function calcUVs( i:int ) :float[]{
     var out :float[] = new float[4];
     
     // atlas中の座標求める
@@ -28,7 +29,7 @@ function calcUVs( i:int ) {
     return out;    
 }
 
-function lightIndexToNormal(i:int){
+function lightIndexToNormal(i:int):float{
     if( i==0){
         return 0.05;
     } else {
@@ -70,7 +71,7 @@ function makeFlowerObj( basepos : Vector3, vertices : Vector3[], uv : Vector2[],
     uv[vi+6] = uv[vi+2];
     uv[vi+7] = uv[vi+3];
 
-    var l = lightIndexToNormal(light);
+    var l:float = lightIndexToNormal(light);
     normals[vi+0]=normals[vi+1]=normals[vi+2]=normals[vi+3]=normals[vi+4]=normals[vi+5]=normals[vi+6]=normals[vi+7]=Vector3(0,l,0);
 
     triangles[ti+0] = vi+0; // z=0.5 表
@@ -107,8 +108,8 @@ function makeFlowerObj( basepos : Vector3, vertices : Vector3[], uv : Vector2[],
 // lights: z0z1x0x1y0y1の順で、各面を照らす明るさ
 function makeCube( basepos : Vector3, vertices : Vector3[], uv : Vector2[], normals : Vector3[], vi : int, triangles : int[], ti : int, blockType :int , lights:int[], drawflags:int[] )
 {
-    var curvi = vi;
-    var curti = ti;
+    var curvi:int = vi;
+    var curti:int = ti;
 
     var startvis:int[]=new int[6];
     var starttis:int[]=new int[6];
@@ -342,13 +343,13 @@ function Update() {
 }
 
 // 0~(sz+2)まで
-function toLightIndex(x,y,z,sz) {
+function toLightIndex(x:int,y:int,z:int,sz:int) :int{
     return y*sz*sz+z*sz+x;
 }
-function toBlockIndex(x,y,z,sz) {
+function toBlockIndex(x:int,y:int,z:int,sz:int) :int{
     return y*sz*sz+z*sz+x;
 }
-function isBlock(t:int){
+function isBlock(t:int) : System.Boolean {
     if(t==0)return false;
     if(t<100)return true;
     return false;

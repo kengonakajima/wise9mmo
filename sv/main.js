@@ -89,7 +89,7 @@ function move(x,y,z,sp,pitch,yaw,dt){
 
 }
 function jump(velY){
-    this.pc.jump( velY * 1.1 );     // ghostが登れないことを防ぐため
+    this.pc.jump( velY * 1.3 );     // ghostが登れないことを防ぐため
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
