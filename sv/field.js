@@ -29,7 +29,8 @@ exports.generate = function( hsize, vsize ) {
     fld.fill( 0,0,0, hsize,1,hsize, g.BlockType.STONE ); // 地盤を置く
     fld.fill( 0,1,0, hsize,groundLevel,hsize, g.BlockType.WATER );   //海
 
-    fld.fill( 0,groundLevel,0, 7,groundLevel+1,7, g.BlockType.STONE ); // すたーとちてん
+    sys.puts( "groundLevel:" + groundLevel );
+    fld.fill( 0,0,0, 7,groundLevel+1,7, g.BlockType.SOIL ); // すたーとちてん
     
     
     var d = 20;

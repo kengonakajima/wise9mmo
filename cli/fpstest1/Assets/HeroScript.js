@@ -139,6 +139,44 @@ function testPointToPointOK( frompos, topos, outary ) {
     
 }
 
+// いまいる位置にブロックあったら返す
+function getCurrentPosBlock( pos:Vector3, s:float, h:float) {
+    var dCoords:Vector3[] = new Vector3[16];
+    getHitCoords( s, h, dCoords );
+    var blk=null;
+    for(var i:int=0;i<dCoords.length;i++){
+        var b = cs.getBlock( pos.x+dCoords[i].x, pos.y+dCoords[i].y, pos.z+dCoords[i].z);
+        if( b != null ){
+            blk = b;
+            if( blk != 0 ){
+                return b;
+            }
+        }
+    }
+    return blk;
+}
+// ある点を中心とした地形ヒット判定用座標16個を返す
+function getHitCoords( s:float, h:float, out:Vector3[] ) {
+    out[0] = Vector3(-s,0,s);
+    out[1] = Vector3(s,0,s);
+    out[2] = Vector3(-s,0,-s);
+    out[3] = Vector3(s,0,-s);
+    out[4] = transform.forward*s;
+    out[5] = transform.forward*s*-1;
+    out[6] = transform.right*s;
+    out[7] = transform.right*s*-1;
+    
+    out[8] = out[0] + Vector3(0,h,0);
+    out[9] = out[1] + Vector3(0,h,0);
+    out[10] = out[2] + Vector3(0,h,0);
+    out[11] = out[3] + Vector3(0,h,0);
+    out[12] = out[4] + Vector3(0,h,0);
+    out[13] = out[5] + Vector3(0,h,0);
+    out[14] = out[6] + Vector3(0,h,0);
+    out[15] = out[7] + Vector3(0,h,0);
+    
+}
+
 var com = null;
 var cs = null;
 
@@ -194,12 +232,13 @@ function Update() {
     dtr.y = dy;
 
     var nextpos = transform.position + dtr * dTime;
+
+    var hitHeight=1.7; // 何故かこれをグローバルにすると使われない値になってしまう。。
+    var hitSize=0.35;
     
     //地形判定
+    var blkcur = getCurrentPosBlock( transform.position, hitSize, hitHeight );
 
-
-
-    var blkcur = cs.getBlock( transform.position.x, transform.position.y, transform.position.z);
     if( blkcur != null ){
         if( blkcur == cs.WATER ){
             // 水の中
@@ -247,29 +286,11 @@ function Update() {
             dy=0;
         }
     }
-    var hitHeight=1.7; // 何故かこれをグローバルにすると使われない値になってしまう。。
-    var hitSize=0.35;
 
     var okary:System.Boolean[] = new System.Boolean[3];
-
     var dCoords:Vector3[] = new Vector3[ 4+4+4+4];
-    dCoords[0] = Vector3(-hitSize,0,hitSize);
-    dCoords[1] = Vector3(hitSize,0,hitSize);
-    dCoords[2] = Vector3(-hitSize,0,-hitSize);
-    dCoords[3] = Vector3(hitSize,0,-hitSize);
-    dCoords[4] = transform.forward*hitSize;
-    dCoords[5] = transform.forward*hitSize*-1;
-    dCoords[6] = transform.right*hitSize;
-    dCoords[7] = transform.right*hitSize*-1;
+    getHitCoords( hitSize, hitHeight, dCoords );
     
-    dCoords[8] = dCoords[0] + Vector3(0,hitHeight,0);
-    dCoords[9] = dCoords[1] + Vector3(0,hitHeight,0);
-    dCoords[10] = dCoords[2] + Vector3(0,hitHeight,0);
-    dCoords[11] = dCoords[3] + Vector3(0,hitHeight,0);
-    dCoords[12] = dCoords[4] + Vector3(0,hitHeight,0);
-    dCoords[13] = dCoords[5] + Vector3(0,hitHeight,0);
-    dCoords[14] = dCoords[6] + Vector3(0,hitHeight,0);
-    dCoords[15] = dCoords[7] + Vector3(0,hitHeight,0);
     var x_ok : System.Boolean = true;
     var y_ok : System.Boolean = true;
     var z_ok : System.Boolean = true;

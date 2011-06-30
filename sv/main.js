@@ -173,7 +173,7 @@ function chat(txt) {
 
 function login() {
   sys.puts( "login" );
-  var p = new g.Pos( 2,14,2 ); // 初期位置
+  var p = new g.Pos( 2,15,2 ); // 初期位置
 
   this.pc = fld.addPC( "guest", p, this );
 

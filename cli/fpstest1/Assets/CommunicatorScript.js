@@ -736,10 +736,12 @@ var chs="";
 var counter=0;
 
 
-function Update () {
+function Update() {
+
     
     send("echo",123); // 何故か送らないと受信できない
     doProtocol();
+
 
     counter++;
     if( (counter%10)==0){
@@ -782,8 +784,10 @@ function Update () {
                 p.name = "chunk_" +upChk.chx + "_" + upChk.chy + "_" + upChk.chz;
             }
             var maker = p.GetComponent( "ChunkMaker" );
+            var st:float = Time.realtimeSinceStartup;
             maker.SetField( upChk.blocks, upChk.lights, CHUNKSZ );
             maker.objmode=0;
+            print("blkdt:"+ ( Time.realtimeSinceStartup-st));
         }
 
         
@@ -806,8 +810,10 @@ function Update () {
                                   Quaternion.identity );
                 pw.name = "water_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz;
                 var wmaker = pw.GetComponent( "ChunkMaker");
+                st = Time.realtimeSinceStartup;
                 wmaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
                 wmaker.objmode=2;
+                print("watdt:"+ (Time.realtimeSinceStartup-st));
             }
         }
 

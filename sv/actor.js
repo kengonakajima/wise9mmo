@@ -119,7 +119,51 @@ function Actor( name, fld, pos ) {
     this.useForce = true;
     this.lastXOK = this.lastYOK = this.lastZOK = true;
 };
-    
+
+// ある点を中心とした地形ヒット判定用座標16個を返す
+function getHitCoords( pos, s, h ) {
+    var out = new Array(16);
+    out[0] = pos.add(new g.Vector3(-s,0,s));
+    out[1] = pos.add(new g.Vector3(s,0,s));
+    out[2] = pos.add(new g.Vector3(-s,0,-s));
+    out[3] = pos.add(new g.Vector3(s,0,-s));
+    out[4] = pos.add(new g.Vector3(0,0,s));
+    out[5] = pos.add(new g.Vector3(s,0,0));
+    out[6] = pos.add(new g.Vector3(-s,0,0));
+    out[7] = pos.add(new g.Vector3(0,0,-s));
+
+    var hv = new g.Vector3(0,h,0);
+    out[8] = out[0].add(hv);
+    out[9] = out[1].add(hv);
+    out[10] = out[2].add(hv);
+    out[11] = out[3].add(hv);
+    out[12] = out[4].add(hv);
+    out[13] = out[5].add(hv);
+    out[14] = out[6].add(hv);
+    out[15] = out[7].add(hv);
+    return out;
+};
+// いまいる位置にブロックあったら返す
+// pos:Vector3
+Actor.prototype.getPosBlock = function( pos, s, h) {
+    var dCoords = getHitCoords( pos, s,h );
+    //    if( this.typeName=="pc") sys.puts( "out:" + dCoords[15].to_s());
+        
+    var blk=null;
+    for(var i=0;i<dCoords.length;i++){
+        var v = dCoords[i];
+        var b = this.field.get( v.ix(), v.iy(), v.iz());
+        if( b != null ){
+            blk = b;
+            if( blk != g.BlockType.AIR ){
+                return b;
+            }
+        }
+    }
+    return blk;
+}
+
+
 Actor.prototype.poll = function(curTime) {
         
     if( ( this.nextMoveAt >= curTime )  ) return;
@@ -196,7 +240,8 @@ Actor.prototype.poll = function(curTime) {
     this.vForce = 0;
 
     
-    var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
+    //    var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
+    var blkcur = this.getPosBlock( this.pos, 0.35, 1.7 );
     if( blkcur != null ){
         if( blkcur == g.BlockType.WATER ){
             // 水の中にいる
@@ -233,55 +278,57 @@ Actor.prototype.poll = function(curTime) {
         var u = (bi + 1) / bloopn;
 
         var np = this.pos.mul(1-u).add( nextpos.mul(u));
+    
+        var blkn = this.getPosBlock( np, 0.35, 1.7 );
 
-        var blkn = this.field.get( np.ix(), np.iy(), np.iz() );
-
+        // 範囲外はつねに移動できない
+        if( blkn == null ){
+            x_ok = y_ok = z_ok = false;
+            break;
+        }
         
-
         if( !g.isSolidBlock(blkn) ){
             // 通れる場合はループ継続
             x_ok = y_ok = z_ok = true;
             this.pos = np;
-            //            if( this.typeName=="pc") sys.puts("nohitw. np:"+np.to_s() + " nextp:"+nextpos.to_s() + " v:" + this.velocity.to_s() );            
-        } else {
-            //            if( this.typeName=="pc") sys.puts("hitw");
-            
-            // 通れない場合はループ終わりで抜ける
-            var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
-            var blkcur2 = this.field.get( np2.ix(), np2.iy(), np2.iz() );
-            if( blkcur2 != null && (!g.isSolidBlock(blkcur2)) ) y_ok = true;
+            //            if( this.typeName=="pc") sys.puts("nohitw. np:"+np.to_s() + " nextp:"+nextpos.to_s() + " v:" + this.velocity.to_s() );
+            continue;
+        } 
 
-            var np3 = new g.Vector3( this.pos.x, this.pos.y, np.z );
-            var blkcur3 = this.field.get( np3.ix(), np3.iy(), np3.iz() );
-            if( blkcur3 != null && (!g.isSolidBlock(blkcur3)) ) z_ok = true;
+            
+        // 通れない場合はループ終わりで抜ける
+        var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
+        var blkcur2 = this.getPosBlock( np2, 0.35, 1.7 );
+        if( blkcur2 != null && (!g.isSolidBlock(blkcur2)) ) y_ok = true;
+
+        var np3 = new g.Vector3( this.pos.x, this.pos.y, np.z );
+        var blkcur3 = this.getPosBlock( np3, 0.35, 1.7 );
+        if( blkcur3 != null && (!g.isSolidBlock(blkcur3)) ) z_ok = true;
     
-            var np4 = new g.Vector3( np.x, this.pos.y, this.pos.z );
-            var blkcur4 = this.field.get( np4.ix(), np4.iy(), np4.iz() );
-            if( blkcur4 != null && (!g.isSolidBlock(blkcur4)) ) x_ok = true;
+        var np4 = new g.Vector3( np.x, this.pos.y, this.pos.z );
+        var blkcur4 = this.getPosBlock( np4, 0.35, 1.7 );
+        if( blkcur4 != null && (!g.isSolidBlock(blkcur4)) ) x_ok = true;
 
-            if( this.hitWallFunc ){
-                var ret = this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ), x_ok, y_ok, z_ok ] );
-                if( ret == false ){
-                    this.field.deleteActor(this.id);
-                    return;
-                }
+        if( this.hitWallFunc ){
+            var ret = this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ), x_ok, y_ok, z_ok ] );
+            if( ret == false ){
+                this.field.deleteActor(this.id);
+                return;
             }
-            
-            var finalnextpos = this.pos;
-            if( x_ok ) finalnextpos.x = np.x;
-            if( y_ok ) {
-                finalnextpos.y = np.y;
-            } else {
-                this.velocity.y =0;
-            }
-            if( z_ok ) finalnextpos.z = np.z;
-
-            
-            
-
-            this.pos = finalnextpos;
-            break;
         }
+
+        var finalnextpos = this.pos;
+        if( x_ok ) finalnextpos.x = np.x;
+        if( y_ok ) {
+            finalnextpos.y = np.y;
+        } else {
+            this.velocity.y =0;
+        }
+        if( z_ok ) finalnextpos.z = np.z;
+
+        this.pos = finalnextpos;
+
+        break;
     }
 
     if(this.pos.x<0){ this.pos.x=0; x_ok=false; }

@@ -415,6 +415,17 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                         skipNum++;
                         continue;
                     }
+                    // 周囲が全部水の水は飛ばす
+                    if( blocks[ toBlockIndex(lx,ly,lz,sz+2)]==4
+                        && blocks[ toBlockIndex(lx-1,ly,lz,sz+2)]==4
+                        && blocks[ toBlockIndex(lx,ly-1,lz,sz+2)]==4
+                        && blocks[ toBlockIndex(lx,ly,lz-1,sz+2)]==4
+                        && blocks[ toBlockIndex(lx+1,ly,lz,sz+2)]==4
+                        && blocks[ toBlockIndex(lx,ly+1,lz,sz+2)]==4
+                        && blocks[ toBlockIndex(lx,ly,lz+1,sz+2)]==4 ){
+                        skipNum++;
+                        continue;
+                    }
 
                     makeNum++;  
                     // normalは２４個で、面あたり角で３個。
