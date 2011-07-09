@@ -104,15 +104,15 @@ function makeFlowerObj( basepos : Vector3, vertices : Vector3[], uv : Vector2[],
     
 }
 
-    
+    var startvis:int[]=new int[6];
+    var starttis:int[]=new int[6];
 // lights: z0z1x0x1y0y1の順で、各面を照らす明るさ
 function makeCube( basepos : Vector3, vertices : Vector3[], uv : Vector2[], normals : Vector3[], vi : int, triangles : int[], ti : int, blockType :int , lights:int[], drawflags:int[] )
 {
     var curvi:int = vi;
     var curti:int = ti;
 
-    var startvis:int[]=new int[6];
-    var starttis:int[]=new int[6];
+    
 
     for(var i:int=0;i<6;i++){
         if( drawflags[i] ){
@@ -360,28 +360,31 @@ var maxvi:int;
 // 地形データをセットする(xyzならび)
 // blocks: AIRとかSTONEとか
 // lights: あかるさ0~7 (sz+2)^3 のサイズが必要。
+
+
+
 function SetField( blocks: int[], lights:int[], sz:int ) {
-    
     if( blocks.length != (sz+2)*(sz+2)*(sz+2) ) throw "invalid block cnt:"+blocks.length.ToString() + " sz:"+sz;
     if( lights.length != (sz+2)*(sz+2)*(sz+2) ) throw "invalid light cnt:"+lights.length.ToString() + " sz:"+sz;
 	var mesh : Mesh = GetComponent(MeshFilter).mesh;
 
-    mesh.Clear();
-
+    // 以下のnewを全部関数の外に出しても、チェン区1個    あたり1回しかやらないのであまりかン京ない
+    var lts:int[] = new int[6*4]; // Z=0 Z=1 X=0 X=1 Y=0 Y=1 の順
+    var drawflags:int[] = new int[6]; // 各面を描画するかどうかのフラグ
     var vertices : Vector3[] = new Vector3[ sz*sz*sz *24 ];
     var uv : Vector2[] = new Vector2[ sz*sz*sz *24 ];
     var triangles : int[] = new int[ sz*sz*sz * 36 ];
     var normals : Vector3[] = new Vector3[sz*sz*sz*24]; // 頂点数と同じだけ必要
     
+    mesh.Clear();
+
+    
     var vi:int=0;
     var ti:int=0;
     
 
-    var makeNum=0;
-    var skipNum=0;
-
-    var lts:int[] = new int[6*4]; // Z=0 Z=1 X=0 X=1 Y=0 Y=1 の順
-    var drawflags:int[] = new int[6]; // 各面を描画するかどうかのフラグ
+    var makeNum:int=0;
+    var skipNum:int=0;
     
     for( var y:int = 0; y < sz; y++ ){
         for( var z:int = 0; z < sz; z++ ){

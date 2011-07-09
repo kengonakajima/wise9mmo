@@ -575,7 +575,7 @@ function expandRunLength(rl,out) {
 //
 
 var CHUNKMAX = 32;  //32x32x32 chunkサイズは16x16x16
-var CHUNKSZ = 8;
+var CHUNKSZ = 16;
 var chunks = new Array(CHUNKMAX*CHUNKMAX*CHUNKMAX);
 
 function toChunkIndex(x:int,y:int,z:int) : int {
@@ -827,12 +827,9 @@ function Update() {
 
 
     counter++;
-    if( (counter%10)==0){
+    if( (counter%30)==0){
         chs = chunkStat();
-        print( "w:"+wprof.to_s());
-        print( "b:"+bprof.to_s());
-        print( "i:"+iprof.to_s());
-        print( "e:"+iprof.to_s());        
+        print( "w:"+wprof.to_s() + " b:"+bprof.to_s() + " i:"+iprof.to_s() );
     }
 
 
@@ -861,12 +858,15 @@ function Update() {
                                  Quaternion.identity );
                 p.name = "chunk_" +upChk.chx + "_" + upChk.chy + "_" + upChk.chz;
             }
+
             var maker = p.GetComponent( "ChunkMaker" );
-            var st:float = Time.realtimeSinceStartup;
+            bprof.start();
             maker.SetField( upChk.blocks, upChk.lights, CHUNKSZ );
+            bprof.end(0);
             maker.objmode=0;
             upChk.needBlockUpdate=false;
             blockUpdated = true;
+
         }
         
         if( upChk.needItemUpdate ){
@@ -892,8 +892,9 @@ function Update() {
                 pw.name = "water_"+upChk.chx + "_" + upChk.chy + "_" + upChk.chz;
             }
             var wmaker = pw.GetComponent( "ChunkMaker");
-            st = Time.realtimeSinceStartup;
+            wprof.start();
             wmaker.SetField(upChk.blocks, upChk.lights, CHUNKSZ );
+            wprof.end(0);
             wmaker.objmode=2;
             upChk.needWaterUpdate=false;                        
         }
