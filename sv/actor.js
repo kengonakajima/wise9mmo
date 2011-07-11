@@ -165,9 +165,13 @@ Actor.prototype.getPosBlock = function( pos, s, h) {
 
 
 Actor.prototype.poll = function(curTime) {
-        
+
+
     if( ( this.nextMoveAt >= curTime )  ) return;
     
+    //    if( this.typeName=="pc"){
+        //        sys.puts( "vely:" + this.velocity.y );
+    //    }
     
     var dTime = ( curTime - this.lastMoveAt ) / 1000.0;
     this.dTime = dTime;
@@ -273,25 +277,27 @@ Actor.prototype.poll = function(curTime) {
     var y_ok = false;
     var z_ok = false;
 
-    //    if( this.typeName=="pc") sys.puts( "LOOPN: " + bloopn  + " len:" + diffVec.length() );
+    //        if( this.typeName=="pc") sys.puts( "LOOPN: " + bloopn  + " len:" + diffVec.length() );
     for( var bi = 0; bi < bloopn; bi++ ){
         var u = (bi + 1) / bloopn;
 
         var np = this.pos.mul(1-u).add( nextpos.mul(u));
-    
-        var blkn = this.getPosBlock( np, 0.35, 1.7 );
 
+        // 地形との境界面で微妙に振動するのをふせぐ
+        //        var blknYepsilon = this.getPosBlock( new g.Vector3( np.x,np.y-0.0001,np.z), 0.35, 1.7 );
+        var blkn = this.getPosBlock( np, 0.35, 1.7 );
         // 範囲外はつねに移動できない
         if( blkn == null ){
             x_ok = y_ok = z_ok = false;
             break;
         }
         
+        if( this.typeName=="pc") sys.puts("HITTTTTTTT: np:"+np.to_s()+ " v:" + this.velocity.to_s() );
         if( !g.isSolidBlock(blkn) ){
-            // 通れる場合はループ継続
             x_ok = y_ok = z_ok = true;
             this.pos = np;
-            //            if( this.typeName=="pc") sys.puts("nohitw. np:"+np.to_s() + " nextp:"+nextpos.to_s() + " v:" + this.velocity.to_s() );
+            if( this.typeName=="pc") sys.puts("block no-hit. yOK!" );
+            if( this.typeName == "pc" && np.y == 13 ) sys.puts( "!!!!!!!!!!!!!!!!!!!!");            
             continue;
         } 
 
@@ -319,6 +325,9 @@ Actor.prototype.poll = function(curTime) {
 
         var finalnextpos = this.pos;
         if( x_ok ) finalnextpos.x = np.x;
+        
+        
+        //        if( this.typeName == "pc" ) sys.puts( "################## yok:" + y_ok );
         if( y_ok ) {
             finalnextpos.y = np.y;
         } else {
@@ -326,6 +335,8 @@ Actor.prototype.poll = function(curTime) {
         }
         if( z_ok ) finalnextpos.z = np.z;
 
+
+        
         this.pos = finalnextpos;
 
         break;
@@ -382,16 +393,33 @@ Actor.prototype.setMove = function( x, y, z, pitch, yaw ) {
     if( this.pos.equal(v) == false ){
         this.toPos = v;
     }
+
 };
+Actor.prototype.setLand = function( x,y,z) {
+    /*
+    sys.puts( "vy:" + this.velocity.y + "          DY: " + (y - this.pos.y ) );
+    if( x > this.pos.x-3 && x < this.pos.x+3
+        && y > this.pos.y-3 && y < this.pos.y+3
+        && z > this.pos.z-3 && z < this.pos.z+3 ){
+        var nv = new g.Vector3( x - this.pos.x, y - this.pos.y, z - this.pos.z );
+        this.pos.add( new g.Vector3(nv.x /5, 1.2, nv.y/5) );
+        
+    }
+    */
+};
+    
 // velY: float
 Actor.prototype.jump = function( velY ) {
-    sys.puts( "jump: velY:" + this.velocity.y );
+    sys.puts( "jump: curvelY:" + this.velocity.y + " givenVelY:" + velY  );
+    if( velY > 6 )return;
+    this.prevJumpGivenVelY = velY;
+    
     if( this.inWater == true ){
         this.velocity.y = velY;
     } else {
-        if( this.velocity.y == 0 ){
+        //        if( this.velocity.y <= 0 ){
             this.velocity.y = velY;
-        }
+            //        }
     }
     main.nearcast( this.pos, "jumpNotify", this.id, velY );    
 };

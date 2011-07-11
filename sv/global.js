@@ -114,7 +114,7 @@ Vector3.prototype.getPitch = function( dv ) {
     return rot;
 };
 Vector3.prototype.to_s = function(){
-    return "{"+(Math.round(this.x*1000)/1000)+","+(Math.round(this.y*1000)/1000)+","+(Math.round(this.z*1000)/1000)+"}";
+    return "{"+(Math.round(this.x*100000)/100000)+","+(Math.round(this.y*100000)/100000)+","+(Math.round(this.z*100000)/100000)+"}";
 };
     
 

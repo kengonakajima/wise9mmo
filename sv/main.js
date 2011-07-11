@@ -89,12 +89,12 @@ function move(x,y,z,sp,pitch,yaw,dt){
 
 }
 function jump(velY){
-    this.pc.jump( velY * 1.3 );     // ghostが登れないことを防ぐため
+    this.pc.jump( velY *1.3 );     // ghostが登れないことを防ぐため
 }
 
 function getField(x0,y0,z0,x1,y1,z1){
     if(this.gfcnt==undefined)this.gfcnt=0;else this.gfcnt++;
-            sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
+    //            sys.puts( "getField: cnt:"+this.gfcnt+":"+x0+","+y0+","+z0+","+x1+","+y1+","+z1);
     var blkary = fld.getBlockBox(x0,y0,z0,x1,y1,z1);
     var lgtary = fld.getLightBox(x0,y0,z0,x1,y1,z1);
     if(blkary==null||lgtary==null){
@@ -181,6 +181,14 @@ function login() {
   this.send( "statusChange", this.pc.id, this.pc.hp );
 
 }
+
+function land(x,y,z) {
+    // 着地したときゴーストがついてきてなかったら補正する
+    sys.puts( "land");
+    this.pc.setLand(x,y,z);
+}
+
+
 
 
 // 関数登録
@@ -310,6 +318,7 @@ addRPC( "jump", jump );
 addRPC( "put", put );
 addRPC( "attack", attack );
 addRPC( "chat", chat );
+addRPC( "land", land );
 
 server.listen(7000, "127.0.0.1");
 
