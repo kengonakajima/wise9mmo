@@ -169,9 +169,9 @@ Actor.prototype.poll = function(curTime) {
 
     if( ( this.nextMoveAt >= curTime )  ) return;
     
-    //    if( this.typeName=="pc"){
-        //        sys.puts( "vely:" + this.velocity.y );
-    //    }
+    //        if( this.typeName=="pc"){
+//                sys.puts( "vely:" + this.velocity.y + " posy:" + this.pos.y);
+    //        }
     
     var dTime = ( curTime - this.lastMoveAt ) / 1000.0;
     this.dTime = dTime;
@@ -292,12 +292,10 @@ Actor.prototype.poll = function(curTime) {
             break;
         }
         
-        if( this.typeName=="pc") sys.puts("HITTTTTTTT: np:"+np.to_s()+ " v:" + this.velocity.to_s() );
+        //        if( this.typeName=="pc") sys.puts("HITTTTTTTT: np:"+np.to_s()+ " v:" + this.velocity.to_s() );
         if( !g.isSolidBlock(blkn) ){
             x_ok = y_ok = z_ok = true;
             this.pos = np;
-            if( this.typeName=="pc") sys.puts("block no-hit. yOK!" );
-            if( this.typeName == "pc" && np.y == 13 ) sys.puts( "!!!!!!!!!!!!!!!!!!!!");            
             continue;
         } 
 
@@ -498,6 +496,7 @@ function Debri( t, fld, pos ) {
 };
 
 function bulletMove( curTime ) {
+
     sys.puts("bmove. pos:" + this.pos.to_s()  + " vel:" + this.velocity.to_s() + " nxmat:" + this.nextMoveAt + " dieat:" + this.dieAt );
 
     var col = this.collide( 1 );　
@@ -527,12 +526,11 @@ function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttlsec, damage ) {
 
     var cameraHeight = 1;
 
-    pos.y += cameraHeight;
     var v = new g.Vector3( Math.cos(pitch), yaw - cameraHeight, Math.sin(pitch) );
 
     var vel = v.normalized().mul(speed);
-
-    var b = new Actor( tname, fld, pos );
+    var putpos = new g.Vector3( pos.x, pos.y + cameraHeight, pos.z );
+    var b = new Actor( tname, fld, putpos );
 
     b.pitch = pitch;
     b.yaw = yaw;

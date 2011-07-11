@@ -827,10 +827,10 @@ function Update() {
 
 
     counter++;
-    if( (counter%30)==0){
-        chs = chunkStat();
-        print( "w:"+wprof.to_s() + " b:"+bprof.to_s() + " i:"+iprof.to_s() );
-    }
+    //    if( (counter%30)==0){
+        //        chs = chunkStat();
+        //        print( "w:"+wprof.to_s() + " b:"+bprof.to_s() + " i:"+iprof.to_s() );
+    //    }
 
 
     var ray = cam.camera.ScreenPointToRay( Vector3( Screen.width/2, Screen.height/2,0));
@@ -838,7 +838,7 @@ function Update() {
     var hs = hero.GetComponent("HeroScript" );
     
     nt = statText.GetComponent( "GUIText" );
-    nt.text = "v:"+hero.transform.position+" dy:" + hs.dy + " chunk:"+chs + " ray:"+ray.origin + ">"+ray.direction + " nose:"+hs.nose;
+    nt.text = "v:"+hero.transform.position+" dy:" + hs.dy + " chk:"+chs +  " ray:"+ray.direction + " ns:"+hs.nose + "f:" + hs.falling;
 
     // 自分のまわり優先
     eprof.start();
@@ -947,3 +947,6 @@ function putItem( ix:int, iy:int, iz:int, tname ) {
     sendGetFieldEdges( ix, iy, iz );    
 }
 
+function land(v:Vector3){
+    send("land", v.x, v.y, v.z );
+}

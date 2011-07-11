@@ -61,7 +61,7 @@ function Update () {
 
     var j = Input.GetButton( "Jump" );
     if(j){
-        var canJump;
+        var canJump:System.Boolean;
         if( herosc.dy == 0 ){
             canJump = true;
         } else {
@@ -69,6 +69,7 @@ function Update () {
                 canJump = true;
             }
         }
+        print("dy:"+herosc.dy);
         
         if( canJump ){
             if( herosc.inWater){
@@ -78,6 +79,7 @@ function Update () {
             }
             herosc.falling = true;
 			herosc.needSend = true;
+            herosc.jumped = true;
             
             comsc.send("jump", herosc.dy );
         }

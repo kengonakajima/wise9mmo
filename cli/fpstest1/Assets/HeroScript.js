@@ -16,6 +16,8 @@ var nose : Vector3; // こういう風に関数の外に変数定義するとGUI
 var falling = false;
 var needSend = false;
 
+var jumped = false; // 明示的にジャンプ操作をしたらtrue
+
 var prevInWater;
 var inWater; 
 
@@ -268,7 +270,8 @@ function Update() {
     var blkfound=false;
     var blkhity=-999;
     for(var by:int=nextpos.y;by>=0;by--){
-        var b = cs.getBlock( transform.position.x, by, transform.position.z);
+        //        var b = cs.getBlock( transform.position.x, by, transform.position.z);
+        var b = getCurrentPosBlock( Vector3( transform.position.x, by, transform.position.z ), hitSize, hitHeight );
         if( b!=null && cs.isSolidBlock(b)){
             blkfound=true;
             blkhity = by;
@@ -281,9 +284,18 @@ function Update() {
             // 自分の位置より下にある
             falling = true;
         } else {
+            //着地した
+            if( jumped==true && cs.myClientID == clientID ){
+                cs.land( transform.position );
+                print( "land:" + dy );
+                jumped=false;
+            }
+            
             nextpos.y = blkhity + 1;
             falling = false;
             dy=0;
+
+
         }
     }
 
