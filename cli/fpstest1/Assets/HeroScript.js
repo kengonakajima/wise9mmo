@@ -182,6 +182,8 @@ function getHitCoords( s:float, h:float, out:Vector3[] ) {
 var com = null;
 var cs = null;
 
+var hitHeight:float=1.7; 
+var hitSize:float =0.35;
 
 function Update() {
     if( com==null) com = GameObject.Find("CommunicatorCube");
@@ -235,8 +237,8 @@ function Update() {
 
     var nextpos = transform.position + dtr * dTime;
 
-    var hitHeight=1.7; // 何故かこれをグローバルにすると使われない値になってしまう。。
-    var hitSize=0.35;
+
+
     
     //地形判定
     var blkcur = getCurrentPosBlock( transform.position, hitSize, hitHeight );
@@ -286,8 +288,6 @@ function Update() {
         } else {
             //着地した
             if( jumped==true && cs.myClientID == clientID ){
-                cs.land( transform.position );
-                print( "land:" + dy );
                 jumped=false;
             }
             

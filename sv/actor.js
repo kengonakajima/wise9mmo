@@ -7,7 +7,19 @@ var main = require("./main");
 
 function pcMove( curTime ) {
     this.vForce = g.PlayerForce;
-    //    sys.puts( "p:"+this.pos.to_s());
+
+    if( this.lastToolRecover < ( curTime - 4000)  ){
+        if( this.pickaxeLeft < 5 ) this.pickaxeLeft ++;
+        if( this.axeLeft < 5 ) this.axeLeft ++;
+        if( this.bucketLeft < 5 ) this.bucketLeft ++;
+        if( this.bowLeft < 5 ) this.bowLeft ++;
+        if( this.bombFlowerLeft < 5 ) this.bombFlowerLeft ++;
+        if( this.torchLeft < 5 ) this.torchLeft ++;
+
+        this.lastToolRecover = curTime;
+        this.sendToolState();
+        sys.puts( "toolst:" + this.lastToolRecover );
+    }
     return true;
 };
 
@@ -245,7 +257,7 @@ Actor.prototype.poll = function(curTime) {
 
     
     //    var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
-    var blkcur = this.getPosBlock( this.pos, 0.35, 1.7 );
+    var blkcur = this.getPosBlock( this.pos, 0.35, this.height );
     if( blkcur != null ){
         if( blkcur == g.BlockType.WATER ){
             // 水の中にいる
@@ -263,6 +275,7 @@ Actor.prototype.poll = function(curTime) {
                 // 壁の中にいま、まさにうまってる
                 this.pos.y += 1;
                 this.velocity.y = 0;
+                sys.puts( "inwall!! h:"+this.height);
             }
         } 
      }
@@ -284,8 +297,7 @@ Actor.prototype.poll = function(curTime) {
         var np = this.pos.mul(1-u).add( nextpos.mul(u));
 
         // 地形との境界面で微妙に振動するのをふせぐ
-        //        var blknYepsilon = this.getPosBlock( new g.Vector3( np.x,np.y-0.0001,np.z), 0.35, 1.7 );
-        var blkn = this.getPosBlock( np, 0.35, 1.7 );
+        var blkn = this.getPosBlock( np, 0.35, this.height );
         // 範囲外はつねに移動できない
         if( blkn == null ){
             x_ok = y_ok = z_ok = false;
@@ -302,15 +314,15 @@ Actor.prototype.poll = function(curTime) {
             
         // 通れない場合はループ終わりで抜ける
         var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
-        var blkcur2 = this.getPosBlock( np2, 0.35, 1.7 );
+        var blkcur2 = this.getPosBlock( np2, 0.35, this.height );
         if( blkcur2 != null && (!g.isSolidBlock(blkcur2)) ) y_ok = true;
 
         var np3 = new g.Vector3( this.pos.x, this.pos.y, np.z );
-        var blkcur3 = this.getPosBlock( np3, 0.35, 1.7 );
+        var blkcur3 = this.getPosBlock( np3, 0.35, this.height );
         if( blkcur3 != null && (!g.isSolidBlock(blkcur3)) ) z_ok = true;
     
         var np4 = new g.Vector3( np.x, this.pos.y, this.pos.z );
-        var blkcur4 = this.getPosBlock( np4, 0.35, 1.7 );
+        var blkcur4 = this.getPosBlock( np4, 0.35, this.height );
         if( blkcur4 != null && (!g.isSolidBlock(blkcur4)) ) x_ok = true;
 
         if( this.hitWallFunc ){
@@ -393,18 +405,7 @@ Actor.prototype.setMove = function( x, y, z, pitch, yaw ) {
     }
 
 };
-Actor.prototype.setLand = function( x,y,z) {
-    /*
-    sys.puts( "vy:" + this.velocity.y + "          DY: " + (y - this.pos.y ) );
-    if( x > this.pos.x-3 && x < this.pos.x+3
-        && y > this.pos.y-3 && y < this.pos.y+3
-        && z > this.pos.z-3 && z < this.pos.z+3 ){
-        var nv = new g.Vector3( x - this.pos.x, y - this.pos.y, z - this.pos.z );
-        this.pos.add( new g.Vector3(nv.x /5, 1.2, nv.y/5) );
-        
-    }
-    */
-};
+
     
 // velY: float
 Actor.prototype.jump = function( velY ) {
@@ -477,13 +478,23 @@ function PlayerCharacter( name, fld, pos ) {
     pc.hp = 10;
     pc.hitWallFunc = pcHitWall;
     pc.func = pcMove;
+    pc.height = 1.7;
+    pc.pickaxeLeft = 5;
+    pc.axeLeft = 5;
+    pc.bowLeft = 5;
+    pc.bucketLeft = 5;
+    pc.torchLeft = 5;
+    pc.bombFlowerLeft = 5;
+    pc.lastToolRecover = 0;
     return pc;
 };
 function Mob( name, fld, pos ) {
     var m = new Actor(name,fld,pos);
     if(name=="zombie"){
         m.func = zombieMove;
-    } 
+        m.height = 1.7;
+    }
+
     return m;
 };
 function Debri( t, fld, pos ) {
@@ -492,6 +503,7 @@ function Debri( t, fld, pos ) {
     var d = new Actor( n + "_debri",fld,pos);
     d.func = debriMove;
     d.debriType = t;
+    d.height = 0.35;
     return d;
 };
 
@@ -564,6 +576,10 @@ Actor.prototype.shoot = function( tname, speed, ttlsec, damage, ag) {
     return b;
 };
 
+Actor.prototype.sendToolState = function(){
+    this.conn.send( "toolState", this.pickaxeLeft, this.axeLeft, this.torchLeft, this.bowLeft, this.bucketLeft, this.bombFlowerLeft );
+};
+    
 exports.Actor = Actor;
 exports.Mob = Mob;
 exports.Debri = Debri;

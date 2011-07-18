@@ -115,12 +115,40 @@ function dig(x,y,z){
     
     var b = fld.get(x,y,z);
     if( b != null && modField.diggable(b) ){
+        if( b == g.BlockType.STONE || b == g.BlockType.SOIL || b == g.BlockType.GRASS ){
+            if( this.pc.pickaxeLeft <= 0 ){
+                sys.puts( "pickaxe not enough" );
+                return;
+            } else {
+                sys.puts( "digged. pkxe left:", this.pc.pickaxeLeft );
+                this.pc.pickaxeLeft --;
+            }
+        }
+        if( b == g.BlockType.STEM || b == g.BlockType.LEAF ){
+            if( this.pc.axeLeft <= 0 ){
+                sys.puts( "axe not enough");
+                return;
+            } else {
+                this.pc.axeLeft --;
+            }
+        }
+        if( b == g.BlockType.WATER ){
+            if( this.pc.bucketLeft <= 0 ){
+                sys.puts( "bucket not enough" );
+                return;
+            } else {
+                this.pc.bucketLeft --;
+            }
+        }
+            
         var prev = fld.set( x,y,z, g.BlockType.AIR);
         fld.recalcSunlight( x-1,z-1,x+1,z+1);
         this.nearcast( "changeFieldNotify", x,y,z);
 
         fld.addDebri( prev, new g.Vector3(x+0.5,y+0.5,z+0.5));
         sys.puts("digged.");
+
+        this.pc.sendToolState();
     }    
 }
 
@@ -147,10 +175,15 @@ function put(x,y,z,tname){
     }
 }
 
-function attack() {
-    sys.puts("attack: pitch"+this.pc.pitch + " yaw:" + this.pc.yaw );
+function shoot() {
+    sys.puts("shoot");
+    if( this.pc.bowLeft > 0 ){
+        this.pc.bowLeft --;
+        this.pc.shoot( "arrow", 30, 2, 2, 4 );
+        this.pc.sendToolState();
+    }
 
-    this.pc.shoot( "hidden", 30, 0.2, 5, 10 );
+    //    this.pc.shoot( "hidden", 30, 0.2, 5, 10 );
 }
 function chat(txt) {
     sys.puts("chat:"+txt);
@@ -176,17 +209,13 @@ function login() {
   var p = new g.Pos( 2,15,2 ); // 初期位置
 
   this.pc = fld.addPC( "guest", p, this );
+  this.pc.conn = this;
 
   this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerForce );
   this.send( "statusChange", this.pc.id, this.pc.hp );
 
 }
 
-function land(x,y,z) {
-    // 着地したときゴーストがついてきてなかったら補正する
-    sys.puts( "land");
-    this.pc.setLand(x,y,z);
-}
 
 
 
@@ -316,9 +345,9 @@ addRPC( "getField", getField );
 addRPC( "dig", dig );
 addRPC( "jump", jump );
 addRPC( "put", put );
-addRPC( "attack", attack );
+addRPC( "shoot", shoot );
 addRPC( "chat", chat );
-addRPC( "land", land );
+
 
 server.listen(7000, "127.0.0.1");
 

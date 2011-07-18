@@ -2,7 +2,9 @@
 
 var shortcutTextures : Texture2D[];
 
-var selectedInventoryIndex : int ;
+
+
+var selectedInventoryIndex : int ; // pickaxe:0, axe:1, torch:2, bow:3, bucket:4,   soil:5, stone:6
 
 var com : GameObject;
 var comsc;
@@ -165,6 +167,7 @@ function OnGUI () {
 
     var d = ray.direction / 30.0;
 
+    var targetblk:int=-1;
     var targetv:Vector3=Vector3(-1,-1,-1);
     var prevTargetv:Vector3=Vector3(-1,-1,-1);
     for(var i=0;i<300;i++){
@@ -175,17 +178,50 @@ function OnGUI () {
         var ix:int = v.x;
         var iy:int = v.y;
         var iz:int = v.z;        
-        if( blk != comsc.AIR && blk != comsc.WATER ){
+        if( blk != comsc.AIR ){
             targetv = Vector3( ix,iy,iz);
+            targetblk = blk;
             break;
         } else {
             prevTargetv = Vector3(ix,iy,iz);
         }
     }
 
+    var cursorHit = false;
+
+    switch( selectedInventoryIndex ){
+    case 0: // pickaxe
+        if( targetblk == comsc.SOIL ||
+            targetblk == comsc.GRASS ||
+            targetblk == comsc.STONE ){
+            cursorHit = true;
+        }
+        break;
+    case 1: // axe
+        if( targetblk == comsc.LEAF ||
+            targetblk == comsc.STEM ) {
+            cursorHit = true;
+        }
+        break;
+    case 2: // torch
+        break;
+    case 3: // bow
+        break;
+    case 4: // bucket
+        if( targetblk == comsc.WATER ){
+            cursorHit = true;
+        }
+        break;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+        break;
+    }
 
     
-    if( targetv.x != -1 ){
+    if( cursorHit ){//targetv.x != -1 ){
         cursorCube.transform.position = targetv + Vector3(0.5,0.5,0.5);
     } else {
         cursorCube.transform.position = Vector3(-1,-1,-1);
@@ -193,12 +229,12 @@ function OnGUI () {
     
     // hit
     //    var ray = cam.camera.ScreenPointToRay( Vector3( Screen.width/2, Screen.height/2,0));
-    var hitInfo : RaycastHit ;
-    var mobhit = false;
-    if( Physics.Raycast( cam.transform.position, ray.direction, hitInfo, 5 ) ){
+    ///    var hitInfo : RaycastHit ;
+    //    var mobhit = false;
+    //    if( Physics.Raycast( cam.transform.position, ray.direction, hitInfo, 5 ) ){
         //        print("something hit!:"+ray.direction + " hitTr:" + hitInfo.transform + " p:" + hitInfo.point  + " d:" + hitInfo.distance );
-        mobhit = true;
-    }
+//        mobhit = true;
+//    }
 
 
         
@@ -206,10 +242,10 @@ function OnGUI () {
         if( Time.realtimeSinceStartup > (prevFireAt + 0.2 ) ){
             prevFireAt = Time.realtimeSinceStartup;
             herosc.PlayUseAnimation();
-            if( targetv.x != -1 ){
+            if( cursorHit ){
                 comsc.digBlock(targetv.x,targetv.y,targetv.z);
-            } else {
-                comsc.attack();
+            } else if( selectedInventoryIndex == 3 ){
+                comsc.shoot();
             }
         }
     }
@@ -252,8 +288,7 @@ function OnGUI () {
         GUI.DrawTexture( Rect(64+i*unit+ofs,Screen.height-unit, unit,unit ), btex, ScaleMode.ScaleToFit, true, 1.0f );            
         GUI.DrawTexture( Rect(64+i*unit+ofs+2,Screen.height-32-2, 32,32 ), shortcutTextures[i], ScaleMode.StretchToFill, true, 1.0f );
 
-        GUI.Label( Rect(64+i*unit+ofs+16, Screen.height-16-2,20,20), ""+99); // 残り個数表示
-
+        GUI.Label( Rect(64+i*unit+ofs+24, Screen.height-16-2,20,20), "" + comsc.toolLastNumNumber[i] ); // 残り個数表示
 
     }
 

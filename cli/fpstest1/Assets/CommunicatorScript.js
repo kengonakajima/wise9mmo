@@ -178,12 +178,12 @@ var pcTexture : Texture;
 var prefabDebri : GameObject;
 var prefabArrow : GameObject;
 
-function makeDebriCube(a) {
+function makeDebriCube(a, typeid:int) {
     var mesh = a.GetComponent(MeshFilter).mesh;
 
     var cmaker = a.GetComponent("ChunkMaker");
     
-    print("mesh:"+mesh);
+    print("mesh:"+mesh + " typeid:" + typeid );
 
     mesh.Clear();
         
@@ -205,7 +205,7 @@ function makeDebriCube(a) {
                      0,
                      triangles,
                      0,
-                     STONE,
+                     typeid,
                      lts,
                      drawflags );
                      
@@ -250,7 +250,20 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         hs.showName =  typeName + "_" + id;
         hs.isPC = false;
 
-        makeDebriCube(a);
+        var typeid:int = STONE;
+        if( typeName == "STONE_debri" ){
+            typeid = STONE;
+        } else if( typeName == "GRASS_debri" ){
+            typeid = GRASS;
+        } else if( typeName == "SOIL_debri" ){
+            typeid = SOIL;
+        } else if( typeName == "LEAF_debri" ){
+            typeid = LEAF;
+        } else if( typeName == "STEM_debri" ){
+            typeid = STEM;
+        }
+        makeDebriCube(a, typeid);
+        hs.hitHeight =0.35;
     } else if( typeName == "arrow" ) {
         a = Instantiate( prefabArrow, pos, Quaternion.identity );
         hs = a.GetComponent( "HeroScript");
@@ -326,11 +339,30 @@ function rpcChatNotify(cliID, txt){
 
 var prefabMark : GameObject;
 
+var markCounter:int;
+
 function rpcMarkNotify(x,y,z) {
-    print("mark: xyz:"+x+","+y+","+z);
-    var m = Instantiate( prefabMark, Vector3( x,y,z ), Quaternion.identity );
+    markCounter++;
+    if( ( markCounter % 5 ) == 0 ){
+        //        print("mark: xyz:"+x+","+y+","+z);
+        var m = Instantiate( prefabMark, Vector3( x,y,z ), Quaternion.identity );
+    }
 }
 
+
+
+function rpcToolState(pickaxe,axe,torch,bow,bucket,bombflw) {
+
+    print( "0:" + toolLastNumNumber[0]);
+    toolLastNumNumber[0] = pickaxe;
+    toolLastNumNumber[1] = axe;
+    toolLastNumNumber[2] = torch;
+    toolLastNumNumber[3] = bow;
+    toolLastNumNumber[4] = bucket;
+    toolLastNumNumber[5] = bombflw;
+    print("toolState:" + pickaxe + "," + axe + "," + torch + "," + bow + "," + bombflw );
+    
+}
 
 //変化のお知らせがあったので地形要求
 function rpcChangeFieldNotify( x,y,z ) {
@@ -339,7 +371,7 @@ function rpcChangeFieldNotify( x,y,z ) {
     var chy:int=Mathf.Floor(y/CHUNKSZ);
     var chz:int=Mathf.Floor(z/CHUNKSZ);
 
-    print("main:"+chx+","+chy+","+chz);
+    //    print("main:"+chx+","+chy+","+chz);
     
     sendGetField(chx,chy,chz);
     print("edge");
@@ -361,8 +393,10 @@ var wprof:Prof;
 var iprof:Prof;
 var eprof:Prof;
 
+var toolLastNumNumber : int[];
+
 // 通信をするobj
-function Start () {
+function Start() {
     cam = GameObject.Find( "Main Camera" );
     hero = GameObject.Find( "HeroCube" );
 
@@ -377,11 +411,14 @@ function Start () {
     addRPC( "disappear", rpcDisappear );
     addRPC( "chatNotify", rpcChatNotify );
     addRPC( "markNotify", rpcMarkNotify );
+    addRPC( "toolState", rpcToolState );
 
     bprof = new Prof( "block", 20);
     wprof = new Prof( "water", 20);
     iprof = new Prof( "item", 20);
     eprof = new Prof( "ensure", 20);
+
+    toolLastNumNumber = new int[10];    
 }
 
 
@@ -820,6 +857,8 @@ var chs="";
 var counter=0;
 
 
+
+
 function Update() {
     
     send("echo",123); // 何故か送らないと受信できない
@@ -922,8 +961,8 @@ function sendGetFieldEdges(ix:int,iy:int,iz:int){
     if((iz%CHUNKSZ)==(CHUNKSZ-1)) sendGetField(chx, chy, chz+1 );
 }
 
-function attack(){
-    send("attack");
+function shoot(){
+    send("shoot");
 }
 
 function digBlock( ix:int, iy:int, iz:int ) {
@@ -947,6 +986,5 @@ function putItem( ix:int, iy:int, iz:int, tname ) {
     sendGetFieldEdges( ix, iy, iz );    
 }
 
-function land(v:Vector3){
-    send("land", v.x, v.y, v.z );
-}
+
+
