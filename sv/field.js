@@ -41,6 +41,8 @@ exports.generate = function( hsize, vsize ) {
     
     fld.set( 8,groundLevel+4,8, g.ItemType.REDFLOWER );   //
     fld.set( 8,groundLevel+4,10, g.ItemType.BLUEFLOWER );   //
+    fld.set( 10,groundLevel+4,11, g.ItemType.TORCH );
+    fld.set( 14,groundLevel+4,14, g.ItemType.TORCH );    
 
     // 木を4本
     fld.putTree(12,12);
@@ -48,7 +50,7 @@ exports.generate = function( hsize, vsize ) {
     fld.putTree(17,17);        
     fld.putTree(12,17);
     
-    fld.fill( 53,1,53, 54,groundLevel+20,54, g.BlockType.LADDER );   // 
+
 
     // 山をいっぱいおく
     for(var i=0;i<40;i++){
@@ -259,6 +261,19 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
         }
     }
 
+    // torchは7
+    for(var x=x0;x<x1;x++){
+        for(var z=z0;z<z1;z++){
+            for(var y=0;y<this.vSize;y++){
+                var cb = this.get(x,y,z);
+                if( cb == g.ItemType.TORCH ) {
+                    sys.puts( "tor");
+                    this.setSunlight( x,y,z, 7);
+                }
+            }
+        }
+    }
+    
     for(var l=0;l<7;l++){
         sys.puts("loop " +l);
         for(var x=x0;x<x1;x++){
@@ -268,6 +283,7 @@ Field.prototype.recalcSunlight = function(x0,z0,x1,z1) {
                     if( cb != g.BlockType.AIR
                         && cb != g.ItemType.REDFLOWER
                         && cb != g.ItemType.BLUEFLOWER
+                        && cb != g.ItemType.TORCH
                         && cb != g.BlockType.WATER
                         ){
                         this.setSunlight(x,y,z,0);

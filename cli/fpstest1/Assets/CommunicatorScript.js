@@ -178,7 +178,8 @@ var pcTexture : Texture;
 var prefabDebri : GameObject;
 var prefabArrow : GameObject;
 
-function makeDebriCube(a, typeid:int) {
+// debri: height=
+function makeSingleCube(a, typeid:int, height:float, sizescale:float ) {
     var mesh = a.GetComponent(MeshFilter).mesh;
 
     var cmaker = a.GetComponent("ChunkMaker");
@@ -207,7 +208,7 @@ function makeDebriCube(a, typeid:int) {
                      0,
                      typeid,
                      lts,
-                     drawflags );
+                     drawflags, 1, 1 );
                      
     mesh.vertices = vertices;
     mesh.uv = uv;
@@ -216,6 +217,8 @@ function makeDebriCube(a, typeid:int) {
 
     a.transform.localScale = Vector3(0.5,0.5,0.5);
 }
+
+
 
 
 function ensureActor( id:int, typeName:String, pos:Vector3 ){
@@ -262,7 +265,7 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         } else if( typeName == "STEM_debri" ){
             typeid = STEM;
         }
-        makeDebriCube(a, typeid);
+        makeSingleCube(a, typeid,1,1);
         hs.hitHeight =0.35;
     } else if( typeName == "arrow" ) {
         a = Instantiate( prefabArrow, pos, Quaternion.identity );
@@ -352,15 +355,13 @@ function rpcMarkNotify(x,y,z) {
 
 
 function rpcToolState(pickaxe,axe,torch,bow,bucket,bombflw) {
-
-    print( "0:" + toolLastNumNumber[0]);
     toolLastNumNumber[0] = pickaxe;
     toolLastNumNumber[1] = axe;
     toolLastNumNumber[2] = torch;
     toolLastNumNumber[3] = bow;
     toolLastNumNumber[4] = bucket;
     toolLastNumNumber[5] = bombflw;
-    print("toolState:" + pickaxe + "," + axe + "," + torch + "," + bow + "," + bombflw );
+//    print("toolState:" + pickaxe + "," + axe + "," + torch + "," + bow + "," + bombflw );
     
 }
 
@@ -964,7 +965,16 @@ function sendGetFieldEdges(ix:int,iy:int,iz:int){
 function shoot(){
     send("shoot");
 }
+function putTorch(ix:int, iy:int, iz:int ) {
+    send("putTorch", ix,iy,iz);
+    var chx=ix/CHUNKSZ;
+    var chy=iy/CHUNKSZ;
+    var chz=iz/CHUNKSZ;    
 
+    sendGetField(chx, chy, chz );
+    sendGetFieldEdges( ix, iy, iz );    
+}
+    
 function digBlock( ix:int, iy:int, iz:int ) {
     //    print( "dig: "+ix+","+iy+","+iz);
     send( "dig", ix,iy,iz );

@@ -9,6 +9,8 @@ var objmode:int; //
 
 var REDFLOWER:int=100;
 var BLUEFLOWER:int=101;
+var TORCH:int=102;
+
 
 // atlasIndexから [startU, startV, endU, endV]もとめる
 function calcUVs( i:int ) :float[]{
@@ -56,6 +58,8 @@ function makeFlowerObj( basepos : Vector3, vertices : Vector3[], uv : Vector2[],
         uvs = calcUVs( 256 );
     } else if( objType==BLUEFLOWER){
         uvs = calcUVs( 257 );
+    } else if( objType==TORCH){
+        uvs = calcUVs( 258 );
     } else{
         throw "bug";
     }
@@ -104,15 +108,14 @@ function makeFlowerObj( basepos : Vector3, vertices : Vector3[], uv : Vector2[],
     
 }
 
-    var startvis:int[]=new int[6];
-    var starttis:int[]=new int[6];
+var startvis:int[]=new int[6];
+var starttis:int[]=new int[6];
+
 // lights: z0z1x0x1y0y1の順で、各面を照らす明るさ
-function makeCube( basepos : Vector3, vertices : Vector3[], uv : Vector2[], normals : Vector3[], vi : int, triangles : int[], ti : int, blockType :int , lights:int[], drawflags:int[] )
+function makeCube( basepos : Vector3, vertices : Vector3[], uv : Vector2[], normals : Vector3[], vi : int, triangles : int[], ti : int, blockType :int , lights:int[], drawflags:int[], h:float, sz:float )
 {
     var curvi:int = vi;
     var curti:int = ti;
-
-    
 
     for(var i:int=0;i<6;i++){
         if( drawflags[i] ){
@@ -127,44 +130,44 @@ function makeCube( basepos : Vector3, vertices : Vector3[], uv : Vector2[], norm
     if( drawflags[0] ){
         vi=startvis[0];
         vertices[vi+0] = basepos + Vector3( 0,0,0 ); // Z=0 (0,1,2,3)
-        vertices[vi+1] = basepos + Vector3( 1,0,0 ); //
-        vertices[vi+2] = basepos + Vector3( 1,1,0 ); //
-        vertices[vi+3] = basepos + Vector3( 0,1,0 ); //
+        vertices[vi+1] = basepos + Vector3( sz,0,0 ); //
+        vertices[vi+2] = basepos + Vector3( sz,h,0 ); //
+        vertices[vi+3] = basepos + Vector3( 0,h,0 ); //
     }
     if( drawflags[1] ){
         vi=startvis[1];
-        vertices[vi+0] = basepos + Vector3( 0,0,1 ); // Z=1  (4,5,6,7)
-        vertices[vi+1] = basepos + Vector3( 1,0,1 ); //
-        vertices[vi+2] = basepos + Vector3( 1,1,1 ); //
-        vertices[vi+3] = basepos + Vector3( 0,1,1 ); //
+        vertices[vi+0] = basepos + Vector3( 0,0,sz ); // Z=1  (4,5,6,7)
+        vertices[vi+1] = basepos + Vector3( sz,0,sz ); //
+        vertices[vi+2] = basepos + Vector3( sz,h,sz ); //
+        vertices[vi+3] = basepos + Vector3( 0,h,sz ); //
     }
     if( drawflags[2] ){
         vi=startvis[2];
         vertices[vi+0] = basepos + Vector3( 0,0,0 ); // X=0 (0,4,7,3)
-        vertices[vi+1] = basepos + Vector3( 0,0,1 ); //
-        vertices[vi+2] = basepos + Vector3( 0,1,1 ); //
-        vertices[vi+3] = basepos + Vector3( 0,1,0 ); //
+        vertices[vi+1] = basepos + Vector3( 0,0,sz ); //
+        vertices[vi+2] = basepos + Vector3( 0,h,sz ); //
+        vertices[vi+3] = basepos + Vector3( 0,h,0 ); //
     }
     if( drawflags[3] ){
         vi=startvis[3];
-        vertices[vi+0] = basepos + Vector3( 1,0,0 ); // X=1 (1,5,6,2)
-        vertices[vi+1] = basepos + Vector3( 1,0,1 ); //
-        vertices[vi+2] = basepos + Vector3( 1,1,1 ); //
-        vertices[vi+3] = basepos + Vector3( 1,1,0 ); //
+        vertices[vi+0] = basepos + Vector3( sz,0,0 ); // X=1 (1,5,6,2)
+        vertices[vi+1] = basepos + Vector3( sz,0,sz ); //
+        vertices[vi+2] = basepos + Vector3( sz,h,sz ); //
+        vertices[vi+3] = basepos + Vector3( sz,h,0 ); //
     }
     if( drawflags[4] ){
         vi=startvis[4];
         vertices[vi+0] = basepos + Vector3( 0,0,0 ); // Y=0 (0,1,5,4)
-        vertices[vi+1] = basepos + Vector3( 1,0,0 ); //
-        vertices[vi+2] = basepos + Vector3( 1,0,1 ); //
-        vertices[vi+3] = basepos + Vector3( 0,0,1 ); //
+        vertices[vi+1] = basepos + Vector3( sz,0,0 ); //
+        vertices[vi+2] = basepos + Vector3( sz,0,sz ); //
+        vertices[vi+3] = basepos + Vector3( 0,0,sz ); //
     }
     if( drawflags[5] ){
         vi=startvis[5];
-        vertices[vi+0] = basepos + Vector3( 0,1,0 ); // Y=1 (3,2,6,7)
-        vertices[vi+1] = basepos + Vector3( 1,1,0 ); //
-        vertices[vi+2] = basepos + Vector3( 1,1,1 ); //
-        vertices[vi+3] = basepos + Vector3( 0,1,1 ); //
+        vertices[vi+0] = basepos + Vector3( 0,h,0 ); // Y=1 (3,2,6,7)
+        vertices[vi+1] = basepos + Vector3( sz,h,0 ); //
+        vertices[vi+2] = basepos + Vector3( sz,h,sz ); //
+        vertices[vi+3] = basepos + Vector3( 0,h,sz ); //
     }
     
 
@@ -391,6 +394,7 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
             for( var x:int = 0; x < sz; x++ ){
 
                 var i : int = blocks[(x+1)+(z+1)*(sz+2)+(y+1)*(sz+2)*(sz+2)] ;
+                
                 var lx=x+1; // light配列の中は１づつずれている
                 var ly=y+1;
                 var lz=z+1;                
@@ -547,7 +551,9 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                               ti,
                               i,
                               lts,
-                              drawflags );
+                              drawflags,
+                              1,
+                              1 );
                     /*                    
                     vi += 24; // ここが固定値でなくてもよい. drawflagsの個数の4倍
                     ti += 36; // の6倍
@@ -575,6 +581,38 @@ function SetField( blocks: int[], lights:int[], sz:int ) {
                                    lights[toLightIndex(lx,ly,lz,sz+2)] );
                     vi += 8;
                     ti += 24;
+                } else if( i==TORCH && objmode==1){
+                    makeFlowerObj( Vector3(x,y,z),
+                                   vertices,
+                                   uv,
+                                   normals,
+                                   vi,
+                                   triangles,
+                                   ti,
+                                   i,
+                                   lights[toLightIndex(lx,ly,lz,sz+2)] );
+                    vi += 8;
+                    ti += 24;
+                    /*
+                      for(i=0;i<lts.length;i++){
+                        lts[i] = 7;
+                    }
+                    drawflags[0]=drawflags[1]=drawflags[2]=drawflags[3]=drawflags[4]=drawflags[5]=1;
+                    makeCube( Vector3(x,y,z) + Vector3(0.4,0,0.4),
+                              vertices,
+                              uv,
+                              normals,
+                              vi,
+                              triangles,
+                              ti,
+                              1,
+                              lts,
+                              drawflags,
+                              0.6,
+                              0.2 );
+                    vi += 6 * 4;
+                    ti += 6 * 6;
+                    */       
                 }
             }
         }

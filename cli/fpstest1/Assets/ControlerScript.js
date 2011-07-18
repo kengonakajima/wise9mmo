@@ -71,7 +71,6 @@ function Update () {
                 canJump = true;
             }
         }
-        print("dy:"+herosc.dy);
         
         if( canJump ){
             if( herosc.inWater){
@@ -169,6 +168,7 @@ function OnGUI () {
 
     var targetblk:int=-1;
     var targetv:Vector3=Vector3(-1,-1,-1);
+    var prevTargetBlk:int=-1;
     var prevTargetv:Vector3=Vector3(-1,-1,-1);
     for(var i=0;i<300;i++){
         var v = ray.origin + d*i;
@@ -184,6 +184,7 @@ function OnGUI () {
             break;
         } else {
             prevTargetv = Vector3(ix,iy,iz);
+            prevTargetBlk = blk;
         }
     }
 
@@ -204,6 +205,11 @@ function OnGUI () {
         }
         break;
     case 2: // torch
+        if( targetblk != comsc.AIR &&
+            targetblk != comsc.WATER &&
+            prevTargetv.y == ( targetv.y + 1 ) ){
+            cursorHit = true;
+        }            
         break;
     case 3: // bow
         break;
@@ -221,7 +227,7 @@ function OnGUI () {
     }
 
     
-    if( cursorHit ){//targetv.x != -1 ){
+    if( cursorHit ){
         cursorCube.transform.position = targetv + Vector3(0.5,0.5,0.5);
     } else {
         cursorCube.transform.position = Vector3(-1,-1,-1);
@@ -243,7 +249,12 @@ function OnGUI () {
             prevFireAt = Time.realtimeSinceStartup;
             herosc.PlayUseAnimation();
             if( cursorHit ){
-                comsc.digBlock(targetv.x,targetv.y,targetv.z);
+                if( selectedInventoryIndex == 2 ){
+                    // torchは、1歩前のところに
+                    comsc.putTorch( prevTargetv.x, prevTargetv.y, prevTargetv.z );
+                } else {
+                    comsc.digBlock(targetv.x,targetv.y,targetv.z);
+                }
             } else if( selectedInventoryIndex == 3 ){
                 comsc.shoot();
             }

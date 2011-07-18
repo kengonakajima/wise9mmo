@@ -394,7 +394,6 @@ function PlayUseAnimation() {
 
     toolT.animation.Play("use");
     
-    print("Use");
 }
 
 var savedHandMesh;

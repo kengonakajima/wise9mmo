@@ -182,9 +182,20 @@ function shoot() {
         this.pc.shoot( "arrow", 30, 2, 2, 4 );
         this.pc.sendToolState();
     }
-
-    //    this.pc.shoot( "hidden", 30, 0.2, 5, 10 );
 }
+
+function putTorch(x,y,z) {
+    if( this.pc.torchLeft >= 1 ){
+        this.pc.torchLeft --;
+        this.pc.sendToolState();
+        fld.set( x,y,z, g.ItemType.TORCH );
+        fld.recalcSunlight( x-7,z-7,x+7,z+7);
+        this.nearcast( "changeFieldNotify", x,y,z );
+    sys.puts( "puttorch:" + x  + "," + y + "," + z );
+        
+    }
+}
+
 function chat(txt) {
     sys.puts("chat:"+txt);
     if( txt == "debri" ){
@@ -347,6 +358,7 @@ addRPC( "jump", jump );
 addRPC( "put", put );
 addRPC( "shoot", shoot );
 addRPC( "chat", chat );
+addRPC( "putTorch", putTorch );
 
 
 server.listen(7000, "127.0.0.1");
