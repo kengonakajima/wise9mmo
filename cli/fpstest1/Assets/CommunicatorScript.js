@@ -375,7 +375,6 @@ function rpcChangeFieldNotify( x,y,z ) {
     //    print("main:"+chx+","+chy+","+chz);
     
     sendGetField(chx,chy,chz);
-    print("edge");
     sendGetFieldEdges(chx,chy,chz);
 }
 
@@ -776,8 +775,11 @@ function getChunk(chx:int,chy:int,chz:int):Chunk{
 
 function updateChunk( chx:int,chy:int,chz:int, blkary:int[],lgtary:int[] ) {
     try{
-        var chk = getChunk(chx,chy,chz);
+        var chk = getChunk(chx,chy,chz);        
         if(chk==null) throw"invalid chcoord:"+chx.ToString()+chy.ToString()+chz.ToString();
+
+        var prevcounts:int[] = countBlocks(chk.blocks);
+        
         expandRunLength(blkary, chk.blocks);
         expandRunLength(lgtary, chk.lights);
         chk.loaded=true;
@@ -787,10 +789,14 @@ function updateChunk( chx:int,chy:int,chz:int, blkary:int[],lgtary:int[] ) {
         var itemCnt:int=counts[1];
         var waterCnt:int=counts[2];
 
-        if( blockCnt > 0 ) chk.needBlockUpdate=true;
-        if( waterCnt > 0 ) chk.needWaterUpdate=true;
-        if( itemCnt > 0 ) chk.needItemUpdate=true;
-            
+        if( blockCnt > 0 || prevcounts[0] != blockCnt ) chk.needBlockUpdate=true;
+        if( waterCnt > 0 || prevcounts[2] != waterCnt ) chk.needWaterUpdate=true;
+        if( itemCnt > 0 || prevcounts[1] != itemCnt ) chk.needItemUpdate=true;
+
+        if( chx==1 && chy==1 && chz==0 ){
+            print("itemcnt:" + itemCnt);
+            print(" needItemUpdate:" + chk.needItemUpdate );
+        }
 
     } catch(e){
         print("excep"+e);
@@ -845,7 +851,7 @@ function findUpdatedChunk() :Chunk{
 
 // blkary, lgtaryは RunLength
 function rpcGetFieldResult( x0,y0,z0,x1,y1,z1,blkary,lgtary) {
-    // print( "field data. xyz:"+x0+y0+z0+x1+y1+z1+":"+blkary+" lgt:"+lgtary);
+     print( "field data. xyz:"+x0+","+y0+","+z0+","+x1+","+y1+","+z1+":"+blkary+" lgt:"+lgtary);
     if( x0<0||y0<0||z0<0||x0>=CHUNKMAX*CHUNKSZ||y0>=CHUNKMAX*CHUNKSZ||z0>=CHUNKMAX*CHUNKSZ||blkary== null || blkary[0] == null ||lgtary==null||lgtary[0]==null )return;
            
     updateChunk( x0/CHUNKSZ, y0/CHUNKSZ, z0/CHUNKSZ, blkary, lgtary );

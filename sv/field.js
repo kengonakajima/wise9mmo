@@ -165,7 +165,7 @@ Field.prototype.set = function(x,y,z,t){
 
 Field.prototype.runtimeSet = function(p,t){
     this.set( p.x, p.y, p.z, t );
-    this.recalcSunlight( p.x-1,p.z-1,p.xx+1,p.z+1);
+    this.recalcSunlight( p.x-8,p.z-8,p.x+8,p.z+8);
     main.nearcast( p, "changeFieldNotify", p.x,p.y,p.z);
 };
 
@@ -445,13 +445,54 @@ Field.prototype.addPC = function(name,pos,sock) {
 
 Field.prototype.findActor = function(id) {
     return this.actors[id];
-}
-    
+};
+
+
 Field.prototype.poll = function(curTime){
     for( var k in this.actors ){
         var a = this.actors[k];
         if(a==null)continue;
         a.poll(curTime);        
     }
+
+    this.pollTorches(curTime);
+    
 };
 
+// たいまつを登録しておいて時間が来たら消す
+Field.prototype.registerTorch = function(x,y,z,tm) {
+    if(this.torches==undefined ){
+        this.torches = new Array();
+    }
+    this.torches.push( new Array( new g.Vector3(x,y,z),tm) );
+};
+
+Field.prototype.pollTorches = function( curTime) {
+    for(var k in this.torches ){
+        var t = this.torches[k];
+        if(t==null)continue;
+        var v = t[0];
+        var tm = t[1];
+        if( curTime > ( tm + 5000 ) ){
+            this.runtimeSet( v, g.BlockType.AIR );
+            this.torches[k]=null;
+            sys.puts( "torch out" );
+        }
+    }
+};
+    
+    /*
+      
+    if( this.fieldPollCnt == undefined ){
+        this.fieldPollCnt = 0;
+    }
+    this.fieldPollCnt ++;
+    var unitVnum = this.vSize / 8; // 128だったら16
+    var unitHnum = this.hSize / 8; // 64だったら8
+    var unitnum = unitVnum * unitHnum * unitHnum;
+    var x = this.fieldPollCnt % unitHnum;    
+    var y = Math.floor( this.fieldPollCnt / unitHnum / unitHnum ) % unitVnum;
+    var z = Math.floor( this.fieldPollCnt / unitHnum ) % unitHnum;
+
+    this.pollVoxel( x * unitHnum, y * unitVnum, z * unitHnum, unitHnum, unitVnum, unitHnum )
+    */

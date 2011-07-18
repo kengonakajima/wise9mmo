@@ -188,11 +188,11 @@ function putTorch(x,y,z) {
     if( this.pc.torchLeft >= 1 ){
         this.pc.torchLeft --;
         this.pc.sendToolState();
-        fld.set( x,y,z, g.ItemType.TORCH );
-        fld.recalcSunlight( x-7,z-7,x+7,z+7);
-        this.nearcast( "changeFieldNotify", x,y,z );
-    sys.puts( "puttorch:" + x  + "," + y + "," + z );
-        
+        fld.runtimeSet( new g.Vector3(x,y,z), g.ItemType.TORCH );
+        sys.puts( "puttorch:" + x  + "," + y + "," + z );
+        var d = new Date();
+        var curTime = d.getTime();                                  
+        fld.registerTorch(x,y,z,curTime);        
     }
 }
 
