@@ -5,6 +5,38 @@ var main = require("./main");
 
 // PC
 
+function pcDie() {
+    for(;;){
+        var puttype=-1;
+        if( this.stoneLeft > 0 ){
+            puttype = g.BlockType.STONE;
+            this.stoneLeft --;
+        }
+        if( this.soilLeft > 0 ){
+            puttype = g.BlockType.SOIL;
+            this.soilLeft--;
+        }
+        if( this.waterLeft > 0 ){
+            puttype = g.BlockType.WATER;
+            this.waterLeft --;
+        }
+        if( this.stemLeft > 0 ){
+            puttype = g.BlockType.STEM;
+            this.stemLeft--;
+        }
+            
+
+        if( puttype == -1 )break;
+
+        var x = Math.floor( this.pos.x - 5 + Math.random() * 10 );
+        var y = Math.floor( this.pos.y + Math.random() * 10 );
+        var z = Math.floor( this.pos.z - 5 + Math.random() * 10 );
+
+        this.field.addDebri( puttype, new g.Vector3(x,y,z));
+        
+    }
+}
+
 function pcMove( curTime ) {
     this.vForce = g.PlayerForce;
 
@@ -13,13 +45,67 @@ function pcMove( curTime ) {
         if( this.axeLeft < 5 ) this.axeLeft ++;
         if( this.bucketLeft < 5 ) this.bucketLeft ++;
         if( this.bowLeft < 5 ) this.bowLeft ++;
-        if( this.bombFlowerLeft < 5 ) this.bombFlowerLeft ++;
         if( this.torchLeft < 5 ) this.torchLeft ++;
 
         this.lastToolRecover = curTime;
         this.sendToolState();
         sys.puts( "toolst:" + this.lastToolRecover );
     }
+    var col = this.collide( 0.5 );
+    for( var i in col ){
+        var a = col[i];
+        var doIt=false;
+        
+        if( a == this.shooter ) continue;
+        if( a.typeName == "STONE_debri" ){
+            if( this.stoneLeft < 10 ) {
+                this.stoneLeft ++;
+                doIt =true;
+            }
+        }
+        if( a.typeName == "SOIL_debri" ){
+            if( this.soilLeft < 10 ){
+                this.soilLeft ++;
+                doIt = true;
+            }
+        }
+        if( a.typeName == "STEM_debri" ){
+            if( this.stemLeft < 10 ){
+                this.stemLeft ++;
+                doIt = true;
+            }
+        }
+        if( a.typeName == "WATER_debri" ){
+            if( this.waterLeft < 10 ){
+                this.waterLeft ++;
+                doIt = true;
+            }
+        }
+            
+        if( doIt ){
+            this.sendToolState();
+            this.field.deleteActor(a.id);
+        }
+    }
+
+    var blkcur = this.getPosBlock( this.pos, 0.35, this.height );
+    if( blkcur == g.BlockType.WATER ){
+        if( curTime > ( this.lastChoke + 2000 ) ){
+            this.hp --;
+            this.lastChoke = curTime;
+            this.sendStatus();
+        }
+    } else {
+        if( curTime > ( this.lastHPRecover + 4000 ) ){
+            this.lastHPRecover = curTime;
+            if( this.hp < 10 ){
+                this.hp ++;
+                this.sendStatus();
+                sys.puts("hprecov");
+            }
+        }
+    }
+    
     return true;
 };
 
@@ -460,13 +546,13 @@ Actor.prototype.collide = function( dia ) {
 // PC
 
 function pcHitWall(p,xok,yok,zok) {
-    //    sys.puts( "pcHitGround: p:"  + p.to_s()+ "ok:" + xok + ","+ yok + "," + zok  + " vel:" + this.velocity.to_s() );
+        sys.puts( "pcHitGround: p:"  + p.to_s()+ "ok:" + xok + ","+ yok + "," + zok  + " vel:" + this.velocity.to_s() );
     if( this.velocity.y < -4 && yok == false ){
         var dmg = Math.round( ( this.velocity.y + 4 ) / 2 ); // 負の値
         if( dmg != 0 ){
             this.hp += dmg;
             sys.puts( "fall damage! me: " + this.typeName + " dmg:" + dmg );
-            main.nearcast( this.pos, "statusChange", this.id, this.hp );
+            this.sendStatus();                
         }
     }
     return true;
@@ -479,13 +565,29 @@ function PlayerCharacter( name, fld, pos ) {
     pc.hitWallFunc = pcHitWall;
     pc.func = pcMove;
     pc.height = 1.7;
+
+
+    // いくらでも時間で増えるもの
     pc.pickaxeLeft = 5;
     pc.axeLeft = 5;
     pc.bowLeft = 5;
     pc.bucketLeft = 5;
     pc.torchLeft = 5;
-    pc.bombFlowerLeft = 5;
+
+    // 拾う必要があるもの
+    pc.stoneLeft = 0;
+    pc.soilLeft = 0;
+    pc.waterLeft = 0;
+    pc.stemLeft = 0;
+    pc.bombFlowerLeft = 0;
+    
     pc.lastToolRecover = 0;
+    pc.lastHPRecover = 0;
+    pc.lastChoke = 0;
+    
+    // 関数
+    pc.onDie = pcDie;
+    
     return pc;
 };
 function Mob( name, fld, pos ) {
@@ -577,9 +679,17 @@ Actor.prototype.shoot = function( tname, speed, ttlsec, damage, ag) {
 };
 
 Actor.prototype.sendToolState = function(){
-    this.conn.send( "toolState", this.pickaxeLeft, this.axeLeft, this.torchLeft, this.bowLeft, this.bucketLeft, this.bombFlowerLeft );
+    this.conn.send( "toolState",
+                    this.pickaxeLeft, this.axeLeft, this.torchLeft, this.bowLeft, this.bucketLeft,
+                    this.stoneLeft, this.soilLeft, this.waterLeft, this.stemLeft, this.bombFlowerLeft );
 };
-    
+
+Actor.prototype.sendStatus = function() {
+    main.nearcast( this.pos, "statusChange", this.id, this.hp );
+};
+
+
+
 exports.Actor = Actor;
 exports.Mob = Mob;
 exports.Debri = Debri;

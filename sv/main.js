@@ -111,7 +111,9 @@ function dig(x,y,z){
     var v = new g.Vector3(x,y,z);
     var d = v.distance( this.pc.pos );
     sys.puts("dig:"+x+","+y+","+z + " d:" + d );
-    if( d > 4 ) return;
+    if( d > 8 ) return;
+
+    var putDebri  =true;
     
     var b = fld.get(x,y,z);
     if( b != null && modField.diggable(b) ){
@@ -131,21 +133,29 @@ function dig(x,y,z){
             } else {
                 this.pc.axeLeft --;
             }
+            if( b == g.BlockType.LEAF ){ putDebri = false; }
         }
         if( b == g.BlockType.WATER ){
             if( this.pc.bucketLeft <= 0 ){
                 sys.puts( "bucket not enough" );
                 return;
-            } else {
+            } else if( this.pc.waterLeft < 10 ){
                 this.pc.bucketLeft --;
+                putDebri = false;
+                this.pc.waterLeft ++;
+            } else {
+                return;
             }
         }
             
         var prev = fld.set( x,y,z, g.BlockType.AIR);
+        if(prev==g.BlockType.GRASS ) prev = g.BlockType.SOIL;
         fld.recalcSunlight( x-1,z-1,x+1,z+1);
         this.nearcast( "changeFieldNotify", x,y,z);
 
-        fld.addDebri( prev, new g.Vector3(x+0.5,y+0.5,z+0.5));
+        if( putDebri ){
+            fld.addDebri( prev, new g.Vector3(x+0.5,y+0.5,z+0.5));
+        }
         sys.puts("digged.");
 
         this.pc.sendToolState();
@@ -196,6 +206,36 @@ function putTorch(x,y,z) {
     }
 }
 
+function putDebri(x,y,z,t){
+    
+    if( t == g.BlockType.STONE ){
+        if( this.pc.stoneLeft > 0 ){
+            this.pc.stoneLeft --;
+            fld.runtimeSet( new g.Vector3(x,y,z), t );
+        }        
+    } else if( t == g.BlockType.SOIL ){
+        if( this.pc.soilLeft > 0 ){
+            this.pc.soilLeft --;
+            fld.runtimeSet( new g.Vector3(x,y,z), t );
+        }
+    } else if( t == g.BlockType.WATER ){
+        if( this.pc.waterLeft > 0 ){
+            this.pc.waterLeft --;
+            fld.runtimeSet( new g.Vector3(x,y,z), t );
+        }
+    } else if( t == g.BlockType.STEM ){
+        if( this.pc.stemLeft > 0 ){
+            this.pc.stemLeft --;
+            fld.runtimeSet( new g.Vector3(x,y,z), t );
+        }
+    }
+
+
+    this.pc.sendToolState();
+    
+}
+
+
 function chat(txt) {
     sys.puts("chat:"+txt);
     if( txt == "debri" ){
@@ -223,7 +263,7 @@ function login() {
   this.pc.conn = this;
 
   this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerForce );
-  this.send( "statusChange", this.pc.id, this.pc.hp );
+  this.pc.sendStatus();
 
 }
 
@@ -333,6 +373,8 @@ var server = net.createServer(function (socket) {
     // ソケットが切断したときのコールバック
     socket.addListener("end", function () {
             if( socket.pc ){
+
+                socket.pc.onDie();
                 fld.deleteActor( socket.pc.id );
                 delete sockets[ socket.pc.id ];
             }
@@ -359,7 +401,7 @@ addRPC( "put", put );
 addRPC( "shoot", shoot );
 addRPC( "chat", chat );
 addRPC( "putTorch", putTorch );
-
+addRPC( "putDebri", putDebri );
 
 server.listen(7000, "127.0.0.1");
 

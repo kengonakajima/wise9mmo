@@ -246,7 +246,7 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
             hs.idleAnimName = "idle";
             hs.setMaterial( pcTexture );            
         }        
-    } else if( typeName == "STONE_debri" || typeName == "GRASS_debri" || typeName == "SOIL_debri" || typeName == "LEAF_debri" || typeName == "STEM_debri" ){
+    } else if( typeName == "STONE_debri" || typeName == "GRASS_debri" || typeName == "SOIL_debri" || typeName == "LEAF_debri" || typeName == "STEM_debri" || typeName == "WATER_debri" ){
         a = Instantiate( prefabDebri, pos, Quaternion.identity );
         hs = a.GetComponent( "HeroScript");
         hs.clientID = id;
@@ -264,6 +264,8 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
             typeid = LEAF;
         } else if( typeName == "STEM_debri" ){
             typeid = STEM;
+        } else if( typeName == "WATER_debri" ){
+            typeid = WATER;
         }
         makeSingleCube(a, typeid,1,1);
         hs.hitHeight =0.35;
@@ -354,13 +356,17 @@ function rpcMarkNotify(x,y,z) {
 
 
 
-function rpcToolState(pickaxe,axe,torch,bow,bucket,bombflw) {
+function rpcToolState(pickaxe,axe,torch,bow,bucket,stone,soil,water,stem,bombflw) {
     toolLastNumNumber[0] = pickaxe;
     toolLastNumNumber[1] = axe;
     toolLastNumNumber[2] = torch;
     toolLastNumNumber[3] = bow;
     toolLastNumNumber[4] = bucket;
-    toolLastNumNumber[5] = bombflw;
+    toolLastNumNumber[5] = stone;
+    toolLastNumNumber[6] = soil;
+    toolLastNumNumber[7] = water;
+    toolLastNumNumber[8] = stem;
+    toolLastNumNumber[9] = bombflw;
 //    print("toolState:" + pickaxe + "," + axe + "," + torch + "," + bow + "," + bombflw );
     
 }
@@ -851,7 +857,7 @@ function findUpdatedChunk() :Chunk{
 
 // blkary, lgtaryは RunLength
 function rpcGetFieldResult( x0,y0,z0,x1,y1,z1,blkary,lgtary) {
-     print( "field data. xyz:"+x0+","+y0+","+z0+","+x1+","+y1+","+z1+":"+blkary+" lgt:"+lgtary);
+    //     print( "field data. xyz:"+x0+","+y0+","+z0+","+x1+","+y1+","+z1+":"+blkary+" lgt:"+lgtary);
     if( x0<0||y0<0||z0<0||x0>=CHUNKMAX*CHUNKSZ||y0>=CHUNKMAX*CHUNKSZ||z0>=CHUNKMAX*CHUNKSZ||blkary== null || blkary[0] == null ||lgtary==null||lgtary[0]==null )return;
            
     updateChunk( x0/CHUNKSZ, y0/CHUNKSZ, z0/CHUNKSZ, blkary, lgtary );
@@ -1002,5 +1008,7 @@ function putItem( ix:int, iy:int, iz:int, tname ) {
     sendGetFieldEdges( ix, iy, iz );    
 }
 
-
+function putDebri( ix:int, iy:int, iz:int, blocktype:int ) {
+    send( "putDebri", ix,iy,iz, blocktype );
+}
 

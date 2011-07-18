@@ -84,7 +84,8 @@ exports.diggable = function(t){
     if( t == g.BlockType.STONE
         || t == g.BlockType.GRASS
         || t == g.BlockType.SOIL
-        || t == g.BlockType.STEM
+        || t == g.BlockType.WATER
+        || t == g.BlockType.STEM        
         || t == g.BlockType.LEAF
         ){
         return true;
@@ -473,7 +474,7 @@ Field.prototype.pollTorches = function( curTime) {
         if(t==null)continue;
         var v = t[0];
         var tm = t[1];
-        if( curTime > ( tm + 5000 ) ){
+        if( curTime > ( tm + 60000 ) ){
             this.runtimeSet( v, g.BlockType.AIR );
             this.torches[k]=null;
             sys.puts( "torch out" );

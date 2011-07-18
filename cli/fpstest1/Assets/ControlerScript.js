@@ -135,6 +135,9 @@ var heartTexture : Texture2D;
 var prevFireAt:float=0.0;
 
 
+var openChatWinAudio : AudioClip;
+var closeChatWinAudio : AudioClip;
+
 
 // クリックしたところのブロックを壊す
 function OnGUI () {
@@ -204,7 +207,8 @@ function OnGUI () {
             cursorHit = true;
         }
         break;
-    case 2: // torch
+    case 2: // torch, bombflower
+    case 9:        
         if( targetblk != comsc.AIR &&
             targetblk != comsc.WATER &&
             prevTargetv.y == ( targetv.y + 1 ) ){
@@ -218,11 +222,13 @@ function OnGUI () {
             cursorHit = true;
         }
         break;
-    case 5:
+    case 5: // stone, soil,water,stem
     case 6:
     case 7:
-    case 8:
-    case 9:
+    case 8:        
+        if( targetblk != comsc.AIR ){
+            cursorHit = true;
+        }
         break;
     }
 
@@ -249,24 +255,47 @@ function OnGUI () {
             prevFireAt = Time.realtimeSinceStartup;
             herosc.PlayUseAnimation();
             if( cursorHit ){
-                if( selectedInventoryIndex == 2 ){
+                switch( selectedInventoryIndex ) {
+                case 0:
+                case 1:
+                case 4:
+                    comsc.digBlock(targetv.x,targetv.y,targetv.z);
+                    break;
+                case 2: // torch
                     // torchは、1歩前のところに
                     comsc.putTorch( prevTargetv.x, prevTargetv.y, prevTargetv.z );
-                } else {
-                    comsc.digBlock(targetv.x,targetv.y,targetv.z);
+                    break;
+                case 3:
+                    break;
+                case 5: // put-stone
+                    comsc.putDebri( prevTargetv.x, prevTargetv.y, prevTargetv.z, comsc.STONE );
+                    break;
+                case 6: // 
+                    comsc.putDebri( prevTargetv.x, prevTargetv.y, prevTargetv.z, comsc.SOIL );
+                    break;
+                case 7: // 
+                    comsc.putDebri( prevTargetv.x, prevTargetv.y, prevTargetv.z, comsc.WATER );
+                    break;
+                case 8: // 
+                    comsc.putDebri( prevTargetv.x, prevTargetv.y, prevTargetv.z, comsc.STEM );
+                    break;                    
+                default:
+                    break;
                 }
             } else if( selectedInventoryIndex == 3 ){
                 comsc.shoot();
             }
         }
     }
-    if( Input.GetButtonDown( "Fire2" ) ) {
-        print( "f2");                
+    if( Input.GetButtonDown( "Fire2" ) ) { // tab
+        print( "f2");
+        
     }
     if( chatShow ){
         chatString = GUI.TextField( Rect(10,Screen.height-80,400,20), chatString );
         if( enterKeyHit ){
             chatShow = false;
+            AudioSource.PlayClipAtPoint( closeChatWinAudio, hero.transform.position );                    
             comsc.send( "chat", chatString );
         }
     }
@@ -277,8 +306,10 @@ function OnGUI () {
         if( Time.realtimeSinceStartup > ( prevFireAt + 0.2 ) ){
             prevFireAt = Time.realtimeSinceStartup;
             print( "f3");
+            
             if(!chatShow){
                 chatShow = true;
+                AudioSource.PlayClipAtPoint( openChatWinAudio, hero.transform.position );        
                 chatString = "";
             }
         }
