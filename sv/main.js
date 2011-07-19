@@ -189,7 +189,7 @@ function shoot() {
     sys.puts("shoot");
     if( this.pc.bowLeft > 0 ){
         this.pc.bowLeft --;
-        this.pc.shoot( "arrow", 30, 2, 2, 4 );
+        this.pc.shoot( "arrow", 15, 2, 2, 4 );
         this.pc.sendToolState();
     }
 }

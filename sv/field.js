@@ -33,7 +33,7 @@ exports.generate = function( hsize, vsize ) {
     fld.fill( 0,0,0, 7,groundLevel+1,7, g.BlockType.SOIL ); // すたーとちてん
     
     
-    var d = 20;
+    var d = 12;
     fld.fill( 4,1,4, 8+d,groundLevel+1,8+d, g.BlockType.STONE );   // 高台を置く
     fld.fill( 5,2,5, 7+d,groundLevel+2,7+d, g.BlockType.SOIL );   
     fld.fill( 6,3,6, 6+d,groundLevel+3,6+d, g.BlockType.GRASS );  
@@ -53,11 +53,11 @@ exports.generate = function( hsize, vsize ) {
 
 
     // 山をいっぱいおく
-    for(var i=0;i<40;i++){
+    for(var i=0;i<120;i++){
         var mx = Math.floor(20 + Math.random() * hsize);
-        var my = Math.floor(0 + Math.random() * groundLevel);
+        var my = Math.floor(5 + Math.random() * (groundLevel+10));
         var mz = Math.floor(20 + Math.random() * hsize);
-        var msz = Math.floor(5 + Math.random() * 10);
+        var msz = Math.floor(2 + Math.random() * 6);
         if(mx+msz>=hsize||mz+msz>=hsize)continue;
         var t;
         if( Math.random() < 0.5 ){
@@ -65,10 +65,11 @@ exports.generate = function( hsize, vsize ) {
         } else {
             t = g.BlockType.STONE;
         }
-        fld.putMountain( mx,my,mz, msz, t);
+        fld.putSphere( mx,my,mz, msz, t, 0, 0 );
     }
+    
 
-    fld.fill( 9,groundLevel+15,9, 28,groundLevel+17,28, g.BlockType.SOIL ); // 土の天井
+    //    fld.fill( 9,groundLevel+15,9, 28,groundLevel+17,28, g.BlockType.SOIL ); // 土の天井
 
     // 後処理
     fld.growGrass();
@@ -199,17 +200,21 @@ Field.prototype.putTree = function(x,z) {
 
 
 //まるい山つくる
-Field.prototype.putMountain = function(basex,basey,basez,sz,t) {
+Field.prototype.putSphere = function(basex,basey,basez,sz,t,waterlevel,minY) {
     var xbase=0;
-    for(var y=basey;y<=basey+sz;y++){
+    for(var y=basey-sz;y<=basey+sz;y++){
         for(var x=basex-sz;x<=basex+sz;x++){
             for(var z=basez-sz;z<=basez+sz;z++){
                 var dz = ( z - basez );
                 var dy = ( y - basey );
                 var dx = ( x - basex );
                 var dia = dz*dz + dy*dy + dx*dx;
-                if( dia < (sz*sz) ){
-                    this.set(x,y,z,t);
+                if( dia < (sz*sz) && y >= minY ){
+                    if( y <= waterlevel ){
+                        this.set(x,y,z,g.BlockType.WATER );
+                    } else {
+                        this.set(x,y,z,t);
+                    }
                 }
             }
         }

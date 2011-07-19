@@ -95,7 +95,7 @@ function Update () {
                                       cam.transform.position.y-0.1,
                                       cam.transform.position.z);
         
-        print("wf:"+wf);
+        //        print("wf:"+wf);
         
         wf.transform.position.x = 0.5;
         wf.transform.position.y = 0.5;
@@ -137,6 +137,9 @@ var prevFireAt:float=0.0;
 
 var openChatWinAudio : AudioClip;
 var closeChatWinAudio : AudioClip;
+var digAudio : AudioClip;
+var bowAudio : AudioClip;
+var torchAudio : AudioClip;
 
 
 // クリックしたところのブロックを壊す
@@ -259,11 +262,19 @@ function OnGUI () {
                 case 0:
                 case 1:
                 case 4:
+                    if( digAudio && comsc.toolLastNumNumber[selectedInventoryIndex]>0){
+                        if( selectedInventoryIndex == 0 || selectedInventoryIndex == 1 ){
+                            AudioSource.PlayClipAtPoint( digAudio, hero.transform.position );
+                        }
+                    }
                     comsc.digBlock(targetv.x,targetv.y,targetv.z);
                     break;
                 case 2: // torch
                     // torchは、1歩前のところに
                     comsc.putTorch( prevTargetv.x, prevTargetv.y, prevTargetv.z );
+                    if( torchAudio ){
+                        AudioSource.PlayClipAtPoint( torchAudio, hero.transform.position);
+                    }
                     break;
                 case 3:
                     break;
@@ -283,6 +294,9 @@ function OnGUI () {
                     break;
                 }
             } else if( selectedInventoryIndex == 3 ){
+                if( bowAudio ){
+                    AudioSource.PlayClipAtPoint( bowAudio, hero.transform.position );
+                }
                 comsc.shoot();
             }
         }

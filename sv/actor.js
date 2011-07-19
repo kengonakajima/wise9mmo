@@ -546,7 +546,7 @@ Actor.prototype.collide = function( dia ) {
 // PC
 
 function pcHitWall(p,xok,yok,zok) {
-        sys.puts( "pcHitGround: p:"  + p.to_s()+ "ok:" + xok + ","+ yok + "," + zok  + " vel:" + this.velocity.to_s() );
+    //        sys.puts( "pcHitGround: p:"  + p.to_s()+ "ok:" + xok + ","+ yok + "," + zok  + " vel:" + this.velocity.to_s() );
     if( this.velocity.y < -4 && yok == false ){
         var dmg = Math.round( ( this.velocity.y + 4 ) / 2 ); // 負の値
         if( dmg != 0 ){

@@ -318,7 +318,7 @@ function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
     }
 }
 function rpcStatusChange( cliID, hp ) {
-    print( "statusChange:" + cliID + " hp:" + hp );
+    //    print( "statusChange:" + cliID + " hp:" + hp );
     if( cliID == myClientID ){
         AppendLog( "Damage! new HP:" + hp );
         currentHP = hp;
@@ -355,6 +355,7 @@ function rpcMarkNotify(x,y,z) {
 }
 
 
+var itemGetAudio : AudioClip;
 
 function rpcToolState(pickaxe,axe,torch,bow,bucket,stone,soil,water,stem,bombflw) {
     toolLastNumNumber[0] = pickaxe;
@@ -362,6 +363,15 @@ function rpcToolState(pickaxe,axe,torch,bow,bucket,stone,soil,water,stem,bombflw
     toolLastNumNumber[2] = torch;
     toolLastNumNumber[3] = bow;
     toolLastNumNumber[4] = bucket;
+
+    if( stone > toolLastNumNumber[5]
+        || soil > toolLastNumNumber[6]
+        || water > toolLastNumNumber[7]
+        || stem > toolLastNumNumber[8]
+        || bombflw > toolLastNumNumber[9] ){
+        AudioSource.PlayClipAtPoint( itemGetAudio, hero.transform.position );
+    }
+    
     toolLastNumNumber[5] = stone;
     toolLastNumNumber[6] = soil;
     toolLastNumNumber[7] = water;

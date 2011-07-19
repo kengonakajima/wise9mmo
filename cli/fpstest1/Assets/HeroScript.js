@@ -78,6 +78,9 @@ var antiGravity : float;
 
 var prevPos : Vector3;
 
+var stepAudio : AudioClip;
+var waterSplashAudio : AudioClip;
+
 // ag: antigravity
 function SetMove( speedps, pt, yw, pos, _dy, dt, ag ) {
     speedPerSec = speedps;
@@ -185,7 +188,10 @@ var cs = null;
 var hitHeight:float=1.7; 
 var hitSize:float =0.35;
 
+var lastStepPosXZ:Vector3;
+
 function Update() {
+    
     if( com==null) com = GameObject.Find("CommunicatorCube");
     if( cs==null) cs = com.GetComponent("CommunicatorScript");
     prevPos = this.transform.position;
@@ -248,11 +254,15 @@ function Update() {
             // 水の中
             inWater=true;
             if( prevInWater!=true){
-                dy=0;
                 // 着水の瞬間
                 if( waterParticleEmitterPrefab ){
                     Instantiate( waterParticleEmitterPrefab, transform.position, transform.rotation );
+                    if( waterSplashAudio && dy < -0.5 ){
+                        AudioSource.PlayClipAtPoint( waterSplashAudio, transform.position );
+                    }                    
                 }
+                dy=0;
+                
             } else {
                 if( dy < -1 ){
                     dy=-1;
@@ -293,7 +303,14 @@ function Update() {
             
             nextpos.y = blkhity + 1;
             falling = false;
+
+            if( stepAudio && dy < -0.5 ){
+                AudioSource.PlayClipAtPoint( stepAudio, transform.position );
+            }
+
+            
             dy=0;
+
 
 
         }
@@ -387,6 +404,14 @@ function Update() {
 
     prevInWater = inWater;
 
+    // 歩行音関連
+    if( stepAudio && (!falling) ){
+        if( Vector3.Distance( lastStepPosXZ, Vector3(transform.position.x,0,transform.position.z) ) > 1.0 ){
+            lastStepPosXZ.x = transform.position.x;
+            lastStepPosXZ.z = transform.position.z;
+            AudioSource.PlayClipAtPoint( stepAudio, transform.position );
+        }
+    }
 }
 function PlayUseAnimation() {
 
