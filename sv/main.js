@@ -79,16 +79,18 @@ function delayed(a,b,c){
     }, 1000, this  );    
 }
 function move(x,y,z,sp,pitch,yaw,dt){
-
+    if( this.pc.died )return;
+    
     //    sys.puts( "move: xyzpyvy:"+x+","+y+","+z+","+pitch+","+yaw+","+velY+","+","+dt + "  cur:" + this.pc.pos.to_s() );
 
-    this.pc.setMove( x, y, z, pitch, yaw );
+    this.pc.setMove( x, y, z, sp, pitch, yaw );
     fld.updatePC( this.pc.id, x, y, z );
 
     //    g.sleep(Math.random() * 100 );
 
 }
 function jump(velY){
+    if( this.pc.died )return;
     this.pc.jump( velY *1.3 );     // ghostが登れないことを防ぐため
 }
 
@@ -108,6 +110,8 @@ function getField(x0,y0,z0,x1,y1,z1){
     }
 }
 function dig(x,y,z){
+    if( this.pc.died )return;
+    
     var v = new g.Vector3(x,y,z);
     var d = v.distance( this.pc.pos );
     sys.puts("dig:"+x+","+y+","+z + " d:" + d );
@@ -165,6 +169,8 @@ function dig(x,y,z){
 
 // あいてる場所になにかおく
 function put(x,y,z,tname){
+    if( this.pc.died )return;
+    
     sys.puts("put:"+x+","+y+","+z+","+tname);
     var b = fld.get(x,y,z);
 
@@ -186,15 +192,19 @@ function put(x,y,z,tname){
 }
 
 function shoot() {
+    if( this.pc.died )return;
+    
     sys.puts("shoot");
     if( this.pc.bowLeft > 0 ){
         this.pc.bowLeft --;
-        this.pc.shoot( "arrow", 15, 2, 2, 4 );
+        this.pc.shoot( "arrow", 12, 3, 2, 4 );
         this.pc.sendToolState();
     }
 }
 
 function putTorch(x,y,z) {
+    if( this.pc.died )return;
+    
     if( this.pc.torchLeft >= 1 ){
         this.pc.torchLeft --;
         this.pc.sendToolState();
@@ -207,6 +217,7 @@ function putTorch(x,y,z) {
 }
 
 function putDebri(x,y,z,t){
+    if( this.pc.died )return;
     
     if( t == g.BlockType.STONE ){
         if( this.pc.stoneLeft > 0 ){
@@ -255,16 +266,32 @@ function chat(txt) {
 }
 
 
+var startPos = new g.Pos( 2,15,2 );  // 初期位置
+
 function login() {
   sys.puts( "login" );
-  var p = new g.Pos( 2,15,2 ); // 初期位置
+  var p = startPos;
 
   this.pc = fld.addPC( "guest", p, this );
   this.pc.conn = this;
 
-  this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerForce );
+  this.send( "loginResult", this.pc.id, p.x, p.y, p.z, g.PlayerMaxForce );
   this.pc.sendStatus();
 
+}
+
+function respawn() {
+    if( this.pc.died ==false)return;
+    
+    sys.puts("respawn");
+    
+    this.pc.pos = new g.Vector3( startPos.x, startPos.y, startPos.z );
+    this.pc.toPos = this.pc.pos;
+    this.pc.died = false;
+    this.pc.hp = 10;
+    this.send( "loginResult", this.pc.id, this.pc.pos.x, this.pc.pos.y, this.pc.pos.z, g.PlayerMaxForce );    
+    this.pc.sendStatus();
+        
 }
 
 
@@ -402,6 +429,7 @@ addRPC( "shoot", shoot );
 addRPC( "chat", chat );
 addRPC( "putTorch", putTorch );
 addRPC( "putDebri", putDebri );
+addRPC( "respawn", respawn );
 
 server.listen(7000, "127.0.0.1");
 

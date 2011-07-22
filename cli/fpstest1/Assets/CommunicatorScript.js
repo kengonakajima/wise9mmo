@@ -277,7 +277,7 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         hs.isPC = false;
 
     }
-    print("typeName:"+typeName);
+
     a.name = "" + id;
     return a;
 }
@@ -300,9 +300,10 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
 }
 
 function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
-    if( typeName == "hidden"){
-        print( "id:"+cliID+" tn:"+typeName+" dt:" +dt  + " xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
-    }
+
+    //    if( typeName == "pc"){
+    //        print( "id:"+cliID+" tn:"+typeName+" xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
+        //    }
     
     // idからpcを検索
     var pos:Vector3 = Vector3( x, y, z );
@@ -348,14 +349,15 @@ var markCounter:int;
 
 function rpcMarkNotify(x,y,z) {
     markCounter++;
-    if( ( markCounter % 5 ) == 0 ){
+    //    if( ( markCounter % 2 ) == 0 ){
         //        print("mark: xyz:"+x+","+y+","+z);
         var m = Instantiate( prefabMark, Vector3( x,y,z ), Quaternion.identity );
-    }
+        //    }
 }
 
 
 var itemGetAudio : AudioClip;
+
 
 function rpcToolState(pickaxe,axe,torch,bow,bucket,stone,soil,water,stem,bombflw) {
     toolLastNumNumber[0] = pickaxe;
@@ -394,12 +396,63 @@ function rpcChangeFieldNotify( x,y,z ) {
     sendGetFieldEdges(chx,chy,chz);
 }
 
+
 function rpcJumpNotify( cliID, dy ) {
     var pc = searchActor(cliID);
-    if(pc==null)return;
+    if(pc==null){
+        print(" rpcJumpNotify : actor not found" );
+        return;
+    }
     var hs = pc.GetComponent( "HeroScript");
     hs.JumpByRemote(dy);
+
+    if( cliID == myClientID ){
+        var myhs = hero.GetComponent( "HeroScript" );
+        myhs.JumpByRemote(dy);
+    }
 }
+
+
+    
+var hitAudio : AudioClip;
+
+function rpcHitNotify( cliID, x,y,z ) {
+    if( hitAudio ) {
+        AudioSource.PlayClipAtPoint( hitAudio, Vector3( x,y,z ) );
+    }
+}
+
+var zombieMoanAudio : AudioClip;
+
+function rpcMoanNotify( tn, cliID, x,y,z ) {
+    print( "rpcMoanNotify "+x+","+y+","+z);
+    if( zombieMoanAudio && tn == "zombie" ) {
+        AudioSource.PlayClipAtPoint( zombieMoanAudio, Vector3( x,y,z ) );
+    }
+}
+
+var damaged : System.Boolean;
+function rpcDamaged() {
+    print("damaged");
+    damaged = true;
+}
+
+var died : System.Boolean;
+var respawnCounter : int ;
+
+function decrementRespawnCounter(d:int) {
+    respawnCounter -=d;
+    if( respawnCounter <= 0 && died ){
+        send( "respawn");
+        died = false;
+    }
+}
+function rpcDied() {
+    print("died");
+    died = true;
+    respawnCounter = 1000;
+}
+
 
 var cam : GameObject;
 var hero : GameObject;
@@ -428,7 +481,11 @@ function Start() {
     addRPC( "chatNotify", rpcChatNotify );
     addRPC( "markNotify", rpcMarkNotify );
     addRPC( "toolState", rpcToolState );
-
+    addRPC( "hitNotify", rpcHitNotify );
+    addRPC( "moanNotify", rpcMoanNotify );
+    addRPC( "damaged", rpcDamaged );
+    addRPC( "died", rpcDied );
+    
     bprof = new Prof( "block", 20);
     wprof = new Prof( "water", 20);
     iprof = new Prof( "item", 20);
@@ -473,7 +530,7 @@ function doProtocol() {
               hero.transform.position.x,
               hero.transform.position.y,
               hero.transform.position.z,
-              hs.speedPerSec,
+              hs.speedPerSec * hs.vVel,
               hs.pitch,
               hs.yaw,
               t - protocolLastSent

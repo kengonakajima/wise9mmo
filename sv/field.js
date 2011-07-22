@@ -33,7 +33,7 @@ exports.generate = function( hsize, vsize ) {
     fld.fill( 0,0,0, 7,groundLevel+1,7, g.BlockType.SOIL ); // すたーとちてん
     
     
-    var d = 12;
+    var d = 20;
     fld.fill( 4,1,4, 8+d,groundLevel+1,8+d, g.BlockType.STONE );   // 高台を置く
     fld.fill( 5,2,5, 7+d,groundLevel+2,7+d, g.BlockType.SOIL );   
     fld.fill( 6,3,6, 6+d,groundLevel+3,6+d, g.BlockType.GRASS );  
@@ -76,7 +76,8 @@ exports.generate = function( hsize, vsize ) {
     fld.recalcSunlight(0,0,hsize,hsize);
     fld.stats(30);
 
-    fld.addMob( "zombie", new g.Pos(5,groundLevel+8,2) ); // 落ちてくる
+
+    fld.addMob( "zombie", new g.Pos(8,groundLevel+8,7) ); // 落ちてくる
     
     return fld;
 };

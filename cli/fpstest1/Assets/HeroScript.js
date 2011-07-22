@@ -281,6 +281,7 @@ function Update() {
     
     var blkfound=false;
     var blkhity=-999;
+
     for(var by:int=nextpos.y;by>=0;by--){
         //        var b = cs.getBlock( transform.position.x, by, transform.position.z);
         var b = getCurrentPosBlock( Vector3( transform.position.x, by, transform.position.z ), hitSize, hitHeight );

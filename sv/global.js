@@ -21,7 +21,7 @@ exports.BlockTypeToString = function(v) {
 };
 
 
-exports.PlayerForce = 5.0;
+exports.PlayerMaxForce = 5.0;
 
 
 
@@ -99,8 +99,11 @@ Vector3.prototype.diffSign = function(v){
 };
 Vector3.prototype.equal = function(v){
     if( v.x == this.x && v.y == this.y && v.z == this.z ) return true; else return false;
-}
-    
+};
+Vector3.prototype.copy = function(v){
+    return new Vector3( v.x, v.y, v.z );
+};
+
 // (0,0)-(dv)からpitchを返す
 Vector3.prototype.getPitch = function( dv ) {
     var rot = 0;
@@ -156,4 +159,9 @@ exports.runLength = function( ary ) {
     out[outi+1]=len;
     return out;        
 };
+    
+exports.curTime = function() {
+    var d = new Date();
+    return d.getTime();
+}
     

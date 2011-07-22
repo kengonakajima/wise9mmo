@@ -38,7 +38,19 @@ function pcDie() {
 }
 
 function pcMove( curTime ) {
-    this.vForce = g.PlayerForce;
+    if( this.hp <= 0 ){
+        if( this.died == false ){
+            this.conn.send("died");
+        }
+        this.died = true;
+        this.lastInputForce = 0;
+    } 
+    
+    if( this.lastInputForce != undefined ){
+        this.vForce = this.lastInputForce;
+    } else {
+        this.vForce = 0;
+    }
 
     if( this.lastToolRecover < ( curTime - 4000)  ){
         if( this.pickaxeLeft < 5 ) this.pickaxeLeft ++;
@@ -53,6 +65,7 @@ function pcMove( curTime ) {
     }
     var col = this.collide( 0.5 );
     for( var i in col ){
+        if(!a)continue;
         var a = col[i];
         var doIt=false;
         
@@ -88,12 +101,14 @@ function pcMove( curTime ) {
         }
     }
 
-    var blkcur = this.getPosBlock( this.pos, 0.35, this.height );
+    var blkcur = this.getPosBlock( this.pos, this.width, this.height, false );
     if( blkcur == g.BlockType.WATER ){
         if( curTime > ( this.lastChoke + 2000 ) ){
-            this.hp --;
-            this.lastChoke = curTime;
-            this.sendStatus();
+            if( this.hp > 0 ){
+                this.hp --;
+                this.lastChoke = curTime;
+                this.sendStatus();
+            }
         }
     } else {
         if( curTime > ( this.lastHPRecover + 4000 ) ){
@@ -155,7 +170,7 @@ function zombieMove( curTime ) {
     
     this.pitch = this.pos.getPitch( diff );
 
-    if( this.pos.hDistance( targetPos ) < 1.0 ){
+    if( this.pos.hDistance( targetPos ) < 0.1 ){
         this.vForce = 0;
     } else {
         this.vForce = 2.0;
@@ -170,10 +185,22 @@ function zombieMove( curTime ) {
             this.velocity.y = 4.0;
 
             sys.puts( "zombie jump!");
-            main.nearcast( this.pos,
-                           "jumpNotify",
-                           this.id,
-                           this.velocity.y ); 
+            main.nearcast( this.pos, "jumpNotify", this.id, this.velocity.y ); 
+        }
+
+        if( Math.random() < 0.2 ){
+            main.nearcast( this.pos, "moanNotify", "zombie", this.id, this.pos.x, this.pos.y, this.pos.z  );
+        }
+    }
+
+    this.yaw = 0;
+
+    var col = this.collide( this.width  );
+    for( var i in col ) {
+        var a = col[i];
+        if( a.typeName == "pc" ){
+            sys.puts(" Zattack!! i:"+i );
+            a.attacked( 2, this, true );
         }
     }
     return true;
@@ -192,7 +219,8 @@ function Actor( name, fld, pos ) {
     // 共用
     this.antiGravity = 1; // 大きくすると落ちにくい
     this.pos = new g.Vector3( pos.x, pos.y, pos.z );
-
+    this.prevPos = new g.Vector3( pos.x, pos.y, pos.z );
+    
     this.createdAt = d.getTime();    
     this.lastMoveAt = this.createdAt;
     this.lastSentAt = this.nextMoveAt = this.lastMoveAt + defaultTick;
@@ -207,8 +235,13 @@ function Actor( name, fld, pos ) {
     this.counter = 0;
     this.toSend = true;
 
+    this.yaw = 0;
+    this.pitch = 0;
 
 
+    this.height = 1;
+    this.width = 1;
+    
     // 以下、移動関連
     this.velocity = new g.Vector3(0,0,0);
     this.pitch = 0.0;
@@ -243,23 +276,30 @@ function getHitCoords( pos, s, h ) {
 };
 // いまいる位置にブロックあったら返す
 // pos:Vector3
-Actor.prototype.getPosBlock = function( pos, s, h) {
+Actor.prototype.getPosBlock = function( pos, s, h, dolog ) {
     var dCoords = getHitCoords( pos, s,h );
     //    if( this.typeName=="pc") sys.puts( "out:" + dCoords[15].to_s());
         
     var blk=null;
     for(var i=0;i<dCoords.length;i++){
         var v = dCoords[i];
+
         var b = this.field.get( v.ix(), v.iy(), v.iz());
         if( b != null ){
             blk = b;
             if( blk != g.BlockType.AIR ){
+                if( dolog ){
+                    sys.puts( "getPosBlock hit v:" + v.to_s() + " s:" + s + " h:" + h);
+                }
+
                 return b;
             }
         }
     }
     return blk;
-}
+};
+
+
 
 
 Actor.prototype.poll = function(curTime) {
@@ -296,8 +336,13 @@ Actor.prototype.poll = function(curTime) {
     dnose.z = 1.0 * Math.sin(this.pitch);
 
     if( this.useForce ){
-        this.velocity.x = dnose.x * this.vForce * dTime;
-        this.velocity.z = dnose.z * this.vForce * dTime;
+        this.velocity.x = dnose.x * this.vForce;// * dTime;
+        this.velocity.z = dnose.z * this.vForce; //* dTime;
+        //        if( this.typeName=="pc"){
+        //            if( this.toPos != null ){
+        //                sys.puts("dt:" + dTime + "vf:" + this.vForce + " nzx:" + dnose.x + " nzz:" + dnose.z + " velx:" + this.velocity.x + " velz:"+this.velocity.z + " x:" + this.pos.x + " y:" + this.pos.y + " tox:" + this.toPos.x + " toy:" + this.toPos.y );
+        //            }
+        //        }
     }
 
 
@@ -334,7 +379,7 @@ Actor.prototype.poll = function(curTime) {
             if( cursign.diff( nextsign ).equal( new g.Vector3(0,0,0)) == false ){
                 nextpos = this.toPos;
                 this.toPos = null;
-                //                if(this.typeName=="pc")                sys.puts( "goal! pos:" + this.pos.to_s() );
+                                if(this.typeName=="pc")                sys.puts( "goal! pos:" + this.pos.to_s() );
             }            
         }
     }
@@ -343,7 +388,7 @@ Actor.prototype.poll = function(curTime) {
 
     
     //    var blkcur = this.field.get( this.pos.ix(), this.pos.iy(), this.pos.iz() );
-    var blkcur = this.getPosBlock( this.pos, 0.35, this.height );
+    var blkcur = this.getPosBlock( this.pos, this.width, this.height, false );
     if( blkcur != null ){
         if( blkcur == g.BlockType.WATER ){
             // 水の中にいる
@@ -383,7 +428,17 @@ Actor.prototype.poll = function(curTime) {
         var np = this.pos.mul(1-u).add( nextpos.mul(u));
 
         // 地形との境界面で微妙に振動するのをふせぐ
-        var blkn = this.getPosBlock( np, 0.35, this.height );
+        var logflg=false;
+        if( this.typeName == "arrow" ){
+            sys.puts( "np:" + np.to_s() + " blkn:" + blkn +  " s:" + this.width + " h:" + this.height );            
+            logflg=true;
+        }
+        
+        var blkn = this.getPosBlock( np, this.width, this.height, logflg );
+
+
+
+        
         // 範囲外はつねに移動できない
         if( blkn == null ){
             x_ok = y_ok = z_ok = false;
@@ -400,20 +455,22 @@ Actor.prototype.poll = function(curTime) {
             
         // 通れない場合はループ終わりで抜ける
         var np2 = new g.Vector3( this.pos.x, np.y, this.pos.z );
-        var blkcur2 = this.getPosBlock( np2, 0.35, this.height );
+        var blkcur2 = this.getPosBlock( np2, this.width, this.height, false );
         if( blkcur2 != null && (!g.isSolidBlock(blkcur2)) ) y_ok = true;
 
         var np3 = new g.Vector3( this.pos.x, this.pos.y, np.z );
-        var blkcur3 = this.getPosBlock( np3, 0.35, this.height );
+        var blkcur3 = this.getPosBlock( np3, this.width, this.height , false );
         if( blkcur3 != null && (!g.isSolidBlock(blkcur3)) ) z_ok = true;
     
         var np4 = new g.Vector3( np.x, this.pos.y, this.pos.z );
-        var blkcur4 = this.getPosBlock( np4, 0.35, this.height );
+        var blkcur4 = this.getPosBlock( np4, this.width, this.height, false );
         if( blkcur4 != null && (!g.isSolidBlock(blkcur4)) ) x_ok = true;
 
         if( this.hitWallFunc ){
             var ret = this.hitWallFunc.apply( this, [new g.Pos( np.ix(), np.iy(), np.iz() ), x_ok, y_ok, z_ok ] );
             if( ret == false ){
+                sys.puts( "x,y,z:" + np4.to_s() + "," + np2.to_s() + "," + np3.to_s() + " b2:" + blkcur2 + " b3:" + blkcur3 + " b4:" + blkcur4 );
+                
                 this.field.deleteActor(this.id);
                 return;
             }
@@ -456,7 +513,7 @@ Actor.prototype.poll = function(curTime) {
     if( this.velocity.y != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
 
     if( toSend && this.toSend == true ){
-
+        //        sys.puts( "yaw:" + this.yaw + " id:" + this.id + " tn:" + this.typeName );
         main.nearcast( this.pos,
                        "moveNotify",
                        this.id,
@@ -479,16 +536,24 @@ Actor.prototype.poll = function(curTime) {
         main.nearcast( this.pos, "markNotify", this.pos.x, this.pos.y, this.pos.z );
     }
     this.prevInWater = this.inWater;
+
+    this.prevPos.copy( this.pos );
+
 };
 
 // args: すべて float 
-Actor.prototype.setMove = function( x, y, z, pitch, yaw ) {
+Actor.prototype.setMove = function( x, y, z, sp, pitch, yaw ) {
     this.yaw = yaw;
     this.pitch = pitch;
+    
+    if( sp > g.PlayerMaxForce ) sp = g.PlayerMaxForce;
+    this.lastInputForce = sp;
+    
     var v = new g.Vector3(x,y,z);
     if( this.pos.equal(v) == false ){
         this.toPos = v;
     }
+
 
 };
 
@@ -502,29 +567,38 @@ Actor.prototype.jump = function( velY ) {
     if( this.inWater == true ){
         this.velocity.y = velY;
     } else {
-        //        if( this.velocity.y <= 0 ){
-            this.velocity.y = velY;
-            //        }
+        this.velocity.y = velY;
     }
     main.nearcast( this.pos, "jumpNotify", this.id, velY );    
 };
 
 // dmg:整数
 // attacker:actor
-Actor.prototype.attacked = function( dmg, attacker ) {
-
-    var dv = attacker.pos.diff( this.pos );
-    sys.puts( "dv:" + dv.to_s());
-    this.knockBack(dv.mul(4));
+Actor.prototype.attacked = function( dmg, attacker, reverseKnockback ) {
+    if( this.attackedFunc ){
+        this.attackedFunc.apply( this, [ attacker, dmg ] );
+    }
+    if( reverseKnockback){
+        var dv = this.pos.diff( attacker.pos ).normalized();
+        sys.puts( "rev dv:" + dv.to_s());
+        attacker.knockBack(dv.mul(3));
+        main.nearcast( attacker.pos, "hitNotify", this.id, this.pos.x, this.pos.y, this.pos.z );
+    } else  {
+        var dv = attacker.pos.diff( this.pos ).normalized();
+        sys.puts( "norm dv:" + dv.to_s());
+        this.knockBack(dv.mul(3));
+        main.nearcast( this.pos, "hitNotify", this.id, this.pos.x, this.pos.y, this.pos.z );
+    }
 };
 
 Actor.prototype.knockBack = function( v ) {
     this.setMove( this.pos.x + v.x,
                   this.pos.y,
                   this.pos.z + v.z,
+                  v.length(),
                   this.pitch,
                   this.yaw );
-    this.jump(4);
+    this.jump(1);
     main.nearcast( this.pos, "jumpNotify", this.id, this.velocity.y );
     
 };
@@ -536,7 +610,11 @@ Actor.prototype.collide = function( dia ) {
         var a = this.field.actors[k];
         if(!a)continue;
         var d = a.pos.diff( this.pos).length();
-        if( a != null && d < dia && a != this ){
+        if( a != null && //(d < (dia+this.width+a.width) ) &&
+            (d<dia)&&
+            //            a.pos.y < (this.pos.y+this.height) &&
+            //            this.pos.y <(a.pos.y+a.height) &&
+            a != this ){
             ret.push(a);
         }
     }
@@ -558,15 +636,28 @@ function pcHitWall(p,xok,yok,zok) {
     return true;
 };
 
+function pcAttacked( attacker, dmg ) {
+    sys.puts( "pcAttacked: attacker:" + attacker + " dmg:" + dmg );
+    this.hp -= dmg;
+
+    this.sendDamaged();
+    this.sendStatus();
+    
+};
+
 function PlayerCharacter( name, fld, pos ) {
     var pc = new Actor( "pc", fld, pos);
     pc.playerName = name;
     pc.hp = 10;
     pc.hitWallFunc = pcHitWall;
+    pc.attackedFunc = pcAttacked;
     pc.func = pcMove;
     pc.height = 1.7;
+    pc.width = 0.35;
+    pc.lastInputForce = 0;
 
-
+    pc.died = false;
+    
     // いくらでも時間で増えるもの
     pc.pickaxeLeft = 5;
     pc.axeLeft = 5;
@@ -595,6 +686,7 @@ function Mob( name, fld, pos ) {
     if(name=="zombie"){
         m.func = zombieMove;
         m.height = 1.7;
+        m.width = 0.35;
     }
 
     return m;
@@ -606,6 +698,7 @@ function Debri( t, fld, pos ) {
     d.func = debriMove;
     d.debriType = t;
     d.height = 0.35;
+    d.width = 0.35;
     return d;
 };
 
@@ -618,7 +711,7 @@ function bulletMove( curTime ) {
         var a = col[i];
         if( a == this.shooter ) continue;
         sys.puts( "collide:" + a.typeName + " d:" + this.pos.diff( a.pos ).length() );
-        a.attacked( this.damage, this );
+        a.attacked( this.damage, this, false );
         return false;
     }
 
@@ -632,7 +725,8 @@ function bulletMove( curTime ) {
 // speed: (m/sec)
 // dtl: distance to live. (m)
 function bulletHitWall(p,xok,yok,zok){
-    sys.puts( "bulletHitWall: p:"+p.to_s());
+    sys.puts( "bulletHitWall: p:"+p.to_s() + " ok:" + xok + ","+ yok +","+zok );
+    main.nearcast( this.pos, "hitNotify", this.id, p.x, p.y, p.z );
     return false;
 };
 
@@ -651,7 +745,9 @@ function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttlsec, damage ) {
     b.useForce = false; // 放物線
 
     b.velocity = vel;
-    
+
+    b.height = 0.1;
+    b.width = 0.1;
     b.origPos = pos;
     b.dieAt = b.createdAt + ttlsec * 1000;
     b.damage = damage;
@@ -687,7 +783,9 @@ Actor.prototype.sendToolState = function(){
 Actor.prototype.sendStatus = function() {
     main.nearcast( this.pos, "statusChange", this.id, this.hp );
 };
-
+Actor.prototype.sendDamaged  = function() {
+    this.conn.send( "damaged" );
+};
 
 
 exports.Actor = Actor;

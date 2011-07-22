@@ -17,6 +17,7 @@ var chatString : String;
 var chatShow : System.Boolean;
 
 
+
 var cam : GameObject;
 
 function Start () {
@@ -39,68 +40,98 @@ function Start () {
 }
 
 
+var damageEffectStartAt:float; //開始時刻
+var damageEffectEndAt:float; //終了時刻
+
+function startDamageEffect(dur:float ) {
+    damageEffectStartAt = Time.realtimeSinceStartup;
+    damageEffectEndAt = damageEffectStartAt + dur;
+}
+
+
+
 
 function Update () {
 
     var i:int;
     var cnt:int=0;
-    var ttt = Time.realtimeSinceStartup;
-    for(i=0;i<100000;i++){
-        for(var q:int=0;q<2;q++){
-            cnt++;
-        }
-    }
-    var eee = Time.realtimeSinceStartup;
-    //    print("D###############DT:" + ( eee-ttt) );
     
     var mx = Input.GetAxis( "Mouse X" );
     var my = Input.GetAxis( "Mouse Y" );
 
     var h = Input.GetAxis( "Horizontal");
-    var v = Input.GetAxis( "Vertical" );    
+    var v = Input.GetAxis( "Vertical" );
+
+    if( comsc.died ){
+        h = v = 0;
+    }
 
     herosc.Move( mx / 10.0 * -1.0 , my / 10.0, h, v );
 
     var j = Input.GetButton( "Jump" );
+    
     if(j){
-        var canJump:System.Boolean;
-        if( herosc.dy == 0 ){
-            canJump = true;
+        if( comsc.died ) {
+            comsc.decrementRespawnCounter(10);
         } else {
-            if( herosc.inWater ){
+            var canJump:System.Boolean;
+            if( herosc.dy == 0 ){
                 canJump = true;
+            } else {
+                if( herosc.inWater ){
+                    canJump = true;
+                }
             }
+        
+            if( canJump ){
+                if( herosc.inWater){
+                    herosc.dy = 2.0;
+                } else {
+                    herosc.dy = 4.0;
+                }
+                herosc.falling = true;
+                herosc.needSend = true;
+                herosc.jumped = true;
+            
+                comsc.send("jump", herosc.dy );
+            }
+        }
+    }
+
+
+    // ダメージ受けたら画面を赤くする
+    if( comsc.damaged ){
+        comsc.damaged = false;
+        startDamageEffect(0.2);
+    }
+        
+    
+    var df = GameObject.Find( "DamageFilterGUITexture" );
+    var nowt = Time.realtimeSinceStartup;
+    if( nowt < damageEffectEndAt || comsc.died ){
+        var r : float = ( nowt - damageEffectStartAt ) / ( damageEffectEndAt - damageEffectStartAt ); // 0から1に近づく
+        if(comsc.died ){
+            df.guiTexture.color = Color( 0.5,0.5,0.5, 0.3 );
+        } else {
+            df.guiTexture.color = Color( 0.5,0.5,0.5, (1 - r)*0.5 );            
         }
         
-        if( canJump ){
-            if( herosc.inWater){
-                herosc.dy = 2.0;
-            } else {
-                herosc.dy = 4.0;
-            }
-            herosc.falling = true;
-			herosc.needSend = true;
-            herosc.jumped = true;
-            
-            comsc.send("jump", herosc.dy );
-        }
+        df.transform.position.x = 0.5;
+        df.transform.position.y = 0.5;
+    } else {
+        df.transform.position.x = -100;
+        df.transform.position.y = -100;            
     }
 
     // 水の中にいるときは、あかるさをみてカメラの前になにかおくか
 
-
     var wf = GameObject.Find( "WaterFilterGUITexture");
-    if( herosc.inWater){
+    if( herosc.inWater && !comsc.died ){
         var lgt:int = comsc.getLight( cam.transform.position.x,
                                       cam.transform.position.y-0.1,
                                       cam.transform.position.z);
-        
-        //        print("wf:"+wf);
-        
         wf.transform.position.x = 0.5;
         wf.transform.position.y = 0.5;
-        
-
         switch(lgt){
         case 0:	
         case 1:
@@ -121,11 +152,12 @@ function Update () {
             wf.transform.position.x=-100;
             wf.transform.position.y=-100;
         }
-
     } else {
-            wf.transform.position.x=-100;
-            wf.transform.position.y=-100;
+        wf.transform.position.x=-100;
+        wf.transform.position.y=-100;
     }
+
+    
 }
 
 var activeBoxTex : Texture2D;
@@ -140,6 +172,7 @@ var closeChatWinAudio : AudioClip;
 var digAudio : AudioClip;
 var bowAudio : AudioClip;
 var torchAudio : AudioClip;
+
 
 
 // クリックしたところのブロックを壊す
@@ -312,6 +345,11 @@ function OnGUI () {
             AudioSource.PlayClipAtPoint( closeChatWinAudio, hero.transform.position );                    
             comsc.send( "chat", chatString );
         }
+    }
+
+    if( comsc.died ) {
+        comsc.decrementRespawnCounter(1);
+        GUI.Label( Rect( Screen.width/2 - 200, Screen.height /2 - 50, 450,50), "GAME OVER. Respawn? " + comsc.respawnCounter + " (Space key to urge)" );
     }
     
     
