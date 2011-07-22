@@ -147,6 +147,22 @@ function debriMove( curTime ) {
 // 穴があったら素直に落ちる
 // 経路探索しない
 function zombieMove( curTime ) {
+    if( this.hp <= 0 ){
+        main.nearcast( this.pos, "smoke", this.pos.x, this.pos.y, this.pos.z );
+        return false;
+    }
+
+    if( this.inWater ){
+        if( this.chokeAt == 0 ){
+            this.chokeAt = curTime;
+        } else {
+            if( curTime > ( this.chokeAt + 2000 ) ){
+                this.hp --;
+                this.chokeAt = curTime;
+                sys.puts( "choke.." );
+            }
+        }
+    }
 
     if( this.hate == undefined ) this.hate = null;
     if( ( this.counter % 10 ) == 0 ){
@@ -183,8 +199,6 @@ function zombieMove( curTime ) {
         //        sys.puts("z: lastxyz:" + this.lastXOK + "," + this.lastZOK + " velY:" + this.velocity.y );
         if( ( this.lastXOK == false || this.lastZOK == false ) && this.velocity.y == 0 ){
             this.velocity.y = 4.0;
-
-            sys.puts( "zombie jump!");
             main.nearcast( this.pos, "jumpNotify", this.id, this.velocity.y ); 
         }
 
@@ -205,6 +219,11 @@ function zombieMove( curTime ) {
     }
     return true;
 }
+
+function zombieAttacked( attacker, dmg ) {
+    this.hp -= dmg;
+}
+
 
 var defaultTick = 30; // ms
 
@@ -687,6 +706,9 @@ function Mob( name, fld, pos ) {
         m.func = zombieMove;
         m.height = 1.7;
         m.width = 0.35;
+        m.hp = 3;
+        m.attackedFunc = zombieAttacked;
+        m.chokeAt = 0;
     }
 
     return m;
@@ -726,7 +748,7 @@ function bulletMove( curTime ) {
 // dtl: distance to live. (m)
 function bulletHitWall(p,xok,yok,zok){
     sys.puts( "bulletHitWall: p:"+p.to_s() + " ok:" + xok + ","+ yok +","+zok );
-    main.nearcast( this.pos, "hitNotify", this.id, p.x, p.y, p.z );
+    main.nearcast( this.pos, "hitNotify", this.id, this.pos.x, this.pos.y, this.pos.z );
     return false;
 };
 

@@ -420,6 +420,13 @@ function rpcHitNotify( cliID, x,y,z ) {
     if( hitAudio ) {
         AudioSource.PlayClipAtPoint( hitAudio, Vector3( x,y,z ) );
     }
+    if( prefabDamageParticleEmitter ) {
+        var o = Instantiate( prefabDamageParticleEmitter,
+                             Vector3( x,y + 0.5,z ),
+                             Quaternion.identity );
+    }
+
+    
 }
 
 var zombieMoanAudio : AudioClip;
@@ -451,6 +458,15 @@ function rpcDied() {
     print("died");
     died = true;
     respawnCounter = 1000;
+}
+
+function rpcSmoke( x,y,z ) {
+    print("smoke");
+    if( prefabSmokeParticleEmitter ) {
+         Instantiate( prefabSmokeParticleEmitter,
+                             Vector3( x,y + 0.5,z ),
+                             Quaternion.identity );
+    }    
 }
 
 
@@ -485,6 +501,7 @@ function Start() {
     addRPC( "moanNotify", rpcMoanNotify );
     addRPC( "damaged", rpcDamaged );
     addRPC( "died", rpcDied );
+    addRPC( "smoke", rpcSmoke );
     
     bprof = new Prof( "block", 20);
     wprof = new Prof( "water", 20);
@@ -631,6 +648,8 @@ var tmpcounter2 = 0;
 
 var statText : GUIText;
 
+var prefabDamageParticleEmitter : GameObject;
+var prefabSmokeParticleEmitter : GameObject;
 
 var prefabGuest : GameObject;
 
