@@ -195,7 +195,9 @@ function OnGUI () {
         if( prevSel != selectedInventoryIndex ){
             herosc.SetToolTex( shortcutTextures[ selectedInventoryIndex ] );
         }
-        if( Event.current.keyCode == KeyCode.X ) attackKeyHit = true;
+        if( Event.current.keyCode == KeyCode.X ||
+            Event.current.keyCode == KeyCode.N ||
+            Event.current.keyCode == KeyCode.E ) attackKeyHit = true;
         if( Event.current.keyCode == KeyCode.Return ) enterKeyHit = true;
     }
 

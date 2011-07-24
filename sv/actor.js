@@ -208,6 +208,7 @@ function ghostMove( curTime ) {
         main.nearcast( this.pos, "smoke", this.pos.x, this.pos.y, this.pos.z );
         return false;
     }
+
     
     this.velocity.y = 0;
 
@@ -217,7 +218,7 @@ function ghostMove( curTime ) {
     this.pitch = this.pos.getPitch( diff );
 
     if( this.counter > 100 && ( this.counter % 100 ) == 0 && this.hate ){
-        var b = this.shootAt( "fireball", 8, 10, 2, 1000, this.targetPos );
+        var b = this.shootAt( "fireball", 8, 5, 2, 1000, this.targetPos );
         b.sendMark = false;
         main.nearcast( this.pos, "fire", this.pos.x, this.pos.y, this.pos.z, "fireball" );
     }
@@ -232,7 +233,7 @@ function ghostMove( curTime ) {
     } else {
         this.velocity.y = -1;
     }
-
+    if( this.counter < 100 ) this.vForce = 0;
     
     
 
@@ -621,7 +622,7 @@ Actor.prototype.poll = function(curTime) {
     
     // 送信. 落ちてる最中ではない場合は、あまり多く送らない
     var toSend = false;
-
+    if( this.counter == 1 ) toSend = true;
     if( this.lastSentAt < (curTime-500) ) toSend = true;
     if( this.velocity.y != 0 && ( this.lastSentAt < ( curTime-50) ) ) toSend = true;
 
