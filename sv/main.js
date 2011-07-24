@@ -237,6 +237,7 @@ function putDebri(x,y,z,t){
     } else if( t == g.BlockType.STEM ){
         if( this.pc.stemLeft > 0 ){
             this.pc.stemLeft --;
+            fld.putTree( x,z);
             fld.runtimeSet( new g.Vector3(x,y,z), t );
         }
     }

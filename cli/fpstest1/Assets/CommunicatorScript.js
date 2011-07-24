@@ -328,12 +328,12 @@ function rpcLoginResult( cliID, x,y,z, speedps ) {
     var hs = hero.GetComponent("HeroScript" );
     hs.clientID = myClientID;
 
-    hs.SetMove( speedps, 0, 0, Vector3( x,y,z ), 0, 1, 1 );
+    hs.SetMove( speedps, 0, 0, Vector3( x,y,z ), 0, 1, 1, 0,0 );
 
 
 }
 
-function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
+function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag, hp, maxhp ){
 
     //    if( typeName == "pc"){
     //        print( "id:"+cliID+" tn:"+typeName+" xyz:"+x+","+y+","+z + " p:"+pitch + " yw:"+yaw + " dy:" +dy + " dt:" + dt + " sp:"+speed );
@@ -348,7 +348,7 @@ function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
     if( typeName == "ghost" ){
         tr = Vector3( 0,1,0);
     }
-    hs.SetMove( speed, pitch, yaw, pos + tr, dy, dt, ag );
+    hs.SetMove( speed, pitch, yaw, pos + tr, dy, dt, ag, hp, maxhp );
 
     // 遠すぎたら強制ワープ
     //    print( "distance:" + Vector3.Distance(  pos,  hero.transform.position ) );
@@ -508,10 +508,17 @@ function rpcSmoke( x,y,z ) {
 }
 
 var fireAudio : AudioClip;
+var mobballAudio : AudioClip;
 
-function rpcFire( x,y,z ) {
-    if( fireAudio ) {
-        AudioSource.PlayClipAtPoint( fireAudio, Vector3( x,y,z ));
+function rpcFire( x,y,z,t ) {
+    if( t == "fireball" ){
+        if( fireAudio ) {
+            AudioSource.PlayClipAtPoint( fireAudio, Vector3( x,y,z ));
+        }
+    } else if( t == "mobball" ) {
+        if( mobballAudio ) {
+            AudioSource.PlayClipAtPoint( mobballAudio, Vector3( x,y,z ));
+        }
     }
 }
 
@@ -679,7 +686,9 @@ function doProtocolOne( h ){
     case 9: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8] ); break;
     case 10: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9] ); break;
     case 11: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9], ra[10] ); break;
-    case 12: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9], ra[10], ra[11] ); break;                        
+    case 12: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9], ra[10], ra[11] ); break;
+    case 13: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9], ra[10], ra[11], ra[12] ); break;
+    case 14: f( ra[0], ra[1], ra[2], ra[3], ra[4], ra[5], ra[6], ra[7], ra[8], ra[9], ra[10], ra[11], ra[12], ra[13] ); break;        
     default: throw "too many args from server"; 
     }
 

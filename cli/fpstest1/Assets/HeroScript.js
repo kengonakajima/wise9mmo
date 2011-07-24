@@ -83,8 +83,11 @@ var prevPos : Vector3;
 var stepAudio : AudioClip;
 var waterSplashAudio : AudioClip;
 
+var curHP:int;
+var maxHP:int;
+
 // ag: antigravity
-function SetMove( speedps, pt, yw, pos, _dy, dt, ag ) {
+function SetMove( speedps, pt, yw, pos, _dy, dt, ag, hp, maxhp ) {
     speedPerSec = speedps;
     antiGravity = ag;
     gotoYaw = yw;
@@ -95,6 +98,9 @@ function SetMove( speedps, pt, yw, pos, _dy, dt, ag ) {
 	gotoTime = Time.realtimeSinceStartup + dt;	
 	gotoDiffTime = dt;	
 	gotoOrigPos = transform.position;
+
+    if( hp != null ) curHP = hp;
+    if( maxhp != null ) maxHP = maxhp;
 }
 function JumpByRemote( _dy) {
     dy = _dy;
@@ -438,7 +444,11 @@ function OnGUI () {
     var v: Vector3 = cam.camera.WorldToScreenPoint(transform.position);
 
     if( clientID != -1 &&  v.x>0&&v.y>0&&v.z > 2.0 ){
-        GUI.Label( Rect( v.x, Screen.height-v.y  - 50, 100,50 ), showName  );
+        var hpstr = "";
+        if( maxHP != 0 ){
+            hpstr = " ("+curHP+"/"+maxHP+")" ;
+        }
+        GUI.Label( Rect( v.x, Screen.height-v.y  - 50, 180,50 ), showName + hpstr );
     }    
     
 }

@@ -36,12 +36,12 @@ exports.generate = function( hsize, vsize ) {
     var d = 20;
     fld.fill( 4,1,4, 8+d,groundLevel+1,8+d, g.BlockType.STONE );   // 高台を置く
     fld.fill( 5,2,5, 7+d,groundLevel+2,7+d, g.BlockType.SOIL );   
-    fld.fill( 6,3,6, 6+d,groundLevel+3,6+d, g.BlockType.GRASS );  
-    fld.fill( 7,4,7, 5+d,groundLevel+4,5+d, g.BlockType.GRASS );  
+    fld.fill( 6,3,6, 6+d,groundLevel+3,6+d, g.BlockType.SOIL );  
+    fld.fill( 7,4,7, 5+d,groundLevel+4,5+d, g.BlockType.SOIL );  
     
-    fld.set( 8,groundLevel+4,8, g.ItemType.REDFLOWER );   //
-    fld.set( 8,groundLevel+4,10, g.ItemType.BLUEFLOWER );   //
-    fld.set( 10,groundLevel+4,11, g.ItemType.TORCH );
+    //    fld.set( 8,groundLevel+4,8, g.ItemType.REDFLOWER );   //
+    //    fld.set( 8,groundLevel+4,10, g.ItemType.BLUEFLOWER );   //
+    //    fld.set( 10,groundLevel+4,11, g.ItemType.TORCH );
     fld.set( 14,groundLevel+4,14, g.ItemType.TORCH );    
 
     // 木を4本

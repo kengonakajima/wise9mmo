@@ -132,7 +132,7 @@ function debriMove( curTime ) {
     if( this.pitch > Math.PI*2 ){
         this.pitch = 0;
     }
-    if( curTime > ( this.createdAt + 5000 ) ){
+    if( curTime > ( this.createdAt + 10000 ) ){
         var p = this.pos.toPos();
         this.field.runtimeSet( p, this.debriType );
         sys.puts( "debri fixed!");
@@ -178,6 +178,7 @@ function blackstarMove( curTime ) {
                     var b = this.shootAt( "mobball", 8, 20, 1, 100, a.pos );
                     b.hitWallFunc = mobballHitwall;
                     b.sendMark = false;
+                    main.nearcast( this.pos, "fire", this.pos.x, this.pos.y, this.pos.z, "mobball" );
                 }
             }
         }
@@ -193,7 +194,7 @@ function blackstarAttacked( attacker, dmg ) {
     this.sendStatus();
     
     if( this.hp <= 0 ){
-        this.hp = 10;
+        this.hp = this.maxhp;
         this.pos.x = this.field.hSize * Math.random();
         this.pos.z = this.field.hSize * Math.random();
     }
@@ -218,7 +219,7 @@ function ghostMove( curTime ) {
     if( this.counter > 100 && ( this.counter % 100 ) == 0 && this.hate ){
         var b = this.shootAt( "fireball", 8, 10, 2, 1000, this.targetPos );
         b.sendMark = false;
-        main.nearcast( this.pos, "fire", this.pos.x, this.pos.y, this.pos.z );
+        main.nearcast( this.pos, "fire", this.pos.x, this.pos.y, this.pos.z, "fireball" );
     }
     
     if( diff.length() > 10 ){
@@ -282,7 +283,9 @@ function zombieMove( curTime ) {
     } else {
         this.vForce = 2.0;
     }
-
+    if( this.counter < 100 ){
+        this.vForce = 0;
+    }
     /////////////
 
     // 障害物あったらジャンプ
@@ -636,7 +639,9 @@ Actor.prototype.poll = function(curTime) {
                        this.yaw,
                        this.velocity.y,
                        (curTime - this.lastSentAt) / 1000.0,
-                       this.antiGravity
+                       this.antiGravity,
+                       this.hp,
+                       this.maxhp
                        );
         this.lastSentAt = curTime;
     } 
@@ -759,7 +764,7 @@ function PlayerCharacter( name, fld, pos ) {
     var pc = new Actor( "pc", fld, pos);
     pc.bornAtPos = pos;
     pc.playerName = name;
-    pc.hp = 10;
+    pc.hp = pc.maxhp = 10;
     pc.hitWallFunc = pcHitWall;
     pc.attackedFunc = pcAttacked;
     pc.func = pcMove;
@@ -799,14 +804,14 @@ function Mob( name, fld, pos ) {
         m.func = zombieMove;
         m.height = 1.7;
         m.width = 0.35;
-        m.hp = 3;
+        m.hp = m.maxhp = 3;
         m.attackedFunc = zombieAttacked;
         m.chokeAt = 0;
     } else if( name == "ghost" ){
         m.func = ghostMove;
         m.height = 1.0;
         m.width = 1.0;
-        m.hp = 3;
+        m.hp = m.maxhp = 3;
         m.attackedFunc = ghostAttacked;
         m.chokeAt = 0;
         m.antiGravity = 1000; // ほぼ落ちない
@@ -814,7 +819,7 @@ function Mob( name, fld, pos ) {
         m.func = blackstarMove;
         m.height = 4.0;
         m.width = 4.0;
-        m.hp = 10;
+        m.hp = m.maxhp = 10;
         m.attackedFunc = blackstarAttacked;
         m.antiGravity = 1000;
     }
@@ -876,7 +881,8 @@ function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttlsec, damage ) {
     b.useForce = false; // 放物線
 
     b.velocity = vel;
-
+    
+    
     b.height = 0.1;
     b.width = 0.1;
     b.origPos = pos;
