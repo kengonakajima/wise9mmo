@@ -179,8 +179,8 @@ var ghostTexture : Texture;
 var prefabDebri : GameObject;
 var prefabArrow : GameObject;
 var prefabFireball : GameObject;
-
-
+var prefabBlackstar : GameObject;
+var prefabMobball : GameObject;
 
 // debri: height=
 function makeSingleCube(a, typeid:int, height:float, sizescale:float ) {
@@ -259,17 +259,16 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         hs.isPC = true;
         a.transform.localScale = Vector3( 0.7,0.7,0.7);
         a.transform.localPosition = Vector3(0,8,8);
-
-        //        /*
-        //          これでは位置を動かせなかった
-        //          for (var child : Transform in a.transform) {
-        //            child.localPosition += Vector3.up * 10.0; // positionにしてもだめ
-        //        }
-          //        */
-
         hs.walkAnimName = "walk";
         hs.idleAnimName = "idle";
         hs.setMaterial( ghostTexture );
+    } else if( typeName == "blackstar" ) {
+        a = Instantiate( prefabBlackstar, pos, Quaternion.identity );
+        hs = a.GetComponent("HeroScript");
+        hs.clientID = id;
+        hs.showName = typeName + "_" + id;
+        hs.isPC = false;
+    
     } else if( typeName == "STONE_debri" || typeName == "GRASS_debri" || typeName == "SOIL_debri" || typeName == "LEAF_debri" || typeName == "STEM_debri" || typeName == "WATER_debri" ){
         a = Instantiate( prefabDebri, pos, Quaternion.identity );
         hs = a.GetComponent( "HeroScript");
@@ -305,6 +304,12 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         hs.clientID = id;
         hs.showName = typeName + "_" + id;
         hs.isPC = false;
+    } else if( typeName == "mobball" ) {
+        a = Instantiate( prefabMobball, pos, Quaternion.identity );
+        hs = a.GetComponent( "HeroScript" );
+        hs.clientID = id;
+        hs.showName = typeName + "_" + id;
+        hs.isPC = false;    
     }
 
     a.name = "" + id;

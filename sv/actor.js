@@ -53,22 +53,24 @@ function pcMove( curTime ) {
     }
 
     if( this.lastToolRecover < ( curTime - 4000)  ){
-        if( this.pickaxeLeft < 5 ) this.pickaxeLeft ++;
-        if( this.axeLeft < 5 ) this.axeLeft ++;
-        if( this.bucketLeft < 5 ) this.bucketLeft ++;
-        if( this.bowLeft < 5 ) this.bowLeft ++;
-        if( this.torchLeft < 5 ) this.torchLeft ++;
+        if( this.pickaxeLeft < 10 ) this.pickaxeLeft ++;
+        if( this.axeLeft < 10 ) this.axeLeft ++;
+        if( this.bucketLeft < 10 ) this.bucketLeft ++;
+        if( this.bowLeft < 10 ) this.bowLeft ++;
+        if( this.torchLeft < 10 ) this.torchLeft ++;
 
         this.lastToolRecover = curTime;
         this.sendToolState();
-        sys.puts( "toolst:" + this.lastToolRecover );
     }
+
+
+    
     var col = this.collide( 0.5 );
     for( var i in col ){
-        if(!a)continue;
         var a = col[i];
+        if(!a)continue;
         var doIt=false;
-        
+
         if( a == this.shooter ) continue;
         if( a.typeName == "STONE_debri" ){
             if( this.stoneLeft < 10 ) {
@@ -140,6 +142,66 @@ function debriMove( curTime ) {
 };
 
 
+function mobballHitwall(p,xok,yok,zok) {
+    sys.puts( "bulletHitWall: p:"+p.to_s() + " ok:" + xok + ","+ yok +","+zok );
+    main.nearcast( this.pos, "hitNotify", this.id, this.pos.x, this.pos.y, this.pos.z );
+    if( Math.random() < 0.5 ) {
+        this.field.addMob( "ghost", p );
+    } else {
+        this.field.addMob( "zombie", p );
+    }
+                          
+    return false;
+}
+
+function blackstarMove( curTime ) {
+    if( this.hp <= 0 ){
+        main.nearcast( this.pos, "smoke", this.pos.x, this.pos.y, this.pos.z );
+        return false;
+    }
+    this.velocity.y = 0;
+
+    if( ( this.counter % 300) == 0 ){
+        // pc 全員にターゲット
+        var enemyCnt=0;
+        for(var k in this.field.actors ) {
+            var a = this.field.actors[k];
+            if( a == null )continue;
+            if( a.typeName == "zombie"|| a.typeName == "ghost" ) enemyCnt++;
+        }
+        if( enemyCnt < 5 ){
+            for(var k in this.field.actors ) {
+                var a = this.field.actors[k];
+                if( a == null )continue;
+                if(a.typeName == "pc" ){
+                    sys.puts("pc found at:" + a.pos.to_s() );
+                    var b = this.shootAt( "mobball", 8, 20, 1, 100, a.pos );
+                    b.hitWallFunc = mobballHitwall;
+                    b.sendMark = false;
+                }
+            }
+        }
+    }
+    return true;
+    
+}
+function blackstarAttacked( attacker, dmg ) {
+    sys.puts( "blackstarAttacked: attacker:" + attacker + " dmg:" + dmg );
+    this.hp -= dmg;
+
+    this.sendDamaged();
+    this.sendStatus();
+    
+    if( this.hp <= 0 ){
+        this.hp = 10;
+        this.pos.x = this.field.hSize * Math.random();
+        this.pos.z = this.field.hSize * Math.random();
+    }
+
+}
+
+
+    
 function ghostMove( curTime ) {
     if( this.hp <= 0 ){
         main.nearcast( this.pos, "smoke", this.pos.x, this.pos.y, this.pos.z );
@@ -153,8 +215,7 @@ function ghostMove( curTime ) {
     
     this.pitch = this.pos.getPitch( diff );
 
-    if( ( this.counter % 100 ) == 0 && this.hate ){
-        sys.puts( "fb!");
+    if( this.counter > 100 && ( this.counter % 100 ) == 0 && this.hate ){
         var b = this.shootAt( "fireball", 8, 10, 2, 1000, this.targetPos );
         b.sendMark = false;
         main.nearcast( this.pos, "fire", this.pos.x, this.pos.y, this.pos.z );
@@ -165,7 +226,7 @@ function ghostMove( curTime ) {
     }  else {
         this.vForce = -2.0;
     }
-    if( this.pos.y < ( this.targetPos.y + 4 ) ){
+    if( this.pos.y < ( this.bornAtPos.y  ) ){
         this.velocity.y = 1;
     } else {
         this.velocity.y = -1;
@@ -216,7 +277,7 @@ function zombieMove( curTime ) {
     
     this.pitch = this.pos.getPitch( diff );
 
-    if( this.pos.hDistance( targetPos ) < 0.1 ){
+    if( this.pos.hDistance( this.targetPos ) < 0.1 ){
         this.vForce = 0;
     } else {
         this.vForce = 2.0;
@@ -455,7 +516,7 @@ Actor.prototype.poll = function(curTime) {
                 // 壁の中にいま、まさにうまってる
                 this.pos.y += 1;
                 this.velocity.y = 0;
-                sys.puts( "inwall!! h:"+this.height);
+                sys.puts( "inwall!! h:"+this.height + " tn:" + this.typeName );
             }
         } 
      }
@@ -696,6 +757,7 @@ function pcAttacked( attacker, dmg ) {
 
 function PlayerCharacter( name, fld, pos ) {
     var pc = new Actor( "pc", fld, pos);
+    pc.bornAtPos = pos;
     pc.playerName = name;
     pc.hp = 10;
     pc.hitWallFunc = pcHitWall;
@@ -732,6 +794,7 @@ function PlayerCharacter( name, fld, pos ) {
 };
 function Mob( name, fld, pos ) {
     var m = new Actor(name,fld,pos);
+    m.bornAtPos = pos;
     if(name=="zombie"){
         m.func = zombieMove;
         m.height = 1.7;
@@ -746,7 +809,14 @@ function Mob( name, fld, pos ) {
         m.hp = 3;
         m.attackedFunc = ghostAttacked;
         m.chokeAt = 0;
-        m.antiGravity = 10000; // ほぼ落ちない
+        m.antiGravity = 1000; // ほぼ落ちない
+    } else if( name == "blackstar" ) {
+        m.func = blackstarMove;
+        m.height = 4.0;
+        m.width = 4.0;
+        m.hp = 10;
+        m.attackedFunc = blackstarAttacked;
+        m.antiGravity = 1000;
     }
 
     return m;
@@ -874,7 +944,7 @@ Actor.prototype.updateHate = function( curTime, dia ) {
     if( this.hate ){
         this.targetPos = new g.Vector3( this.hate.pos.x, this.hate.pos.y, this.hate.pos.z );
     } else {
-        this.targetPos = new g.Vector3(2,2,2);
+        this.targetPos = this.bornAtPos;
     }    
 };
 

@@ -30,7 +30,7 @@ exports.generate = function( hsize, vsize ) {
     fld.fill( 0,1,0, hsize,groundLevel,hsize, g.BlockType.WATER );   //海
 
     sys.puts( "groundLevel:" + groundLevel );
-    fld.fill( 0,0,0, 7,groundLevel+1,7, g.BlockType.SOIL ); // すたーとちてん
+    fld.fill( 0,0,0, 16,groundLevel+1,16, g.BlockType.SOIL ); // すたーとちてん
     
     
     var d = 20;
@@ -78,8 +78,10 @@ exports.generate = function( hsize, vsize ) {
 
 
     //    fld.addMob( "zombie", new g.Pos(8,groundLevel+8,7) ); // 落ちてくる
+    //        fld.addMob( "ghost", new g.Pos(8,groundLevel+8,7) ); // 落ちてくる
 
-    fld.addMob( "ghost", new g.Pos(8,groundLevel+8,7) ); // 落ちてくる    
+    fld.addMob( "blackstar", new g.Pos( 40, vsize-2, 40 ) );
+    //fld.addMob( "blackstar", new g.Pos( 30, 17, 4 ) );    
     return fld;
 };
 
