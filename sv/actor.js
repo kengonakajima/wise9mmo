@@ -139,6 +139,52 @@ function debriMove( curTime ) {
     return true;
 };
 
+
+function ghostMove( curTime ) {
+    if( this.hp <= 0 ){
+        main.nearcast( this.pos, "smoke", this.pos.x, this.pos.y, this.pos.z );
+        return false;
+    }
+    
+    this.velocity.y = 0;
+
+    this.updateHate(curTime, 30);
+    var diff = this.pos.diff( this.targetPos ) ;
+    
+    this.pitch = this.pos.getPitch( diff );
+
+    if( ( this.counter % 100 ) == 0 && this.hate ){
+        sys.puts( "fb!");
+        var b = this.shootAt( "fireball", 8, 10, 2, 1000, this.targetPos );
+        b.sendMark = false;
+        main.nearcast( this.pos, "fire", this.pos.x, this.pos.y, this.pos.z );
+    }
+    
+    if( diff.length() > 10 ){
+        this.vForce  = 2.0;
+    }  else {
+        this.vForce = -2.0;
+    }
+    if( this.pos.y < ( this.targetPos.y + 4 ) ){
+        this.velocity.y = 1;
+    } else {
+        this.velocity.y = -1;
+    }
+
+    
+    
+
+    return true;
+}
+function ghostAttacked( attacker, dmg ) {
+    sys.puts( "ghostAttacked: attacker:" + attacker + " dmg:" + dmg );
+    this.hp -= dmg;
+
+    this.sendDamaged();
+    this.sendStatus();
+    
+};
+
 // 目的地はいつも近くのpc
 // pcと距離が2以内だったら攻撃
 // 常にpcの方にむく
@@ -164,25 +210,9 @@ function zombieMove( curTime ) {
         }
     }
 
-    if( this.hate == undefined ) this.hate = null;
-    if( ( this.counter % 10 ) == 0 ){
-        var pcs = this.field.searchLatestNearPC( this.pos, 10, curTime - 1000 );
-        if( pcs.length > 0 ){
-            this.hate = pcs[0];
-        } else {
-            this.hate = null;
-        }
-    }
-
-    var targetPos ;
-    if( this.hate ){
-        targetPos = new g.Vector3( this.hate.pos.x, this.hate.pos.y, this.hate.pos.z );
-    } else {
-        targetPos = new g.Vector3(2,2,2);
-    }
-    var diff = this.pos.diff( targetPos ) ;
-        
-    //    this.yaw = Math.random();
+    this.updateHate(curTime,10);
+    
+    var diff = this.pos.diff( this.targetPos ) ;
     
     this.pitch = this.pos.getPitch( diff );
 
@@ -709,6 +739,14 @@ function Mob( name, fld, pos ) {
         m.hp = 3;
         m.attackedFunc = zombieAttacked;
         m.chokeAt = 0;
+    } else if( name == "ghost" ){
+        m.func = ghostMove;
+        m.height = 1.0;
+        m.width = 1.0;
+        m.hp = 3;
+        m.attackedFunc = ghostAttacked;
+        m.chokeAt = 0;
+        m.antiGravity = 10000; // ほぼ落ちない
     }
 
     return m;
@@ -725,8 +763,9 @@ function Debri( t, fld, pos ) {
 };
 
 function bulletMove( curTime ) {
+    if( this.inWater )return false;
 
-    sys.puts("bmove. pos:" + this.pos.to_s()  + " vel:" + this.velocity.to_s() + " nxmat:" + this.nextMoveAt + " dieat:" + this.dieAt );
+    //    sys.puts("bmove. pos:" + this.pos.to_s()  + " vel:" + this.velocity.to_s() + " nxmat:" + this.nextMoveAt + " dieat:" + this.dieAt );
 
     var col = this.collide( 1 );　
     for( var i in col ){
@@ -789,12 +828,21 @@ function Bullet( tname, fld, pos, shooter, pitch, yaw, speed, ttlsec, damage ) {
 };
 
 // tname : "hidden"だとmove送らない
-Actor.prototype.shoot = function( tname, speed, ttlsec, damage, ag) {
+Actor.prototype.shoot = function( tname, speed, ttlsec, damage, antig) {
     var b = new Bullet( tname, this.field, this.pos, this, this.pitch, this.yaw, speed, ttlsec, damage );
-    b.antiGravity = ag;
+    b.antiGravity = antig;
     this.field.addActor(b);
     return b;
 };
+// 位置指定でうつ
+Actor.prototype.shootAt = function( tname, speed, ttlsec, damage, antig, atpos ) {
+    var b = new Bullet( tname, this.field, this.pos, this, 0,0, speed, ttlsec, damage );
+    b.antiGravity = antig;
+    b.velocity = this.pos.diff(atpos).normalized().mul(speed);
+    this.field.addActor(b);
+    return b;
+}
+    
 
 Actor.prototype.sendToolState = function(){
     this.conn.send( "toolState",
@@ -806,9 +854,29 @@ Actor.prototype.sendStatus = function() {
     main.nearcast( this.pos, "statusChange", this.id, this.hp );
 };
 Actor.prototype.sendDamaged  = function() {
-    this.conn.send( "damaged" );
+    if( this.conn ){
+        this.conn.send( "damaged" );
+    }
 };
 
+Actor.prototype.updateHate = function( curTime, dia ) {
+    if( this.hate == undefined ) this.hate = null;
+
+    if( ( this.counter % 10 ) == 0 ){
+        var pcs = this.field.searchLatestNearPC( this.pos, dia, curTime - 1000 );
+        if( pcs.length > 0 ){
+            this.hate = pcs[0];
+        } else {
+            this.hate = null;
+        }
+    }
+    
+    if( this.hate ){
+        this.targetPos = new g.Vector3( this.hate.pos.x, this.hate.pos.y, this.hate.pos.z );
+    } else {
+        this.targetPos = new g.Vector3(2,2,2);
+    }    
+};
 
 exports.Actor = Actor;
 exports.Mob = Mob;

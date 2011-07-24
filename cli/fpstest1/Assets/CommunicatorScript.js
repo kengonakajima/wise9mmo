@@ -174,9 +174,13 @@ function searchActor( id:int ){
 
 var zombieTexture : Texture;
 var pcTexture : Texture;
+var ghostTexture : Texture;
 
 var prefabDebri : GameObject;
 var prefabArrow : GameObject;
+var prefabFireball : GameObject;
+
+
 
 // debri: height=
 function makeSingleCube(a, typeid:int, height:float, sizescale:float ) {
@@ -226,7 +230,7 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
     var a = searchActor(id);
     if(a!=null) return a;
     
-    if( typeName == "pc" || typeName == "zombie" ){
+    if( typeName == "pc" || typeName == "zombie"  ){
         a = Instantiate( prefabGuest, pos,  Quaternion.identity );
         var hs = a.GetComponent( "HeroScript" );
         hs.clientID = id;
@@ -240,12 +244,32 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         if(typeName=="zombie"){
             hs.walkAnimName = "zwalk";
             hs.idleAnimName = "zidle";
-            hs.setMaterial( zombieTexture );            
+            hs.setMaterial( zombieTexture );
         } else {
             hs.walkAnimName = "walk";
             hs.idleAnimName = "idle";
             hs.setMaterial( pcTexture );            
-        }        
+        }
+
+    } else if( typeName == "ghost"  ){
+        a = Instantiate( prefabGhostMob, pos, Quaternion.identity );
+        hs = a.GetComponent( "HeroScript");
+        hs.clientID = id;
+        hs.showName = typeName + "_" + id;
+        hs.isPC = true;
+        a.transform.localScale = Vector3( 0.7,0.7,0.7);
+        a.transform.localPosition = Vector3(0,8,8);
+
+        //        /*
+        //          これでは位置を動かせなかった
+        //          for (var child : Transform in a.transform) {
+        //            child.localPosition += Vector3.up * 10.0; // positionにしてもだめ
+        //        }
+          //        */
+
+        hs.walkAnimName = "walk";
+        hs.idleAnimName = "idle";
+        hs.setMaterial( ghostTexture );
     } else if( typeName == "STONE_debri" || typeName == "GRASS_debri" || typeName == "SOIL_debri" || typeName == "LEAF_debri" || typeName == "STEM_debri" || typeName == "WATER_debri" ){
         a = Instantiate( prefabDebri, pos, Quaternion.identity );
         hs = a.GetComponent( "HeroScript");
@@ -275,7 +299,12 @@ function ensureActor( id:int, typeName:String, pos:Vector3 ){
         hs.clientID = id;
         hs.showName =  typeName + "_" + id;
         hs.isPC = false;
-
+    } else if( typeName == "fireball" ) {
+        a = Instantiate( prefabFireball, pos, Quaternion.identity );
+        hs = a.GetComponent( "HeroScript" );
+        hs.clientID = id;
+        hs.showName = typeName + "_" + id;
+        hs.isPC = false;
     }
 
     a.name = "" + id;
@@ -310,7 +339,11 @@ function rpcMoveNotify( cliID, typeName, x,y,z, speed, pitch, yaw, dy, dt, ag ){
     var pc = ensureActor( cliID, typeName, pos );
 
     var hs = pc.GetComponent( "HeroScript");
-    hs.SetMove( speed, pitch, yaw, pos, dy, dt, ag );
+    var tr = Vector3(0,0,0);
+    if( typeName == "ghost" ){
+        tr = Vector3( 0,1,0);
+    }
+    hs.SetMove( speed, pitch, yaw, pos + tr, dy, dt, ag );
 
     // 遠すぎたら強制ワープ
     //    print( "distance:" + Vector3.Distance(  pos,  hero.transform.position ) );
@@ -469,6 +502,14 @@ function rpcSmoke( x,y,z ) {
     }    
 }
 
+var fireAudio : AudioClip;
+
+function rpcFire( x,y,z ) {
+    if( fireAudio ) {
+        AudioSource.PlayClipAtPoint( fireAudio, Vector3( x,y,z ));
+    }
+}
+
 
 var cam : GameObject;
 var hero : GameObject;
@@ -502,6 +543,7 @@ function Start() {
     addRPC( "damaged", rpcDamaged );
     addRPC( "died", rpcDied );
     addRPC( "smoke", rpcSmoke );
+    addRPC( "fire", rpcFire );
     
     bprof = new Prof( "block", 20);
     wprof = new Prof( "water", 20);
@@ -652,6 +694,7 @@ var prefabDamageParticleEmitter : GameObject;
 var prefabSmokeParticleEmitter : GameObject;
 
 var prefabGuest : GameObject;
+var prefabGhostMob : GameObject; // 敵のghost(浮かんでるやつ)
 
 var prefabMultiCube : GameObject;
 var prefabMultiObjCube : GameObject;

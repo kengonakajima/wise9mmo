@@ -37,6 +37,8 @@ var walkAnimName : String;
 var idleAnimName : String;
 
 
+
+
 var omitBody: System.Boolean; // trueにすると、身体を省略して手だけにする（自キャラ用）
 
 function Start() {
@@ -115,7 +117,7 @@ function setMaterial(tex) {
 
     for( var nm in layernames ){
         var t = transform.Find(nm);
-        t.renderer.material.mainTexture = tex;
+        if(t)t.renderer.material.mainTexture = tex;
     }
 }
 
@@ -209,7 +211,8 @@ function Update() {
     dside.y = 0;
     dside.z = 1.0 * Mathf.Sin(pitch - Mathf.PI/2);
 
-
+    
+    
     nose = transform.position + dnose ;
     var flatNose = Vector3( nose.x, transform.position.y, nose.z );
     transform.LookAt( flatNose );
@@ -230,6 +233,7 @@ function Update() {
             gravity /= 8;
         }
         dy -= gravity * dTime;
+        if( dy < -10000 )dy=0; // antigravityが巨大な場合
     }
     
     // 絶対的な世界の底
@@ -241,7 +245,8 @@ function Update() {
 
     dtr.y = dy;
 
-    var nextpos = transform.position + dtr * dTime;
+
+ var nextpos = transform.position + dtr * dTime;
 
 
 
@@ -305,15 +310,10 @@ function Update() {
             nextpos.y = blkhity + 1;
             falling = false;
 
-            if( stepAudio && dy < -0.5 ){
-                AudioSource.PlayClipAtPoint( stepAudio, transform.position );
+            if( isPC ){
+                if( stepAudio && dy < -0.5 ) AudioSource.PlayClipAtPoint( stepAudio, transform.position );
             }
-
-            
             dy=0;
-
-
-
         }
     }
 
@@ -406,7 +406,7 @@ function Update() {
     prevInWater = inWater;
 
     // 歩行音関連
-    if( stepAudio && (!falling) ){
+    if( stepAudio && (!falling) && isPC ){
         if( Vector3.Distance( lastStepPosXZ, Vector3(transform.position.x,0,transform.position.z) ) > 1.0 ){
             lastStepPosXZ.x = transform.position.x;
             lastStepPosXZ.z = transform.position.z;

@@ -77,8 +77,9 @@ exports.generate = function( hsize, vsize ) {
     fld.stats(30);
 
 
-    fld.addMob( "zombie", new g.Pos(8,groundLevel+8,7) ); // 落ちてくる
-    
+    //    fld.addMob( "zombie", new g.Pos(8,groundLevel+8,7) ); // 落ちてくる
+
+    fld.addMob( "ghost", new g.Pos(8,groundLevel+8,7) ); // 落ちてくる    
     return fld;
 };
 
